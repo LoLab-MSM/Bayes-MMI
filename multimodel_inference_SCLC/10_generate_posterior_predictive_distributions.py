@@ -1,3 +1,6 @@
+## Need to run ../helper_functions_and_files/consolidate_posterior_marginal_distributions.py before
+#   running this script (but after 09_generate_posterior_marginal_distributions.py)
+
 from pysb.simulator import ScipyOdeSimulator
 import sys
 import pickle

@@ -6,6 +6,7 @@
       <excludeFolder url="file://$MODULE_DIR$/run_files_for_candidate_models" />
       <excludeFolder url="file://$MODULE_DIR$/pymultinest_results" />
       <excludeFolder url="file://$MODULE_DIR$/posterior_marginals_and_predictives" />
+      <excludeFolder url="file://$MODULE_DIR$/analyzed_pickles" />
     </content>
     <orderEntry type="jdk" jdkName="Python 3.7 (sclc_analysis)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
