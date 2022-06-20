@@ -563,7 +563,7 @@ def get_postprobs_allbutstructure(df,add_to_dict=False,priordict={}):
               'no posterior probability possible')
         the_sum = 0
     if add_to_dict:
-        postprob_dict['div_eff_any'] = the_sum
+        postprob_dict['div_any'] = the_sum
     else:
         print('any effect on division posterior probability: '+str(the_sum))
     # division effects separated by who the effects are by
