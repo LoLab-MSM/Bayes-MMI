@@ -1,0 +1,3 @@
+Now that the run_model_x.py files have been generated for all candidate models, can run
+PyMultinest. Can run multiple run_model files on multiple cores or by using a computer cluster,
+or choose to run one at a time.
