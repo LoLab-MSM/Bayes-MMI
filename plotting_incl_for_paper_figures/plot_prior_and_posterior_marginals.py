@@ -1,10 +1,5 @@
 ## Below is plotting the prior marginal distributions (= the prior parameters you gave to multinest) and the posterior marginal distributions (the distributions you got back) -- this way you can compare them
 
-from scipy.stats import norm, uniform
-from matplotlib import ticker
-import seaborn as sns
-import sys
-import matplotlib.pyplot as plt
 import pickle
 import numpy as np
 import pandas as pd
@@ -80,7 +75,7 @@ def plot_priors(ax, dist, loc, scale, plt_range):
     ax.plot(x, dist.pdf(x, loc=loc, scale=scale), linewidth=2, color='black')
 
 
-def remove_empty_plots(fig, ax, dims_plotted):
+def remove_empty_plots(fig, axs, dims_plotted, columns, rows):
     ## The plt.subplots() function puts a plot in every single row and column, so eliminate empty plots and replace them with empty space
     dims_plotted = list(set(dims_plotted))
     tot_plots = columns * rows
@@ -173,6 +168,7 @@ ordered_namelist = ['division_A_baseline',
                     'diff_A_to_Y_baseline',
                     'diff_Y_to_A_baseline']
 
+'''
 # Plot prior distributions only (Figure S2)
 
 plt.rcParams.update({'font.size': 12})
@@ -215,7 +211,7 @@ for n, i in enumerate(ordered_namelist):
         removeind += 1
         pass
 
-remove_empty_plots(fig, ax, dims_plotted)
+remove_empty_plots(fig, axs, dims_plotted, columns, rows)
 
 # sizes don't look ideal with plt.show() but saving it as a pdf then opening that pdf in adobe reader looks good
 
@@ -290,7 +286,7 @@ for dset in ['TKO', 'RPM', 'cl_A']:
         except KeyError:
             removeind += 1
             pass
-    remove_empty_plots(fig, ax, dims_plotted)
+    remove_empty_plots(fig, axs, dims_plotted, columns, rows)
     #
     # sizes don't look ideal with plt.show() but saving it as a pdf then opening that pdf in adobe reader looks good
     fig.text(0.5, 0.02, 'Log parameter value', ha='center')  # , fontsize=30)  ## need diff sizes for ACCRE
@@ -366,7 +362,7 @@ for dset in ['TKO', 'RPM', 'cl_A']:
             except KeyError:
                 removeind += 1
                 pass
-    remove_empty_plots(fig, ax, dims_plotted)
+    remove_empty_plots(fig, axs, dims_plotted, columns, rows)
     #
     fig.text(0.5, 0.02, 'Log parameter value', ha='center')  # , fontsize=30)  ## need diff sizes for ACCRE
     fig.text(0.01, 0.55, 'Probability', va='center',
@@ -447,7 +443,7 @@ for dset in ['TKO', 'RPM', 'cl_A']:
             except KeyError:
                 removeind += 1
                 pass
-    remove_empty_plots(fig, ax, dims_plotted)
+    remove_empty_plots(fig, axs, dims_plotted, columns, rows)
     #
     fig.text(0.5, 0.02, 'Log parameter value', ha='center')  # , fontsize=30)  ## need diff sizes for ACCRE
     fig.text(0.01, 0.55, 'Probability', va='center',
@@ -518,7 +514,7 @@ plt.xlabel('Parameter')
 plt.ylabel('Log parameter value')
 # plt.savefig('../generated_figures/parambarplot_updated5891.pdf',format='pdf')
 plt.show()
-
+'''
 results_from_dataset_comparisons = {}
 num_to_sample = 1000
 for y in range(10):
@@ -531,6 +527,7 @@ for y in range(10):
         model_avgd = model_avgd.loc[model_avgd.from_model.isin(upd_modnums)]
         model_avgd = model_avgd.loc[model_avgd.model_starting_subtype_makeup_code.str.contains('\...1')]
         model_avgd = model_avgd.loc[model_avgd.model_starting_subtype_makeup_code.str.startswith('0')]
+        sampledict[dset] = {}
         for n, i in enumerate(ordered_namelist):  # [i for i in list(set(names_dict.values()))]):
             try:
                 if np.isnan(model_avgd[i]).all():
@@ -545,17 +542,18 @@ for y in range(10):
                 sampledict[dset][i] = k.resample(num_to_sample)
             except KeyError:
                 print('UH OH')
+                print(dset,i)
                 pass
         sampledict[dset]['dataset'] = dset
     #
     all_datasets_all_params_df = pd.DataFrame()
-    #one_topology_all_params_df['dataset']
-    one_dataset_all_params_df = pd.DataFrame()
-    for i in sampledict[dset]:
-        if not 'equil' in i and not 'die' in i and not 'alter' in i:
-            df = pd.DataFrame(sampledict[dset][i]).T
-            df.columns = [i]
-            one_dataset_all_params_df = pd.concat([one_dataset_all_params_df, df], axis=1)
+    for dset in ['TKO', 'RPM', 'cl_A']:
+        one_dataset_all_params_df = pd.DataFrame()
+        for i in sampledict[dset]:
+            if not 'equil' in i and not 'die' in i and not 'alter' in i and not i=='dataset':
+                df = pd.DataFrame(sampledict[dset][i]).T
+                df.columns = [i]
+                one_dataset_all_params_df = pd.concat([one_dataset_all_params_df, df], axis=1)
         one_dataset_all_params_df['dataset'] = dset
         all_datasets_all_params_df = pd.concat([all_datasets_all_params_df, one_dataset_all_params_df], ignore_index=True)
         one_dataset_all_params_df = pd.DataFrame()
@@ -573,21 +571,15 @@ for y in range(10):
             tukey = pairwise_tukeyhsd(endog=testsample['value'],
                                   groups=testsample['dataset'],
                                   alpha=0.01)
-            print(i)
-            print(len(testsample))
-            var_4sub = np.var(testsample.loc[testsample.dataset=='four_subtype']['value'])
-            var_3sub = np.var(testsample.loc[testsample.dataset=='three_subtype_A_A2_Y']['value'])
-            var_2subA2 = np.var(testsample.loc[testsample.dataset=='two_subtype_A_A2']['value'])
-            var_2subY = np.var(testsample.loc[testsample.dataset=='two_subtype_A_Y']['value'])
             dset_param_variances = {dt: np.var(testsample.loc[testsample.dataset == dt]['value']) for dt in
                                     ['TKO','RPM','cl_A']}
-            if not np.all([magnitude(v) for v in dset_param_variances]):  # np.all() ignores NaNs
+            if not np.all([magnitude(dset_param_variances[v]) for v in dset_param_variances]):  # np.all() ignores NaNs
                 print('***************')
                 print('variances are not the same (different order of magnitude)')
                 for j in dset_param_variances:
                     print(j, dset_param_variances[j])
                 print('***************')
-            print(tukey)
+            #print(tukey)
             ind = 0
             for n,j in enumerate(tukey.groupsunique):
                 for m,k in enumerate(tukey.groupsunique):
@@ -601,7 +593,6 @@ for y in range(10):
         except ValueError:
             # shouldnt happen in this case
             pass
-    break
 
 for i in results_from_dataset_comparisons:
     print(i)

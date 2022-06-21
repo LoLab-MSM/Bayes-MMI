@@ -127,12 +127,12 @@ for dset in ['TKO', 'RPM', 'cl_A']:
                 df = pd.DataFrame(samplefordf).T
                 df.columns = [i]
                 one_topology_all_params_df = pd.concat([one_topology_all_params_df, df], axis=1)
-        one_topology_all_params_df['dataset'] = topo
+        one_topology_all_params_df['topology'] = topo
         all_topos_in_dset_all_params_df = pd.concat([all_topos_in_dset_all_params_df, one_topology_all_params_df], ignore_index=True)
         one_topology_all_params_df = pd.DataFrame()
     #
-    all_topos_in_dset_all_params_df.columns = [x.split('_baseline')[0] for x in all_topos_in_dset_all_params_df.columns if not x == 'dataset'] + ['dataset']
-    df = pd.melt(all_topos_in_dset_all_params_df, id_vars=['dataset'], value_vars=[x for x in all_topos_in_dset_all_params_df.columns if not x == 'dataset'])
+    all_topos_in_dset_all_params_df.columns = [x.split('_baseline')[0] for x in all_topos_in_dset_all_params_df.columns if not x == 'topology'] + ['topology']
+    df = pd.melt(all_topos_in_dset_all_params_df, id_vars=['topology'], value_vars=[x for x in all_topos_in_dset_all_params_df.columns if not x == 'topology'])
     #
     left = 0.2  # the value on the x axis where the left margin should be
     right = 0.8
@@ -142,7 +142,7 @@ for dset in ['TKO', 'RPM', 'cl_A']:
     hspace = 1#0.8
     #
     fig,ax=plt.subplots(figsize=(20,10))
-    g = sns.boxplot(x='variable',y='value',hue='dataset',data=df,palette=palette_dict[dset])
+    g = sns.boxplot(x='variable',y='value',hue='topology',data=df,palette=palette_dict[dset])
     for n in range(len(g.lines)):
        l = g.lines[n]
        l.set_linewidth(.25)
@@ -196,12 +196,12 @@ for dset in ['TKO', 'RPM', 'cl_A']:
                     df = pd.DataFrame(samplefordf).T
                     df.columns = [i]
                     one_topology_all_params_df = pd.concat([one_topology_all_params_df, df], axis=1)
-            one_topology_all_params_df['dataset'] = topo
+            one_topology_all_params_df['topology'] = topo
             all_topos_in_dset_all_params_df = pd.concat([all_topos_in_dset_all_params_df, one_topology_all_params_df], ignore_index=True)
             one_topology_all_params_df = pd.DataFrame()
         #
-        all_topos_in_dset_all_params_df.columns = [x.split('_baseline')[0] for x in all_topos_in_dset_all_params_df.columns if not x == 'dataset'] + ['dataset']
-        df = pd.melt(all_topos_in_dset_all_params_df, id_vars=['dataset'], value_vars=[x for x in all_topos_in_dset_all_params_df.columns if not x == 'dataset'])
+        all_topos_in_dset_all_params_df.columns = [x.split('_baseline')[0] for x in all_topos_in_dset_all_params_df.columns if not x == 'topology'] + ['topology']
+        df = pd.melt(all_topos_in_dset_all_params_df, id_vars=['topology'], value_vars=[x for x in all_topos_in_dset_all_params_df.columns if not x == 'topology'])
         #
         results_from_topology_comparisons = {}
         for i in list(set(df.variable)):
@@ -211,9 +211,9 @@ for dset in ['TKO', 'RPM', 'cl_A']:
                 testsample = df.loc[~np.isnan(df.value)]
                 testsample = testsample.loc[testsample.variable==i]
                 tukey = pairwise_tukeyhsd(endog=testsample['value'],
-                                      groups=testsample['dataset'],
+                                      groups=testsample['topology'],
                                       alpha=0.01)
-                topo_param_variances = {topo:np.var(testsample.loc[testsample.dataset == topo]['value']) for topo in topo_dict[dset]}
+                topo_param_variances = {topo:np.var(testsample.loc[testsample.topology == topo]['value']) for topo in topo_dict[dset]}
                 if not np.all([magnitude(topo_param_variances[v]) for v in topo_param_variances]): # np.all() ignores NaNs
                     print('***************')
                     print('variances are not the same (different order of magnitude)')
