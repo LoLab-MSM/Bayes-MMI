@@ -2,16 +2,22 @@
 
 from scipy.stats import norm, uniform
 from matplotlib import ticker
-from matplotlib.ticker import FormatStrFormatter
-from matplotlib.ticker import FuncFormatter
 import seaborn as sns
 import sys
 import matplotlib.pyplot as plt
 import pickle
 import numpy as np
 import pandas as pd
-import json
 from scipy.stats import gaussian_kde
+import math
+from statsmodels.stats.multicomp import pairwise_tukeyhsd
+
+def magnitude(value):
+    if (value == 0): return 0
+    if not np.isnan(value):
+        return int(math.floor(math.log10(abs(value))))
+    else:
+        return np.NaN
 
 indir = '../posterior_marginals_and_predictives/'
 outdir = ''
@@ -122,8 +128,6 @@ colordict = {
     },
 }
 
-# maybe sp_list unnecessary then
-sp_list = []
 ordered_namelist = ['division_A_baseline',
                     'division_A_altered',
                     'division_A_equil_assn',
@@ -169,15 +173,12 @@ ordered_namelist = ['division_A_baseline',
                     'diff_A_to_Y_baseline',
                     'diff_Y_to_A_baseline']
 
-for i in ordered_namelist:
-    sp_list.append(i)
-
 # Plot prior distributions only (Figure S2)
 
 plt.rcParams.update({'font.size': 12})
 plt.rcParams.update({'axes.titlesize': 12})
 
-ndims = len(sp_list)
+ndims = len(ordered_namelist)
 columns = 6
 rows = int(np.ceil(ndims / 6))
 
@@ -231,15 +232,15 @@ plt.show()
 plt.rcParams.update({'font.size': 12})
 plt.rcParams.update({'axes.titlesize': 12})
 
-ndims = len(sp_list)
+ndims = len(ordered_namelist)
 columns = 6
 rows = int(np.ceil(ndims / 6))
 
-for resdir in ['TKO', 'RPM', 'cl_A']:
+for dset in ['TKO', 'RPM', 'cl_A']:
     fig, axs = plt.subplots(rows, columns, figsize=(20, 20))
     dims_plotted = []
     model_avgd = pd.read_pickle(
-        indir + resdir + '_betafit_postmarg_params_and_probabilities_from_postequalweights_somemissing_4_10_22.pickle')
+        indir + dset + '_betafit_postmarg_params_and_probabilities_from_postequalweights_somemissing_4_10_22.pickle')
     model_avgd = model_avgd.loc[~np.isnan(model_avgd.model_pp)]  # only models with a posterior probability can be used
     model_avgd = model_avgd.loc[model_avgd.from_model.isin(upd_modnums)]
     ## comment out for any initiating subtype, currently has A +/- others
@@ -262,10 +263,10 @@ for resdir in ['TKO', 'RPM', 'cl_A']:
             vals = np.linspace(plt_range[0], plt_range[1], 100)
             ax.hist(model_avgd[i].values, bins=100,
                     weights=model_avgd.model_pp,
-                    color=colordict[resdir]['distr'],
+                    color=colordict[dset]['distr'],
                     alpha=0.2, histtype='stepfilled',
                     range=plt_range, density=True)
-            ax.plot(vals, k.evaluate(vals), color=colordict[resdir]['kdeline'],
+            ax.plot(vals, k.evaluate(vals), color=colordict[dset]['kdeline'],
                     linewidth=2)
             ax2 = ax.twinx()  # instantiate a second axes that shares the same x-axis
             ax.get_shared_y_axes().join(ax, ax2)  # needs to share y-axis too
@@ -296,17 +297,17 @@ for resdir in ['TKO', 'RPM', 'cl_A']:
     fig.text(0.01, 0.55, 'Probability', va='center',
              rotation='vertical')  # , fontsize=30)  ## need diff sizes for ACCRE
     plt.subplots_adjust(left=left, right=right, bottom=bottom, top=top, wspace=wspace, hspace=hspace)
-    plt.savefig('../generated_figures/priors_modelavg_posterior_marginals_5891update_' + str(resdir) + '.pdf',
+    plt.savefig('../generated_figures/priors_modelavg_posterior_marginals_5891update_' + str(dset) + '.pdf',
                 format='pdf')
     plt.show()
 
 # Priors and posteriors separated by initiating subtype (Figure S4)
 
-ndims = len(sp_list)
+ndims = len(ordered_namelist)
 columns = 6
 rows = int(np.ceil(ndims / 6))
 
-for resdir in ['TKO', 'RPM', 'cl_A']:
+for dset in ['TKO', 'RPM', 'cl_A']:
     fig, axs = plt.subplots(rows, columns, figsize=(20, 20))
     dims_plotted = []
     # below to look for 'starting with A +/- others', 'starting with N +/- others', etc
@@ -317,7 +318,7 @@ for resdir in ['TKO', 'RPM', 'cl_A']:
                      ('4000', 'red', 'darkred')]:
         removeind = 0
         model_avgd = pd.read_pickle(
-            indir + resdir + '_betafit_postmarg_params_and_probabilities_from_postequalweights_somemissing_4_10_22.pickle')
+            indir + dset + '_betafit_postmarg_params_and_probabilities_from_postequalweights_somemissing_4_10_22.pickle')
         model_avgd = model_avgd.loc[
             ~np.isnan(model_avgd.model_pp)]  # only models with a posterior probability can be used
         model_avgd = model_avgd.loc[model_avgd.from_model.isin(upd_modnums)]
@@ -371,7 +372,7 @@ for resdir in ['TKO', 'RPM', 'cl_A']:
     fig.text(0.01, 0.55, 'Probability', va='center',
              rotation='vertical')  # , fontsize=30)  ## need diff sizes for ACCRE
     plt.subplots_adjust(left=left, right=right, bottom=bottom, top=top, wspace=wspace, hspace=hspace)
-    plt.savefig('../generated_figures/priors_modelavg_posterior_marginals_' + str(resdir) + '_bystarting_suppfig.pdf',
+    plt.savefig('../generated_figures/priors_modelavg_posterior_marginals_' + str(dset) + '_bystarting_suppfig.pdf',
                 format='pdf')
     plt.show()
 
@@ -387,17 +388,17 @@ topodict = {
                     ('5.', 'red', 'darkred'), ('6.', 'cyan', 'turquoise'), ('7.', 'green', 'darkgreen')]
 }
 
-ndims = len(sp_list)
+ndims = len(ordered_namelist)
 columns = 6
 rows = int(np.ceil(ndims / 6))
 
-for resdir in ['TKO', 'RPM', 'cl_A']:
+for dset in ['TKO', 'RPM', 'cl_A']:
     fig, axs = plt.subplots(rows, columns, figsize=(20, 20))
     dims_plotted = []
-    for topo in topodict[resdir]:
+    for topo in topodict[dset]:
         removeind = 0
         model_avgd = pd.read_pickle(
-            indir + resdir + '_betafit_postmarg_params_and_probabilities_from_postequalweights_somemissing_4_10_22.pickle')
+            indir + dset + '_betafit_postmarg_params_and_probabilities_from_postequalweights_somemissing_4_10_22.pickle')
         model_avgd = model_avgd.loc[~np.isnan(model_avgd.model_pp)]
         model_avgd = model_avgd.loc[model_avgd.from_model.isin(upd_modnums)]
         # this is only per structure, not initiating subtype
@@ -458,18 +459,16 @@ for resdir in ['TKO', 'RPM', 'cl_A']:
 
 # I think this is Figure 5F
 
-one_dataset_all_params_df = pd.DataFrame(columns=ordered_namelist)
-one_dataset_all_params_df['dataset'] = 'None'
 sampledict = {}
-for resdir in ['TKO', 'RPM', 'cl_A']:
-    sampledict[resdir] = {}
+for dset in ['TKO', 'RPM', 'cl_A']:
+    sampledict[dset] = {}
     model_avgd = pd.read_pickle(
-        indir + resdir + '_betafit_postmarg_params_and_probabilities_from_postequalweights_somemissing_4_10_22.pickle')
+        indir + dset + '_betafit_postmarg_params_and_probabilities_from_postequalweights_somemissing_4_10_22.pickle')
     model_avgd = model_avgd.loc[~np.isnan(model_avgd.model_pp)]
     model_avgd = model_avgd.loc[model_avgd.from_model.isin(upd_modnums)]
     model_avgd = model_avgd.loc[model_avgd.model_starting_subtype_makeup_code.str.contains('\...1')]
     model_avgd = model_avgd.loc[model_avgd.model_starting_subtype_makeup_code.str.startswith('0')]
-    for n, i in enumerate(ordered_namelist):  # [i for i in list(set(names_dict.values()))]):
+    for n, i in enumerate(ordered_namelist):
         try:
             if np.isnan(model_avgd[i]).all():
                 continue
@@ -480,25 +479,25 @@ for resdir in ['TKO', 'RPM', 'cl_A']:
                 model_avgd[i].dropna().values.max())
             k = gaussian_kde(model_avgd.loc[~np.isnan(model_avgd[i])][i],
                              weights=model_avgd.loc[~np.isnan(model_avgd[i])].model_pp)
-            sampledict[resdir][i] = k.resample(1000)
+            sampledict[dset][i] = k.resample(1000)
         except KeyError:
             print('UH OH')
             pass
         # break
-    sampledict[resdir]['dataset'] = resdir
+    sampledict[dset]['dataset'] = dset
 
 colpal = ['#4c72b0', '#dd8452', '#55a868']
 # Hex values taken from the 'deep' color palette
 
 all_datasets_all_params_df = pd.DataFrame()
-for resdir in ['TKO', 'RPM', 'cl_A']:
+for dset in ['TKO', 'RPM', 'cl_A']:
     one_dataset_all_params_df = pd.DataFrame()
-    for i in sampledict[resdir]:
+    for i in sampledict[dset]:
         if not 'equil' in i and not 'die' in i and not 'alter' in i and not i=='dataset':
-            df = pd.DataFrame(sampledict[resdir][i]).T
+            df = pd.DataFrame(sampledict[dset][i]).T
             df.columns = [i]
             one_dataset_all_params_df = pd.concat([one_dataset_all_params_df, df], axis=1)
-    one_dataset_all_params_df['dataset'] = resdir
+    one_dataset_all_params_df['dataset'] = dset
     all_datasets_all_params_df = pd.concat([all_datasets_all_params_df, one_dataset_all_params_df], ignore_index=True)
     one_dataset_all_params_df = pd.DataFrame()
 
@@ -519,3 +518,94 @@ plt.xlabel('Parameter')
 plt.ylabel('Log parameter value')
 # plt.savefig('../generated_figures/parambarplot_updated5891.pdf',format='pdf')
 plt.show()
+
+results_from_dataset_comparisons = {}
+num_to_sample = 1000
+for y in range(10):
+    print(y)
+    sampledict = {}
+    for dset in ['TKO','RPM','cl_A']:
+        model_avgd = pd.read_pickle(
+            indir + dset + '_betafit_postmarg_params_and_probabilities_from_postequalweights_somemissing_4_10_22.pickle')
+        model_avgd = model_avgd.loc[~np.isnan(model_avgd.model_pp)]
+        model_avgd = model_avgd.loc[model_avgd.from_model.isin(upd_modnums)]
+        model_avgd = model_avgd.loc[model_avgd.model_starting_subtype_makeup_code.str.contains('\...1')]
+        model_avgd = model_avgd.loc[model_avgd.model_starting_subtype_makeup_code.str.startswith('0')]
+        for n, i in enumerate(ordered_namelist):  # [i for i in list(set(names_dict.values()))]):
+            try:
+                if np.isnan(model_avgd[i]).all():
+                    continue
+                model_avgd[i][model_avgd[i] == np.inf] = np.nan
+                model_avgd[i][model_avgd[i] == -np.inf] = np.nan
+                plt_range = (
+                    model_avgd[i].dropna().values.min(),
+                    model_avgd[i].dropna().values.max())
+                k = gaussian_kde(model_avgd.loc[~np.isnan(model_avgd[i])][i],
+                                weights=model_avgd.loc[~np.isnan(model_avgd[i])].model_pp)
+                sampledict[dset][i] = k.resample(num_to_sample)
+            except KeyError:
+                print('UH OH')
+                pass
+        sampledict[dset]['dataset'] = dset
+    #
+    all_datasets_all_params_df = pd.DataFrame()
+    #one_topology_all_params_df['dataset']
+    one_dataset_all_params_df = pd.DataFrame()
+    for i in sampledict[dset]:
+        if not 'equil' in i and not 'die' in i and not 'alter' in i:
+            df = pd.DataFrame(sampledict[dset][i]).T
+            df.columns = [i]
+            one_dataset_all_params_df = pd.concat([one_dataset_all_params_df, df], axis=1)
+        one_dataset_all_params_df['dataset'] = dset
+        all_datasets_all_params_df = pd.concat([all_datasets_all_params_df, one_dataset_all_params_df], ignore_index=True)
+        one_dataset_all_params_df = pd.DataFrame()
+    #
+    all_datasets_all_params_df.columns = [x.split('_baseline')[0] for x in all_datasets_all_params_df.columns if not x == 'dataset'] + ['dataset']
+    df = pd.melt(all_datasets_all_params_df, id_vars=['dataset'], value_vars=[x for x in all_datasets_all_params_df.columns if not x == 'dataset'])
+    #
+    results_from_dataset_comparisons = {}
+    for i in list(set(df.variable)):
+        if i not in results_from_dataset_comparisons:
+            results_from_dataset_comparisons[i] = {}
+        try:
+            testsample = df.loc[~np.isnan(df.value)]
+            testsample = testsample.loc[testsample.variable==i]
+            tukey = pairwise_tukeyhsd(endog=testsample['value'],
+                                  groups=testsample['dataset'],
+                                  alpha=0.01)
+            print(i)
+            print(len(testsample))
+            var_4sub = np.var(testsample.loc[testsample.dataset=='four_subtype']['value'])
+            var_3sub = np.var(testsample.loc[testsample.dataset=='three_subtype_A_A2_Y']['value'])
+            var_2subA2 = np.var(testsample.loc[testsample.dataset=='two_subtype_A_A2']['value'])
+            var_2subY = np.var(testsample.loc[testsample.dataset=='two_subtype_A_Y']['value'])
+            dset_param_variances = {dt: np.var(testsample.loc[testsample.dataset == dt]['value']) for dt in
+                                    ['TKO','RPM','cl_A']}
+            if not np.all([magnitude(v) for v in dset_param_variances]):  # np.all() ignores NaNs
+                print('***************')
+                print('variances are not the same (different order of magnitude)')
+                for j in dset_param_variances:
+                    print(j, dset_param_variances[j])
+                print('***************')
+            print(tukey)
+            ind = 0
+            for n,j in enumerate(tukey.groupsunique):
+                for m,k in enumerate(tukey.groupsunique):
+                    if m>n:
+                        try:
+                            results_from_dataset_comparisons[i][j + ' vs ' + k].append((tukey.pvalues[ind], tukey.reject[ind]))
+                        except KeyError:
+                            results_from_dataset_comparisons[i][j + ' vs ' + k] = [(tukey.pvalues[ind], tukey.reject[ind])]
+                        ind += 1
+    #        break
+        except ValueError:
+            # shouldnt happen in this case
+            pass
+    break
+
+for i in results_from_dataset_comparisons:
+    print(i)
+    for j in results_from_dataset_comparisons[i]:
+        print('\t' + j)
+        print('\t\t' + str(np.mean([x[1] for x in results_from_dataset_comparisons[i][j]])))
+
