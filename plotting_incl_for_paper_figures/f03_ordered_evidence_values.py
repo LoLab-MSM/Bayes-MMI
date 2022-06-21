@@ -270,6 +270,7 @@ for j in dfdict.index:
 
 # print(upd_modnums)
 
+CInums = {}
 for dset in ['TKO','RPM','clA']:
     df = pd.read_pickle(indir+'compare_'+dset+'_gleipnir_results_subset_betafit_to9264_somemissing_4_7_2022_addlanalyses.pickle')
     df = df.loc[df.index.isin(upd_modnums)]
@@ -281,13 +282,108 @@ for dset in ['TKO','RPM','clA']:
     while np.sum(df.loc[df.posterior_prob>df.loc[lastprob_ind].posterior_prob].posterior_prob) < 0.95:
         lastprob_ind += 1
     #
+    # prep for Fig 3D
+    CInums[dset] = {
+                    'non 95% CI':len(df)-len(df.loc[df.posterior_prob>df.loc[lastprob_ind].posterior_prob]),
+                    '95% CI':len(df) - len(df.loc[df.INS_Z > (np.max(df.INS_Z) / 10 ** .5)]),
+                    'relative likelihood CI':len(df)
+                    }
+    # Fig 3A-C
     add_to_lp = 200
     if len(df) / (lastprob_ind + add_to_lp) < 2:
         plot_with_y_breaks(df,lastprob_ind,bottomlabel='Model no.',leftlabel='Evidence (marginal likelihood',rightlabel='Posterior probability')
     else:
         plot_with_x_and_y_breaks(df,lastprob_ind,bottomlabel='Model no.',leftlabel='Evidence (marginal likelihood',rightlabel='Posterior probability')
 
+####
+# Fig 3D
 
+# example from when i did this using both all-models group and 4-subtype only models
+#df1 = pd.DataFrame(CInums['SCLC-A cell lines'],index=[0])#['all models'],index=[0])
+#df1['models'] = 'all models'
+#df2 = pd.DataFrame(CInums['SCLC-A cell lines']['4-subtype only'],index=[0])
+#df2['models'] = '4-subtype only'
+#df_c = pd.concat([df1,df2])
+#df_c = df1
+#df_c['dataset'] = 'SCLC-A cell lines'
+#
+df_c = pd.DataFrame(CInums['clA'],index=[0])
+df_c['dataset'] = 'SCLC-A cell lines'
+#
+df_r = pd.DataFrame(CInums['RPM'],index=[0])
+df_r['dataset'] = 'RPM'
+#
+df_t = pd.DataFrame(CInums['TKO'],index=[0])
+df_t['dataset'] = 'TKO'
+#
+dfCIs = pd.concat([df_t,df_r,df_c],ignore_index=True)
+
+colors = ["red", "orange","blue"]
+colpal = sns.color_palette(colors)
+
+plt.rcParams.update({'font.size': 18})
+sns.axes_style("white")
+sns.set_style("ticks")
+sns.set_context("talk")
+
+bar_width = 0.5
+TKO_bar_positions = np.arange(1)*2
+RPM_bar_positions = TKO_bar_positions + bar_width
+SCLCA_bar_positions = RPM_bar_positions + bar_width
+pos=[TKO_bar_positions,RPM_bar_positions,SCLCA_bar_positions]
+
+fig,ax=plt.subplots(figsize=(10,10))
+for n,j in enumerate(['TKO','RPM','SCLC-A cell lines']):
+    if n==0:
+        plt.bar(pos[n],
+        (dfCIs['relative likelihood CI']).loc[dfCIs.dataset==j],
+        bar_width,
+        color='red',label='relative likelihood CI')
+        plt.bar(pos[n],
+        (dfCIs['95% CI']).loc[dfCIs.dataset==j],
+        bar_width,
+        color='orange',label='95% CI')
+        plt.bar(pos[n],
+        dfCIs['non 95% CI'].loc[dfCIs['dataset']==j],
+        bar_width,color='royalblue',label='non 95% CI')
+    else:
+        plt.bar(pos[n],
+        (dfCIs['relative likelihood CI']).loc[dfCIs.dataset==j],
+        bar_width,
+        color='red')
+        plt.bar(pos[n],
+        (dfCIs['95% CI']).loc[dfCIs.dataset==j],
+        bar_width,
+        color='orange')
+        plt.bar(pos[n],
+        dfCIs['non 95% CI'].loc[dfCIs['dataset']==j],
+        bar_width,color='royalblue')
+
+# to write the percentages over the bars
+for n,r in enumerate(ax.patches):
+    print(n)
+    ind = int((n/3))
+    print(ind)
+    size=14
+    height = r.get_height()
+    if n%3==0: #needs to be the number of stacks per bar
+        lab = list((dfCIs['relative likelihood CI']-dfCIs['95% CI']) / dfCIs['relative likelihood CI'])[ind]
+        ax.text(r.get_x() + r.get_width() / 2, height, str(np.round(lab*100,2))+'%', ha='center', va='bottom', fontsize=size)
+    elif n%3==1:
+        lab = list((dfCIs['95% CI']-dfCIs['non 95% CI']) / dfCIs['relative likelihood CI'])[ind]
+        ax.text(r.get_x() + r.get_width() / 2, height-plt.rcParams['font.size']*5, str(np.round(lab*100,2))+'%', ha='center', va='top',fontsize=size)
+    else:
+        lab = list(dfCIs['non 95% CI'] / dfCIs['relative likelihood CI'])[ind]
+        ax.text(r.get_x() + r.get_width() / 2, height-plt.rcParams['font.size']*5, str(np.round(lab*100,2))+'%', ha='center', va='top',fontsize=size)
+
+plt.xticks([TKO_bar_positions[0],RPM_bar_positions[0],SCLCA_bar_positions[0]], ['TKO','RPM','SCLC-A'])
+plt.legend(fontsize=14,loc='best')
+plt.ylabel('# Models')
+plt.xlabel('Dataset')
+sns.despine()
+plt.subplots_adjust(left=left, right=right, bottom=bottom, top=top, wspace=wspace, hspace=hspace)
+plt.savefig('../generated_figures/number_models_perCIs_bw_datasets.pdf',format='pdf')
+plt.show()
 
 
 
