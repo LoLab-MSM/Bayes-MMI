@@ -19,6 +19,10 @@ hb_dir = '/home/'
 #  in the directory you gave the run command, it will create (or use if it exists) 'output/home/beiksp/example_csv/'
 #  and put all generated model files there
 
+## After running this code, I move the contents of the generated directory (output/name_of_csv/) to a
+#   directory called 'candidate_models' at the same depth as 'multimodel_inference_SCLC'
+
+
 ModelAssembler(hb_dir+'/HB_library.txt', '02_sclc_multimodelinference_models_updatedjun2022.csv')
 # ModelAssembler(hb_dir+'/HB_library.txt', hb_dir+'/earm_example.csv')
 # ModelAssembler(hb_dir+'/HB_library.txt', hb_dir+'/optional_reactions_example.csv')
