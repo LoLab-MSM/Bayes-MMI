@@ -3,14 +3,17 @@
 import os
 import sys
 
-for number in [x.split('_')[-1].split('.')[0] for x in os.listdir('../candidate_models/') if
+candidate_model_dir = '../candidate_models/'
+run_file_dir = '../run_files_for_candidate_models/'
+
+for number in [x.split('_')[-1].split('.')[0] for x in os.listdir(candidate_model_dir) if
                'model_' in x and '.py' in x and not 'run' in x and not 'plot' in x and not 'posttx' in x and not 'testing' in x]:
-    if int(number) > 1:
-        continue
+#    if int(number) > 1:
+#        continue
     print(number)
     str_to_write_1 = """import os
 import sys
-sys.path.append('../candidate_models/')
+sys.path.append('"""+candidate_model_dir+"""')
 
 from pysb.simulator import ScipyOdeSimulator
 import numpy as np
@@ -405,7 +408,7 @@ print(log_evidence_error)
     str_to_write_1+=str_to_write_4
     str_to_write_1+=str_to_write_5
     str_to_write_1+=str_to_write_6
-    fname = "../run_files_for_candidate_models/run_model_"+str(number)+"_TKO_betafit.py"
+    fname = run_file_dir+"/run_model_"+str(number)+"_TKO_betafit.py"
     f = open(fname,"w")
     f.write(str_to_write_1)
     f.close()

@@ -1,9 +1,13 @@
-from scipy.stats import norm, uniform
-import sys
 import pickle
 import numpy as np
 import pandas as pd
 import pymultinest
+import sys
+
+# add this Bayes-MMI directory to the path to be able to import from helper_functions_and_files
+#sys.path.append('/home/beiksp/Bayes-MMI')
+
+sys.path.append('/home/beiksp/maybe_pycharm_running/')
 
 with open('../helper_functions_and_files/all_possible_sampled_params.pickle', 'rb') as p:
     sampled_params_list = pickle.load(p)
@@ -170,11 +174,11 @@ modeldict = generate_modeldict()
 dfdict = pd.read_pickle('../helper_functions_and_files/updatedinjune_all_9327_models_in_dataframe_with_subtype_starting_makeup_code.pickle')
 res_dict = {
     'TKO': pd.read_pickle(
-        analyzed_file_dir+'compare_TKO_gleipnir_results_subset_betafit_to9264_somemissing_4_7_2022_addlanalyses.pickle'),
+        analyzed_file_dir+'/results_fromNS_gathered_TKO_somemissing_addlanalyses.pickle'),
     'RPM': pd.read_pickle(
-        analyzed_file_dir+'compare_RPM_gleipnir_results_subset_betafit_to9264_somemissing_4_7_2022_addlanalyses.pickle'),
+        analyzed_file_dir+'/results_fromNS_gathered_RPM_somemissing_addlanalyses.pickle'),
     'cl_A': pd.read_pickle(
-        analyzed_file_dir+'compare_clA_gleipnir_results_subset_betafit_to9264_somemissing_4_7_2022_addlanalyses.pickle')
+        analyzed_file_dir+'/results_fromNS_gathered_clA_somemissing_addlanalyses.pickle')
 }
 
 modselection_postmarg = {

@@ -1,19 +1,20 @@
 import sys
 import numpy as np
 
-# need to run in the folder where the initially-generated models are (e.g., Hypbuilder/output/sclc_MMI_multiplestarts/)
-# run command: python 04_remove_placeholders_fromcandidates.py a b
+# run command: python 04_remove_placeholders_fromcandidates.py dir_with_candidate_models a b
 #   where a is the model to start with and b is the model to end with (e.g., a=0 b=9327)
+#   more specifically: python 04_remove_placeholders_fromcandidates.py /home/beiksp/Bayes-MMI/candidate_models/ 0 5890
 
 args = sys.argv
 
-start_modelnum = args[1]
-end_modelnum = args[2]
+filedir = args[1]
+start_modelnum = args[2]
+end_modelnum = args[3]
 
 print ('\nRunning on models: from number '+str(start_modelnum)+' to '+str(end_modelnum)+'.\n')
 
 for j in range(int(start_modelnum),int(end_modelnum)+1):
-    outfile='model_'+str(j)+'.py'
+    outfile=filedir+'/model_'+str(j)+'.py'
     print (outfile)
     # check for whatever
     with open(outfile,"r") as f:

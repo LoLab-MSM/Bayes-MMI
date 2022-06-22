@@ -8,6 +8,9 @@ import pymultinest
 import sys
 import signal
 
+# add this Bayes-MMI directory to the path to be able to import from helper_functions_and_files
+sys.path.append('/home/beiksp/Bayes-MMI')
+
 indir = '../pymultinest_results/RPM/'
 outdir = "../files_generated_in_MMI_sclc/"
 
@@ -282,7 +285,7 @@ for m in results_dict:
     df_list.append(pd.DataFrame(results_dict[m],index=[m]))
 
 full_rez_dict = pd.concat(df_list)
-full_rez_dict.to_pickle(outdir+'compare_RPM_gleipnir_results_subset_betafit_to9264_somemissing_4_7_2022.pickle')
+full_rez_dict.to_pickle(outdir+'results_fromNS_gathered_TKO_somemissing.pickle')
 
 
 #with open(outdir+'compare_clA_gleipnir_results_subset_betafit_12_10_2020_DIC_calc_values_in_case.pickle','wb') as f:

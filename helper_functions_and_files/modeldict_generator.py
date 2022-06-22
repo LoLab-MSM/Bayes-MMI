@@ -3,7 +3,8 @@ import pickle
 import numpy as np
 import pandas as pd
 
-sys.path.append('../candidate_models/')
+#sys.path.append('../candidate_models/')
+sys.path.append('/home/beiksp/sam_sclc/') #temp
 
 def generate_modeldict():
 	modeldict = {}

@@ -21,7 +21,7 @@ hb_dir = '/home/'
 
 ## After running this code, I move the contents of the generated directory (output/name_of_csv/) to a
 #   directory called 'candidate_models' at the same depth as 'multimodel_inference_SCLC'
-
+#  (or make a symlink)
 
 ModelAssembler(hb_dir+'/HB_library.txt', '02_sclc_multimodelinference_models_updatedjun2022.csv')
 # ModelAssembler(hb_dir+'/HB_library.txt', hb_dir+'/earm_example.csv')

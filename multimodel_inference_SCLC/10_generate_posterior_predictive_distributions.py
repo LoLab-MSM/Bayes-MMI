@@ -8,6 +8,9 @@ import numpy as np
 import pandas as pd
 import signal
 
+# add this Bayes-MMI directory to the path to be able to import from helper_functions_and_files
+sys.path.append('/home/beiksp/Bayes-MMI')
+
 class TimeoutException(RuntimeError):
     """ Time out occurred! """
     pass

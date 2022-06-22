@@ -4,6 +4,10 @@ import copy
 import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap, LinearSegmentedColormap
 import seaborn as sns
+import sys
+
+# add this Bayes-MMI directory to the path to be able to import from helper_functions_and_files
+sys.path.append('/home/beiksp/Bayes-MMI')
 
 from helper_functions_and_files.posterior_probability_calculations import \
     get_structure_postprobs

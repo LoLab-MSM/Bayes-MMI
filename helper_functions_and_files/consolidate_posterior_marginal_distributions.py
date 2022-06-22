@@ -2,6 +2,8 @@
 #
 
 import pandas as pd
+import gzip
+import pickle
 
 indirdict = {
     'TKO': '../posterior_marginals_and_predictives/posterior_marginals_all/TKO/',
@@ -57,7 +59,8 @@ for n, p in enumerate(post_picklelist):
         [modselection_postmarg, p])
 
 modselection_postmarg.to_pickle(
-    outdir + 'TKO_betafit_postmarg_params_and_probabilities_from_postequalweights_somemissing_4_10_22.pickle')
+    outdir + 'TKO_betafit_postmarg_params_and_probabilities_from_postequalweights_somemissing_4_10_22.pklz',
+            compression='gzip')
 
 
 # RPM
@@ -106,7 +109,8 @@ for n, p in enumerate(post_picklelist):
         [modselection_postmarg, p])
 
 modselection_postmarg.to_pickle(
-    outdir + 'RPM_betafit_postmarg_params_and_probabilities_from_postequalweights_somemissing_4_10_22.pickle')
+    outdir + 'RPM_betafit_postmarg_params_and_probabilities_from_postequalweights_somemissing_4_10_22.pickle',
+        compression='gzip')
 
 # cell lines cluster A
 indir_clA = indirdict['cl_A']
@@ -153,4 +157,7 @@ for n, p in enumerate(post_picklelist):
         [modselection_postmarg, p])
 
 modselection_postmarg.to_pickle(
-    outdir + 'cl_A_betafit_postmarg_params_and_probabilities_from_postequalweights_somemissing_4_10_22.pickle')
+    outdir + 'cl_A_betafit_postmarg_params_and_probabilities_from_postequalweights_somemissing_4_10_22.pklz',
+            compression='gzip') #,protocol=4 ?
+
+

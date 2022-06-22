@@ -9420,4 +9420,3 @@ text obs
 Observable('NE_less_obs', NE()+NEv1())
 Observable('total_cells',NE()+NEv1()+NEv2()+NonNE())
 Observable('Hes1_all_obs',NEv2()+NonNE())"
-(model_selection) [beiksp@vm-infr-portal ~]$
