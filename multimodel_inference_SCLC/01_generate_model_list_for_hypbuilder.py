@@ -2199,7 +2199,8 @@ z.extend(modelstr_list)
 
 np.save('../files_generated_in_MMI_sclc/all_filtered_topologies_models_for_hypbuilder.npy',z)
 
+# this printout is what goes at the end of the hypbuilder csv file (see 02_sclc_multimodelinference_models_updatedjun2022.py)
 for n,i in enumerate(z):
     print('list:'+str(n)+', '+str(i))
 
-# and that printout is what goes at the end of the hypbuilder csv file
+

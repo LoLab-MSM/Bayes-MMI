@@ -1,6 +1,6 @@
 from pysb.simulator import ScipyOdeSimulator
 import numpy as np
-from scipy.stats import norm, uniform, beta
+from scipy.stats import norm, uniform, beta, expon
 import copy
 import pandas as pd
 import pickle
