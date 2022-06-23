@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 import pymultinest
 import sys
+import os
 
 # add this Bayes-MMI directory to the path to be able to import from helper_functions_and_files
 #sys.path.append('/home/beiksp/Bayes-MMI')
@@ -231,10 +232,13 @@ for dset in ['TKO', 'RPM', 'cl_A']:
         pos['model_starting_subtype_makeup_code'] = dfdict.loc[m].subtype_starting_and_makeup_code
         modselection_postmarg[dset] = pd.concat([modselection_postmarg[dset], pos], ignore_index=True)
         print('adding m ' + str(m))
-        if (ind % 1000 == 0 and not ind == 0) or m == 9262 or m == 9264:
+        if (ind % 1000 == 0 and not ind == 0) or m == 9327:
             print('saving ' + str(dset) + ' ' + str(old_m) + ' to ' + str(m) + '...')
+            if not os.path.exists(outdir + '/' + dset + '/'):
+                os.makedirs(outdir + '/' + dset + '/')
             with open(
-                    outdir + dset + '_betafit_postmarg_params_and_probabilities_from_postequalweights_from_model_'
+                    outdir + '/' + dset + '/' + dset +
+                    '_betafit_postmarg_params_and_probabilities_from_postequalweights_from_model_'
                     + str(old_m) + '_to_' + str(m) + '.pickle', 'wb') as fp:
                 pickle.dump(modselection_postmarg[dset], fp)
             ## restart for new ones to save

@@ -1,3 +1,5 @@
-Now that the run_model_x.py files have been generated for all candidate models, can run
-PyMultinest. Can run multiple run_model files on multiple cores or by using a computer cluster,
-or choose to run one at a time.
+Now that the run_model_[model_number]_[dataset].py files have been generated for all candidate
+models, can run PyMultinest. Can run multiple run_model files on multiple cores or by using a
+computer cluster, or choose to run one at a time. Scripts 07a-c and 09 expect these files to
+be in a directory Bayes-MMI/pymultinest_results/, so when calling run_model_[model_number]_[dataset].py,
+include pymultinest_results/ as the first argument in the call.

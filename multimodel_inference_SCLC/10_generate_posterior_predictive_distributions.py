@@ -7,6 +7,7 @@ import pickle
 import numpy as np
 import pandas as pd
 import signal
+import os
 
 # add this Bayes-MMI directory to the path to be able to import from helper_functions_and_files
 sys.path.append('/home/beiksp/Bayes-MMI')
@@ -414,11 +415,15 @@ for dset in ['TKO', 'RPM', 'cl_A']:
             print('saving ' + str(old_m) + ' to ' + str(m) + ', ' + str(ind) + ' models...')
             print(outdir_prior + dset + '_trajectories_as_priorpredictive_from_model_'
                   + str(old_m) + '_to_' + str(m) + '.pickle')
+            if not os.path.exists(outdir_prior):
+                os.makedirs(outdir_prior)
             with open(outdir_prior + dset + '_trajectories_as_priorpredictive_from_model_'
                       + str(old_m) + '_to_' + str(m) + '.pickle','wb') as fp:
                 pickle.dump(modselection_priorpred[dset], fp)
             print(outdir_post + dset + '_trajectories_as_postpredictive_from_postequalweights_from_model_'
                   + str(old_m) + '_to_' + str(m) + '.pickle')
+            if not os.path.exists(outdir_post):
+                os.makedirs(outdir_post)
             with open(outdir_post + dset + '_trajectories_as_postpredictive_from_postequalweights_from_model_'
                       + str(old_m) + '_to_' + str(m) + '.pickle','wb') as fp:
                 pickle.dump(modselection_postpred[dset], fp)

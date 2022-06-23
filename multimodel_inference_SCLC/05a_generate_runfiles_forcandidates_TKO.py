@@ -409,6 +409,8 @@ print(log_evidence_error)
     str_to_write_1+=str_to_write_5
     str_to_write_1+=str_to_write_6
     fname = run_file_dir+"/run_model_"+str(number)+"_TKO_betafit.py"
+    if not os.path.exists(run_file_dir):
+        os.makedirs(run_file_dir)
     f = open(fname,"w")
     f.write(str_to_write_1)
     f.close()

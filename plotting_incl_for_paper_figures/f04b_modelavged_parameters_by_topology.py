@@ -6,7 +6,9 @@ import seaborn as sns
 from scipy.stats import gaussian_kde
 import math
 from statsmodels.stats.multicomp import pairwise_tukeyhsd
-
+from matplotlib import ticker
+from matplotlib.ticker import FormatStrFormatter
+from matplotlib.ticker import FuncFormatter
 
 def magnitude(value):
     if (value == 0): return 0
@@ -94,7 +96,8 @@ ordered_namelist = ['division_A_baseline',
 num_to_sample = 1000
 for dset in ['TKO', 'RPM', 'cl_A']:
     kde_dict = {dset:{}}
-    df = pd.read_pickle(indir+dset+'_betafit_postmarg_params_and_probabilities_from_postequalweights_somemissing_4_10_22.pickle')
+    df = pd.read_pickle(indir+dset+'_betafit_postmarg_params_and_probabilities_from_postequalweights_somemissing_6_23_22.pklz',
+                        compression='gzip')
     df = df.loc[df.from_model.isin(upd_modnums)]
     df = df[df['model_starting_subtype_makeup_code'].str.contains('\...1')]
     #
