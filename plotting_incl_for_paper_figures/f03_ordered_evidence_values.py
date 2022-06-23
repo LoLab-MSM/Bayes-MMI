@@ -59,20 +59,20 @@ def plot_with_x_and_y_breaks(df, lastprob_ind, add_to_lp=200, figsize=(14,8),
     bottomyax2 = axs[1][1]
     bottomyax.get_shared_y_axes().join(bottomyax, bottomyax2)
     # plot same data on all axes / that is, all 4 plots... only need to refer to xax or yax,
-    sns.scatterplot(df.loc[df.INS_Z<=(np.max(df.INS_Z)/10**.5)].index,df.loc[df.INS_Z<=(np.max(df.INS_Z)/10**.5)].INS_Z,s=marksize,ax=leftxax,edgecolor=sns.color_palette()[0],linewidth=0.1) #not sure if these edges are making the figures larger
-    sns.scatterplot(df.loc[df.INS_Z<=(np.max(df.INS_Z)/10**.5)].index,df.loc[df.INS_Z<=(np.max(df.INS_Z)/10**.5)].INS_Z,s=marksize,ax=leftxax2,edgecolor=sns.color_palette()[0],linewidth=0.1)
-    sns.scatterplot(df.loc[df.INS_Z<=(np.max(df.INS_Z)/10**.5)].index,df.loc[df.INS_Z<=(np.max(df.INS_Z)/10**.5)].INS_Z,s=marksize,ax=rightxax,edgecolor=sns.color_palette()[0],linewidth=0.1,label='All models')
-    sns.scatterplot(df.loc[df.INS_Z<=(np.max(df.INS_Z)/10**.5)].index,df.loc[df.INS_Z<=(np.max(df.INS_Z)/10**.5)].INS_Z,s=marksize,ax=rightxax2,edgecolor=sns.color_palette()[0],linewidth=0.1)
+    sns.scatterplot(df.loc[df.INS_Z<=(np.max(df.INS_Z)/10**.5)].index,df.loc[df.INS_Z<=(np.max(df.INS_Z)/10**.5)].INS_Z,s=marksize,ax=leftxax,linewidth=0.1) #not sure if these edges are making the figures larger
+    sns.scatterplot(df.loc[df.INS_Z<=(np.max(df.INS_Z)/10**.5)].index,df.loc[df.INS_Z<=(np.max(df.INS_Z)/10**.5)].INS_Z,s=marksize,ax=leftxax2,linewidth=0.1)
+    sns.scatterplot(df.loc[df.INS_Z<=(np.max(df.INS_Z)/10**.5)].index,df.loc[df.INS_Z<=(np.max(df.INS_Z)/10**.5)].INS_Z,s=marksize,ax=rightxax,linewidth=0.1,label='All models')
+    sns.scatterplot(df.loc[df.INS_Z<=(np.max(df.INS_Z)/10**.5)].index,df.loc[df.INS_Z<=(np.max(df.INS_Z)/10**.5)].INS_Z,s=marksize,ax=rightxax2,linewidth=0.1)
     #
-    sns.scatterplot(df.loc[df['posterior_prob']>df.loc[lastprob_ind].posterior_prob].index,df.loc[df['posterior_prob']>df.loc[lastprob_ind].posterior_prob].INS_Z,color='orange',s=marksize,linewidth=0.1,ax=leftxax,edgecolor='brown')
-    sns.scatterplot(df.loc[df['posterior_prob']>df.loc[lastprob_ind].posterior_prob].index,df.loc[df['posterior_prob']>df.loc[lastprob_ind].posterior_prob].INS_Z,color='orange',s=marksize,linewidth=0.1,ax=leftxax2,edgecolor='brown')
-    sns.scatterplot(df.loc[df['posterior_prob']>df.loc[lastprob_ind].posterior_prob].index,df.loc[df['posterior_prob']>df.loc[lastprob_ind].posterior_prob].INS_Z,color='orange',s=marksize,linewidth=0.1,ax=rightxax,edgecolor='brown',label='95% CI')
-    sns.scatterplot(df.loc[df['posterior_prob']>df.loc[lastprob_ind].posterior_prob].index,df.loc[df['posterior_prob']>df.loc[lastprob_ind].posterior_prob].INS_Z,color='orange',s=marksize,linewidth=0.1,ax=rightxax2,edgecolor='brown')
+    sns.scatterplot(df.loc[df['posterior_prob']>df.loc[lastprob_ind].posterior_prob].index,df.loc[df['posterior_prob']>df.loc[lastprob_ind].posterior_prob].INS_Z,color='orange',s=marksize,linewidth=0.1,ax=leftxax)
+    sns.scatterplot(df.loc[df['posterior_prob']>df.loc[lastprob_ind].posterior_prob].index,df.loc[df['posterior_prob']>df.loc[lastprob_ind].posterior_prob].INS_Z,color='orange',s=marksize,linewidth=0.1,ax=leftxax2)
+    sns.scatterplot(df.loc[df['posterior_prob']>df.loc[lastprob_ind].posterior_prob].index,df.loc[df['posterior_prob']>df.loc[lastprob_ind].posterior_prob].INS_Z,color='orange',s=marksize,linewidth=0.1,ax=rightxax,label='95% CI')
+    sns.scatterplot(df.loc[df['posterior_prob']>df.loc[lastprob_ind].posterior_prob].index,df.loc[df['posterior_prob']>df.loc[lastprob_ind].posterior_prob].INS_Z,color='orange',s=marksize,linewidth=0.1,ax=rightxax2)
     #
-    sns.scatterplot(df.loc[df.INS_Z>(np.max(df.INS_Z)/10**.5)].index,df.loc[df.INS_Z>(np.max(df.INS_Z)/10**.5)].INS_Z,color='red',s=marksize,linewidth=0.1,ax=leftxax,edgecolor='darkred')
-    sns.scatterplot(df.loc[df.INS_Z>(np.max(df.INS_Z)/10**.5)].index,df.loc[df.INS_Z>(np.max(df.INS_Z)/10**.5)].INS_Z,color='red',s=marksize,linewidth=0.1,ax=leftxax2,edgecolor='darkred')
-    sns.scatterplot(df.loc[df.INS_Z>(np.max(df.INS_Z)/10**.5)].index,df.loc[df.INS_Z>(np.max(df.INS_Z)/10**.5)].INS_Z,color='red',s=marksize,linewidth=0.1,ax=rightxax,edgecolor='darkred',label='relative likelihood CI')
-    sns.scatterplot(df.loc[df.INS_Z>(np.max(df.INS_Z)/10**.5)].index,df.loc[df.INS_Z>(np.max(df.INS_Z)/10**.5)].INS_Z,color='red',s=marksize,linewidth=0.1,ax=rightxax2,edgecolor='darkred')
+    sns.scatterplot(df.loc[df.INS_Z>(np.max(df.INS_Z)/10**.5)].index,df.loc[df.INS_Z>(np.max(df.INS_Z)/10**.5)].INS_Z,color='red',s=marksize,linewidth=0.1,ax=leftxax)
+    sns.scatterplot(df.loc[df.INS_Z>(np.max(df.INS_Z)/10**.5)].index,df.loc[df.INS_Z>(np.max(df.INS_Z)/10**.5)].INS_Z,color='red',s=marksize,linewidth=0.1,ax=leftxax2)
+    sns.scatterplot(df.loc[df.INS_Z>(np.max(df.INS_Z)/10**.5)].index,df.loc[df.INS_Z>(np.max(df.INS_Z)/10**.5)].INS_Z,color='red',s=marksize,linewidth=0.1,ax=rightxax,label='relative likelihood CI')
+    sns.scatterplot(df.loc[df.INS_Z>(np.max(df.INS_Z)/10**.5)].index,df.loc[df.INS_Z>(np.max(df.INS_Z)/10**.5)].INS_Z,color='red',s=marksize,linewidth=0.1,ax=rightxax2)
     #
     # Y AXIS ... do everything twice (once "left", once "right")
     # left
@@ -188,7 +188,7 @@ def plot_with_x_and_y_breaks(df, lastprob_ind, add_to_lp=200, figsize=(14,8),
     fig.text(0.01,0.5,leftlabel,va='center',rotation='vertical')
     fig.text(0.99,0.5,rightlabel,va='center',rotation='vertical')
     fig.text(0.45,0.025,bottomlabel,va='center',rotation='horizontal')
-    fig.text(0.45,0.925,toplabel,va='center',rotation='horizontal')
+    fig.text((.5-(len(toplabel)*0.0055)),0.96,toplabel,va='center',rotation='horizontal')
     plt.subplots_adjust(left=left, right=right, bottom=bottom, top=top, wspace=wspace, hspace=hspace)
     if savedir:
         plt.savefig(savedir+dset+'_to9327_evidence_ordered_no95CI_somemissing.pdf',format='pdf')
@@ -207,14 +207,14 @@ def plot_with_y_breaks(df, lastprob_ind, add_to_lp=200, figsize=(14,8),
     ax.get_shared_y_axes().join(ax, rightax)
     ax.get_shared_y_axes().join(ax2, rightax2)
     # plot same data on both axes
-    sns.scatterplot(df.index,df.INS_Z,s=marksize,edgecolor=sns.color_palette()[0],linewidth=0.1,ax=ax)
-    sns.scatterplot(df.index,df.INS_Z,s=marksize,edgecolor=sns.color_palette()[0],ax=ax2)
+    sns.scatterplot(df.index,df.INS_Z,s=marksize,linewidth=0.1,ax=ax)
+    sns.scatterplot(df.index,df.INS_Z,s=marksize,ax=ax2)
     #
-    sns.scatterplot(df.loc[df['posterior_prob']>df.loc[lastprob_ind].posterior_prob].index,df.loc[df['posterior_prob']>df.loc[lastprob_ind].posterior_prob].INS_Z,color='orange',s=marksize,linewidth=0.1,ax=ax,edgecolor='brown',label='95% CI')
-    sns.scatterplot(df.loc[df['posterior_prob']>df.loc[lastprob_ind].posterior_prob].index,df.loc[df['posterior_prob']>df.loc[lastprob_ind].posterior_prob].INS_Z,color='orange',s=marksize,linewidth=0.1,ax=ax2,edgecolor='brown')
+    sns.scatterplot(df.loc[df['posterior_prob']>df.loc[lastprob_ind].posterior_prob].index,df.loc[df['posterior_prob']>df.loc[lastprob_ind].posterior_prob].INS_Z,color='orange',s=marksize,linewidth=0.1,ax=ax,label='95% CI')
+    sns.scatterplot(df.loc[df['posterior_prob']>df.loc[lastprob_ind].posterior_prob].index,df.loc[df['posterior_prob']>df.loc[lastprob_ind].posterior_prob].INS_Z,color='orange',s=marksize,linewidth=0.1,ax=ax2)
     #
-    sns.scatterplot(df.loc[df.INS_Z>(np.max(df.INS_Z)/10**.5)].index,df.loc[df.INS_Z>(np.max(df.INS_Z)/10**.5)].INS_Z,color='red',s=marksize,linewidth=0.1,ax=ax,edgecolor='darkred',label='highest-scoring')
-    sns.scatterplot(df.loc[df.INS_Z>(np.max(df.INS_Z)/10**.5)].index,df.loc[df.INS_Z>(np.max(df.INS_Z)/10**.5)].INS_Z,color='red',s=marksize,linewidth=0.1,ax=ax2,edgecolor='darkred')
+    sns.scatterplot(df.loc[df.INS_Z>(np.max(df.INS_Z)/10**.5)].index,df.loc[df.INS_Z>(np.max(df.INS_Z)/10**.5)].INS_Z,color='red',s=marksize,linewidth=0.1,ax=ax,label='relative likelihood CI')
+    sns.scatterplot(df.loc[df.INS_Z>(np.max(df.INS_Z)/10**.5)].index,df.loc[df.INS_Z>(np.max(df.INS_Z)/10**.5)].INS_Z,color='red',s=marksize,linewidth=0.1,ax=ax2)
     # this should be setting the plot so only need to do once, after plotting all the ks and js
     # set where the breaks should be
     ax.set_yscale('log')
@@ -254,7 +254,8 @@ def plot_with_y_breaks(df, lastprob_ind, add_to_lp=200, figsize=(14,8),
     fig.text(0.01,0.5,leftlabel,va='center',rotation='vertical')
     fig.text(0.99,0.5,rightlabel,va='center',rotation='vertical')
     fig.text(0.45,0.025,bottomlabel,va='center',rotation='horizontal')
-    fig.text(0.45,0.925,toplabel,va='center',rotation='horizontal')
+    fig.text((.5-(len(toplabel)*0.0055)),0.96,toplabel,va='center',rotation='horizontal')
+    #plt.title(toplabel)
     plt.subplots_adjust(left=left, right=right, bottom=bottom, top=top, wspace=wspace, hspace=hspace)
     if savedir:
         plt.savefig(savedir+dset+'_to9327_evidence_ordered_no95CI_somemissing.pdf',format='pdf')
@@ -291,11 +292,13 @@ for dset in ['TKO','RPM','clA']:
     # Fig 3A-C
     add_to_lp = 200
     if len(df) / (lastprob_ind + add_to_lp) < 2:
-        plot_with_y_breaks(df,lastprob_ind,bottomlabel='Model no.',leftlabel='Evidence (marginal likelihood',
-                           rightlabel='Posterior probability',savedir='../generated_figures/')
+        plot_with_y_breaks(df,lastprob_ind,toplabel=(dset if dset != 'clA' else 'SCLC-A cell lines'),bottomlabel='Model no.',
+                           leftlabel='Evidence (marginal likelihood',rightlabel='Posterior probability',
+                           savedir='../generated_figures/')
     else:
-        plot_with_x_and_y_breaks(df,lastprob_ind,bottomlabel='Model no.',leftlabel='Evidence (marginal likelihood',
-                                 rightlabel='Posterior probability',savedir='../generated_figures/')
+        plot_with_x_and_y_breaks(df,lastprob_ind,toplabel=(dset if dset != 'clA' else 'SCLC-A cell lines'),bottomlabel='Model no.',
+                                 leftlabel='Evidence (marginal likelihood',rightlabel='Posterior probability',
+                                 savedir='../generated_figures/')
 
 ####
 # Fig 3D
@@ -323,18 +326,19 @@ dfCIs = pd.concat([df_t,df_r,df_c],ignore_index=True)
 colors = ["red", "orange","blue"]
 colpal = sns.color_palette(colors)
 
-plt.rcParams.update({'font.size': 18})
+plt.rcParams.update({'font.size': 24})
 sns.axes_style("white")
 sns.set_style("ticks")
 sns.set_context("talk")
 
-bar_width = 0.5
+bar_width = 0.3
+anyextra = 0.2
 TKO_bar_positions = np.arange(1)*2
-RPM_bar_positions = TKO_bar_positions + bar_width
-SCLCA_bar_positions = RPM_bar_positions + bar_width
+RPM_bar_positions = TKO_bar_positions + bar_width + anyextra
+SCLCA_bar_positions = RPM_bar_positions + bar_width + anyextra
 pos=[TKO_bar_positions,RPM_bar_positions,SCLCA_bar_positions]
 
-fig,ax=plt.subplots(figsize=(10,10))
+fig,ax=plt.subplots(figsize=(8,8))
 for n,j in enumerate(['TKO','RPM','SCLC-A cell lines']):
     if n==0:
         plt.bar(pos[n],
@@ -381,7 +385,8 @@ plt.legend(fontsize=14,loc='best')
 plt.ylabel('# Models')
 plt.xlabel('Dataset')
 sns.despine()
-plt.subplots_adjust(left=left, right=right, bottom=bottom, top=top, wspace=wspace, hspace=hspace)
+#plt.subplots_adjust(left=left, right=right, bottom=bottom, top=top, wspace=wspace, hspace=hspace)
+plt.tight_layout()
 plt.savefig('../generated_figures/number_models_perCIs_bw_datasets.pdf',format='pdf')
 plt.show()
 
