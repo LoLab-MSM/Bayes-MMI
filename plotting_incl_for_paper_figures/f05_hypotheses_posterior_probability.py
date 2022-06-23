@@ -7,15 +7,15 @@ import seaborn as sns
 import sys
 
 # add this Bayes-MMI directory to the path to be able to import from helper_functions_and_files
-sys.path.append('/home/beiksp/Bayes-MMI')
+sys.path.append('/home/beiksp/Bayes-MMI/')
+sys.path.append('/home/beiksp/maybe_pycharm_running/plotting_incl_for_paper_figures/')
 
 from helper_functions_and_files.posterior_probability_calculations import \
     get_postprobs_allbutstructure, hypo_to_num, num_to_hypo
 
 from posterior_prob_networkgraph_plotting import make_plots_for_datasets_in_a_row
 
-#indir = '../files_generated_in_MMI_sclc/'
-indir = '../analyzed_pickles/'
+indir = '../files_generated_in_MMI_sclc/'
 
 dfdict = pd.read_pickle('../helper_functions_and_files/updatedinjune_all_9327_models_in_dataframe_with_subtype_starting_makeup_code.pickle')
 
@@ -29,7 +29,7 @@ for j in dfdict.index:
 
 tdict = {}
 for dset in ['TKO','RPM','clA']:
-    df = pd.read_pickle(indir+'compare_'+dset+'_gleipnir_results_subset_betafit_to9264_somemissing_4_7_2022_addlanalyses.pickle')
+    df = pd.read_pickle(indir+'/results_fromNS_gathered_'+dset+'_somemissing_addlanalyses.pickle')
     df = df.loc[df.index.isin(upd_modnums)]
     # 
     df_wA = copy.deepcopy(df[df['subtype_starting_and_makeup_code'].str.contains('\...1')])
@@ -37,7 +37,7 @@ for dset in ['TKO','RPM','clA']:
     df_wA2 = copy.deepcopy(df[df['subtype_starting_and_makeup_code'].str.contains('\...3')])
     # for topologies filtered by earliest initiating subtype (A)
     for topo in ['0','1.','2','4','5','6','7']:
-        tdict_key = dset+' data structure '+topo+' starts including A' if dset != 'clA' else ' SCLC-A cell lines data structure '+topo+' starts including A'
+        tdict_key = dset+' data structure '+topo+' starts including A' if dset != 'clA' else 'SCLC-A cell lines data structure '+topo+' starts including A'
         df = df_wA[df_wA['subtype_starting_and_makeup_code'].str.startswith(topo)]
         post_prob, prior_prob = get_postprobs_allbutstructure(df, add_to_dict=True)
         tdict[tdict_key] = copy.deepcopy(post_prob)
@@ -92,7 +92,7 @@ arrowcolormap = {'cmap_diff':cmap1,
 z_graph = z.drop([x for x in z.index if type(x) is str])
 
 throughdict = {x:z_graph[x].to_dict() for x in z}
-make_plots_for_datasets_in_a_row(throughdict,colormap=arrowcolormap,savedir='../generated_figures')
+#make_plots_for_datasets_in_a_row(throughdict,colormap=arrowcolormap,savedir='../generated_figures/')
 
 # for the heatmap plotting view
 
@@ -190,6 +190,7 @@ plt.show()
 # Figure 5A
 zheat = zheat.loc[['TKO 3 subtypes (A,A2,Y)','RPM 3 subtypes (A,N,Y)','SCLC-A cells 3 subtypes (A,N,A2)']]
 
+plt.rcParams.update({'font.size': 24})
 fig, (row1,row2) = plt.subplots(ncols=1,nrows=2,figsize=(14,8),gridspec_kw={'height_ratios':[1,20]})
 ax = row2
 sns.heatmap(zheat, cmap=cmap1, ax=ax,cbar=False,vmin=0, vmax=1)#, center=0.5, ax=ax, cbar=False) #cmap1 instead of "vlag"
@@ -204,6 +205,8 @@ plt.setp(ax.xaxis.get_majorticklabels(), ha='right')
 fig.subplots_adjust(bottom=0.38,top=0.9,left=0.33,right=0.95)
 plt.savefig('../generated_figures/top3topology_heatmap.pdf',format='pdf')
 plt.show()
+
+sys.exit(0)
 
 #####
 # No more figures in the paper (or supplement) after this, only example code for
@@ -257,7 +260,7 @@ arrowcolormap = {'cmap_diff':cmap1,
                  'cmap_eff':cmap2}
 
 throughdict = {y:x[y].to_dict() for y in x}
-make_plots_for_datasets_in_a_row(throughdict,colormap=arrowcolormap,savedir='../generated_figures')
+make_plots_for_datasets_in_a_row(throughdict,colormap=arrowcolormap,savedir='../generated_figures/')
 
 # heatmap plot
 
@@ -321,7 +324,6 @@ xeff = x.T[[c for c in x.T.columns if not 'to' in c]]
 
 plt.rcParams.update({'font.size': 18})
 
-## Full
 fig, (row1,row2) = plt.subplots(ncols=2,nrows=2,figsize=(20,12),gridspec_kw={'width_ratios': [2, 1],'height_ratios':[1,20]})
 ax = row2[0]
 ax2 = row2[1]

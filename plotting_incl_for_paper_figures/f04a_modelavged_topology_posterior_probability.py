@@ -12,8 +12,7 @@ sys.path.append('/home/beiksp/Bayes-MMI')
 from helper_functions_and_files.posterior_probability_calculations import \
     get_structure_postprobs
 
-#indir = '../files_generated_in_MMI_sclc/'
-indir = '../analyzed_pickles/'
+indir = '../files_generated_in_MMI_sclc/'
 
 dfdict = pd.read_pickle('../helper_functions_and_files/updatedinjune_all_9327_models_in_dataframe_with_subtype_starting_makeup_code.pickle')
 updated_modelmakeups = np.load('../helper_functions_and_files/updatedinjune_apr_11_all_model_makeups_from_redo_ignoring_uneven_bidirtxns.npy')
@@ -24,7 +23,7 @@ for j in dfdict.index:
 
 topo_modelavg_post = {}
 for dset in ['TKO','RPM','clA']:
-    df = pd.read_pickle(indir+'compare_'+dset+'_gleipnir_results_subset_betafit_to9264_somemissing_4_7_2022_addlanalyses.pickle')
+    df = pd.read_pickle(indir+'/results_fromNS_gathered_'+dset+'_somemissing_addlanalyses.pickle')
     df = df.loc[df.index.isin(upd_modnums)]
     # Fig 4A (the following line plus everything after this for loop
     topo_modelavg_post[dset], pri = get_structure_postprobs(df,add_to_dict=True,by_initiating_sub=1) #not using pri

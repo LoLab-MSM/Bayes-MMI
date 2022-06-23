@@ -6,8 +6,7 @@ import copy
 
 pd.set_option('display.max_columns', 500)
 
-#indir = '../files_generated_in_MMI_sclc/'
-indir = '../analyzed_pickles/'
+indir = '../files_generated_in_MMI_sclc/'
 
 left = 0.1  # the value on the x axis where the left margin should be
 right = 0.9
@@ -80,7 +79,7 @@ def plot_with_x_and_y_breaks(df, lastprob_ind, add_to_lp=200, figsize=(14,8),
     # set where the breaks should be
     leftxax.set_yscale('log')
     leftxax2.set_yscale('log')
-    leftxax.set_ylim(df.loc[(lastprob_ind+lastprob_ind)].INS_Z,10**(np.floor(np.log10(df.INS_Z.max()))+1)) #max score, next order of magnitude up
+    leftxax.set_ylim(df.loc[(lastprob_ind+add_to_lp)].INS_Z,10**(np.floor(np.log10(df.INS_Z.max()))+1)) #max score, next order of magnitude up
     leftxax2.set_ylim(10**(np.floor(np.log10(df.INS_Z.min()))-1),df.loc[len(df.index)-(lastprob_ind+add_to_lp)].INS_Z)  # min score, next order of magnitude down
     # set the ticks at the breaks
     leftxax.set_yticks(list(leftxax.get_yticks())[2:-1])
@@ -92,7 +91,7 @@ def plot_with_x_and_y_breaks(df, lastprob_ind, add_to_lp=200, figsize=(14,8),
     leftxax.set_xlim(-50,(lastprob_ind+add_to_lp))
     leftxax2.set_xlim(-50,(lastprob_ind+add_to_lp))
     #leftxax2.set_xticks(list(leftxax2.get_xticks())[::2])
-    leftxax2.set_xticks([0,500,(lastprob_ind+.5*lastprob_ind)])
+    leftxax2.set_xticks([x*500 for x in list(range(0,int(np.floor((lastprob_ind+add_to_lp)/500))+1))])
     leftxax.set_xticks([])
     leftxax2.xaxis.tick_bottom()
     # make the breaks
@@ -129,6 +128,7 @@ def plot_with_x_and_y_breaks(df, lastprob_ind, add_to_lp=200, figsize=(14,8),
     rightxax2.set_xticks(list(rightxax2.get_xticks()))#[::2])
     rightxax.set_xticks([])
     rightxax2.xaxis.tick_bottom()
+    # x axis
     # make the breaks
     # arguments to pass to plot, just so we don't keep repeating them
     kwargs = dict(transform=rightxax.transAxes, color='k', clip_on=False)
@@ -138,6 +138,7 @@ def plot_with_x_and_y_breaks(df, lastprob_ind, add_to_lp=200, figsize=(14,8),
     kwargs.update(transform=rightxax2.transAxes)  # switch to the middle axes
     d = 0.033
     rightxax2.plot((1 - (d-d_ang), 1 + (d-d_ang)), (1 - d, 1 + d), **kwargs)
+    #plt.show()
     #
     # X AXIS
     # top plots
@@ -162,8 +163,9 @@ def plot_with_x_and_y_breaks(df, lastprob_ind, add_to_lp=200, figsize=(14,8),
     topyax.set_ylim(df.loc[(lastprob_ind+add_to_lp)].INS_Z,10**(np.floor(np.log10(df.INS_Z.max()))+1)) #max score, next order of magnitude up
     topyax2.set_ylim(df.loc[(lastprob_ind+add_to_lp)].INS_Z,10**(np.floor(np.log10(df.INS_Z.max()))+1)) #max score, next order of magnitude up
     # bottom plots
-    bottomyax.set_xlim(-50,(lastprob_ind+add_to_lp))
-    bottomyax2.set_xlim(len(df.index)-(lastprob_ind+add_to_lp),len(df.index)+50)
+    #bottomyax.set_xlim(-50,(lastprob_ind+add_to_lp))
+    #bottomyax2.set_xlim(len(df.index)-(lastprob_ind+add_to_lp),len(df.index)+50)
+    #plt.show()
     # set the ticks at the breaks
     # hide spines and ticks
     bottomyax.spines['right'].set_visible(False)
@@ -189,7 +191,7 @@ def plot_with_x_and_y_breaks(df, lastprob_ind, add_to_lp=200, figsize=(14,8),
     fig.text(0.45,0.925,toplabel,va='center',rotation='horizontal')
     plt.subplots_adjust(left=left, right=right, bottom=bottom, top=top, wspace=wspace, hspace=hspace)
     if savedir:
-        plt.savefig(savedir+dset+'_to9327_evidence_ordered_no95CI_somemissing.svg',format='svg')
+        plt.savefig(savedir+dset+'_to9327_evidence_ordered_no95CI_somemissing.pdf',format='pdf')
     plt.show()
 
 
@@ -255,7 +257,7 @@ def plot_with_y_breaks(df, lastprob_ind, add_to_lp=200, figsize=(14,8),
     fig.text(0.45,0.925,toplabel,va='center',rotation='horizontal')
     plt.subplots_adjust(left=left, right=right, bottom=bottom, top=top, wspace=wspace, hspace=hspace)
     if savedir:
-        plt.savefig(savedir+dset+'_to9327_evidence_ordered_no95CI_somemissing.svg',format='svg')
+        plt.savefig(savedir+dset+'_to9327_evidence_ordered_no95CI_somemissing.pdf',format='pdf')
     plt.show()
 
 
@@ -270,7 +272,7 @@ for j in dfdict.index:
 
 CInums = {}
 for dset in ['TKO','RPM','clA']:
-    df = pd.read_pickle(indir+'compare_'+dset+'_gleipnir_results_subset_betafit_to9264_somemissing_4_7_2022_addlanalyses.pickle')
+    df = pd.read_pickle(indir+'/results_fromNS_gathered_'+dset+'_somemissing_addlanalyses.pickle')
     df = df.loc[df.index.isin(upd_modnums)]
     #
     df.sort_values('posterior_prob',ascending=False,inplace=True)
@@ -289,9 +291,11 @@ for dset in ['TKO','RPM','clA']:
     # Fig 3A-C
     add_to_lp = 200
     if len(df) / (lastprob_ind + add_to_lp) < 2:
-        plot_with_y_breaks(df,lastprob_ind,bottomlabel='Model no.',leftlabel='Evidence (marginal likelihood',rightlabel='Posterior probability')
+        plot_with_y_breaks(df,lastprob_ind,bottomlabel='Model no.',leftlabel='Evidence (marginal likelihood',
+                           rightlabel='Posterior probability',savedir='../generated_figures/')
     else:
-        plot_with_x_and_y_breaks(df,lastprob_ind,bottomlabel='Model no.',leftlabel='Evidence (marginal likelihood',rightlabel='Posterior probability')
+        plot_with_x_and_y_breaks(df,lastprob_ind,bottomlabel='Model no.',leftlabel='Evidence (marginal likelihood',
+                                 rightlabel='Posterior probability',savedir='../generated_figures/')
 
 ####
 # Fig 3D
@@ -359,9 +363,7 @@ for n,j in enumerate(['TKO','RPM','SCLC-A cell lines']):
 
 # to write the percentages over the bars
 for n,r in enumerate(ax.patches):
-    print(n)
     ind = int((n/3))
-    print(ind)
     size=14
     height = r.get_height()
     if n%3==0: #needs to be the number of stacks per bar
