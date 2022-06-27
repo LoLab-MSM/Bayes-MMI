@@ -168,7 +168,7 @@ ordered_namelist = ['division_A_baseline',
                     'diff_A_to_Y_baseline',
                     'diff_Y_to_A_baseline']
 
-'''
+
 # Plot prior distributions only (Figure S2)
 
 plt.rcParams.update({'font.size': 12})
@@ -514,7 +514,7 @@ plt.xlabel('Parameter')
 plt.ylabel('Log parameter value')
 # plt.savefig('../generated_figures/parambarplot_updated5891.pdf',format='pdf')
 plt.show()
-'''
+
 results_from_dataset_comparisons = {}
 num_to_sample = 1000
 for y in range(10):
