@@ -6,6 +6,12 @@ import pandas as pd
 from scipy.stats import gaussian_kde
 import math
 from statsmodels.stats.multicomp import pairwise_tukeyhsd
+import matplotlib.pyplot as plt
+from matplotlib import ticker
+from matplotlib.ticker import FormatStrFormatter
+from matplotlib.ticker import FuncFormatter
+from scipy.stats import norm, uniform, beta
+import seaborn as sns
 
 def magnitude(value):
     if (value == 0): return 0
