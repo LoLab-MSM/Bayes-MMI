@@ -1,18 +1,58 @@
-# Bayes-MMI
+Bayes-MMI
+========
 
-This repository contains code from 'Unified Tumor Growth Mechanisms from Multimodel Inference and Dataset Integration'.
+This is the repository for the Bayesian Multimodel Inference (Bayes-MMI) analysis of small cell lung cancer (SCLC) using 
+several RNA-sequencing datasets integrated into one overall analysis, to be published as "Unified Tumor Growth 
+Mechanisms from Multimodel Inference and Dataset Integration". Code in this repository represents the generation of
+multiple candidate models of SCLC based on prior knowledge, followed by model selection and Bayesian evidence (marginal 
+likelihood) value calculation via Nested Sampling. Evidence values are then used to determine posterior probabilities 
+per model, which are model-averaged to 1) generate posterior parameter distributions across all candidate models, and 2) 
+determine the probability of model features conditioned on the evaluated datasets. 
 
-There are empty directories in this repository, and these are for data referenced 
-in the scripts to plot figures and other supporting plots for the publication. These
-scripts, contained in plotting_incl_for_paper_figures/, will not be able to run 
-without this data. The data is hosted on DropBox. To run the Bayes-MMI/plotting_incl_for_paper_figures/ 
-scripts, go to the DropBox link and download the contents of the directories there and
-place them in the identically-named but empty directories provided in Bayes-MMI.
+Why Bayesian Multimodel Inference of small cell lung cancer (SCLC)?
+---------------------------------
+
+Mathematical modeling aims to provide a mechanistic understanding of cellular processes, but model composition and 
+comparison to the data represented continue to be a challenge. A single proposed model may represent only a subset of 
+mechanistic hypotheses, and the data may not inform every aspect of the model – even after parameter calibration. 
+Hypothesis exploration in biological processes via mechanistic modeling is a challenge in nearly every system, including 
+the molecular biology of SCLC. We probe unanswered questions in the SCLC field about 
+heterogeneity, lineage plasticity, and cell-cell interactions in the tumor system, using a Bayesian multimodel 
+inference (MMI) approach to evaluate mathematical models of SCLC representing mechanistic hypotheses inferred from 
+data. Integrating multiple existing datasets, our approach directly enables estimating how informative the data are 
+for a given model hypothesis, and whether multiple hypotheses support the data equally well. Predictions from our 
+application of Bayesian MMI support tumor evolution promoted by high lineage plasticity, rather than through expanding 
+rare stem-like populations. This work yields a novel probabilistic understanding of SCLC tumor growth mechanisms, 
+highlighting what mechanistic knowledge is supported by data and identifying which desired knowledge requires further 
+experiments. These results highlight that given available data, any SCLC cellular subtype can contribute to tumor 
+repopulation post-treatment, suggesting a mechanistic interpretation for tumor recalcitrance.
+                                                                                                                    
+
+Download
+--------
+To use this code, you can clone the repository with Git:
+```bash
+git clone https://github.com/LoLab-VU/Bayes-MMI.git
+```
+
+The code may be run from scratch, by running scripts in number-order in the multimodel_inference_SCLC/ directory. In
+this usage, no downloads are necessary. Figures can then be generated after all multimodel_inference_SCLC/ scripts have 
+been run and completed.
+
+To run only the figure-generating code, with scripts in figure-number-order in the plotting_incl_for_paper_figures/ 
+directory, files generated via the multimodel_inference_SCLC/ scripts, used in the publication, are hosted via DropBox.
+The empty directories in this repository (files_generated_in_MMI_sclc/ and posterior_marginals_and_predictives/) are the
+locations where Bayes-MMI code expects the data to be placed in order to generate figures; these are identical to 
+directory names in DropBox where the data is located.
+
+To run the Bayes-MMI/plotting_incl_for_paper_figures/ scripts, go to the DropBox link and download the contents of the 
+directories, and place them in the identically-named but empty directories provided in Bayes-MMI.
 
 DropBox link:
 https://www.dropbox.com/sh/4fqzpvu9hgyjicm/AABdfFlCenEuiOPgiH0TT-xqa?dl=0
 
-** Explain what the project does here **
+Bayes-MMI repository arrangement
+--------------------
 
 Data-generating and analyzing code is in the multimodel_inference_SCLC directory,
 where each script can be run in order. Scripts 01 through 05 generate all of the
