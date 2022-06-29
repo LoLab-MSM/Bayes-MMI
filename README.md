@@ -51,27 +51,74 @@ directories, and place them in the identically-named but empty directories provi
 DropBox link:
 https://www.dropbox.com/sh/4fqzpvu9hgyjicm/AABdfFlCenEuiOPgiH0TT-xqa?dl=0
 
-Bayes-MMI repository arrangement
---------------------
+How to run Bayes-MMI (with SCLC data)
+------------------------------------
+
+**Python libraries required for Bayes-MMI with SCLC data**:
+```angular2html
+library                   version
+-------                   -------
+*gleipnir                 0.18.0 
+matplotlib                3.0.3
+*multinest                3.10
+networkx                  2.3
+numpy                     1.17.2
+pandas                    1.2.2
+*pymultinest              2.9
+pysb                      1.11.0
+python                    3.7.3
+scipy                     1.5.0
+seaborn                   0.11.1
+statsmodels               0.10.1
+```
+
+*starred libraries:
+- To install PyMultinest/Multinest, please follow instructions at: http://johannesbuchner.github.io/PyMultiNest/index.html#
+- To install Gleipnir, please follow instructions at: https://github.com/LoLab-VU/Gleipnir
+
+**Running Bayes-MMI with SCLC data**
 
 Data-generating and analyzing code is in the multimodel_inference_SCLC directory,
-where each script can be run in order. Scripts 01 through 05 generate all of the
+where each script can be run in order. 
+- Scripts 01 through 05: these generate all of the
 PySB models that represent model candidates for the multimodel inference analysis,
 as well as generate individual scripts that will run nested sampling (via PyMultiNest)
 on each model to calculate posterior fitted parameter distributions and the marginal
-likelihood (Bayesian evidence) value per model. 06_run_pymultinest_files.txt describes
+likelihood (Bayesian evidence) value per model. 
+- 06_run_pymultinest_files.txt: this file describes
 running PyMultiNest on each model, which will be unique to the user wanting to
 replicate the fitted parameters/evidence values for each SCLC candidate model.
-
-Scripts 07 through 10 use the results of nested sampling and combine, per dataset, each model's evidence
+- Scripts 07 through 10: these use the results of nested sampling and combine, per dataset, each model's evidence
 value (scripts 07a-c and 08) and each model's posterior fitted parameters, generating
 all model posterior marginal distributions (09) and all model posterior predictive
-distributions. Helper functions (in helper_functions_and_files/) consolidate_posterior_marginal_distributions.py
-and consolidate_posterior_predictive_distributions.py then make these files more accessible.
+distributions (10). Scripts 09 and 10 result in multiple files as-written.
+  - Helper function (located in helper_functions_and_files/) modeldict_generator.py is used in scripts 07a-c, 09, and 10
+  to access the features of all PySB candidate models.
+  - Helper functions (helper_functions_and_files/) consolidate_posterior_marginal_distributions.py and
+  consolidate_posterior_predictive_distributions.py must be called by the user, and will make the multiple files of
+  analyzed data from scripts 09 and 10 into one consolidated file each, enabling scripts used for plotting to easily
+  access these analyzed data.
 
-Plotting code is in the plotting_incl_for_paper_figures/ directory, named and commented within
-each file for which figure is plotted using each script (e.g., script f03 plots each part of Figure 3,
-and comments within the script indicate the code that plots Fig 3A-C, and the code that plots Fig 3D).
-Files from the DropBox link above are required for running these scripts.
-
-
+Plotting code, including for plotting-specific helper functions, is in the plotting_incl_for_paper_figures/ directory, 
+named and commented within each file for which figure is plotted using each script (e.g., script f03 plots each part of 
+Figure 3, and comments within the script indicate the code that plots Fig 3A-C, and the code that plots Fig 3D). Files 
+from the DropBox link above are required for running these scripts.
+- Script f03: this plots the Bayesian evidence (marginal likelihood) values per candidate model in order, per dataset, 
+corresponding to Figures 3A-C in the publication, and plots the total numbers of candidate models in and out of 
+confidence intervals per dataset, corrseponding to Figure 3D.
+- Script f04a: this plots the Bayesian model-averaged probabilities of each model structure compared to each dataset, 
+corresponding to Figure 4A.
+  - Helper function posterior_probability_calculations.py is called by this script to calculate these probabilities.
+- Script f04b: this plots the Bayesian model-averaged posterior parameter distributions per highest-scoring model 
+structures (seen in Figure 4A) per dataset, corresponding to Figure 4B.
+- Script f05: this plots the Bayesian model-averaged probabilities of each feature in the highest-scoring three-subtype
+models, as a heatmap, corresponding to Figure 5A, and as model topology representations, corresponding to Figures 5B-D.
+  - Helper function posterior_probability_calculations.py (in helper_functions_and_files/) is called by this script to 
+  calculate the model-averaged probabilities for each model structure.
+  - Plotting-specific helper function plotting_incl_for_paper_figures/posterior_prob_networkgraph_plotting.py is called
+  by this script to generate model topology representations using posterior probabilities to determine edge color.
+- Scripts plot_prior_and_posterior_marginals.py and plot_prior_and_posterior_predictives.py: these plot model-averaged 
+posterior parameter distributions (posterior marginals), and simulate candidate models using model-averaged posterior 
+marginal distributions (posterior predictives). Part of plot_prior_and_posterior_marginals.py corresponds to
+Figure 5F, and the remainder of the script, as well as plot_prior_and_posterior_predictives.py, correspond to 
+supplementary figures.
