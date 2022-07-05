@@ -56,9 +56,8 @@ How to run Bayes-MMI (with SCLC data)
 
 **Python libraries required for Bayes-MMI with SCLC data**:
 ```angular2html
-library                   version
--------                   -------
-*gleipnir                 0.18.0 
+library                   versions used for the publication
+-------                   ---------------------------------
 matplotlib                3.0.3
 *multinest                3.10
 networkx                  2.3
@@ -74,7 +73,6 @@ statsmodels               0.10.1
 
 *starred libraries:
 - To install PyMultinest/Multinest, please follow instructions at: http://johannesbuchner.github.io/PyMultiNest/index.html#
-- To install Gleipnir, please follow instructions at: https://github.com/LoLab-VU/Gleipnir
 
 **Running Bayes-MMI with SCLC data**
 
