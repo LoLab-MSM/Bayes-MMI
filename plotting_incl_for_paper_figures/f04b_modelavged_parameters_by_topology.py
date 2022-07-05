@@ -222,7 +222,7 @@ for dset in ['TKO', 'RPM', 'cl_A']:
                 topo_param_variances = {topo:np.var(testsample.loc[testsample.topology == topo]['value']) for topo in topo_dict[dset]}
                 if not np.all([magnitude(topo_param_variances[v]) for v in topo_param_variances]): # np.all() ignores NaNs
                     print('***************')
-                    print('variances are not the same (different order of magnitude)')
+                    print('variances are not the same (different order of magnitude) for param ' + str(i))
                     for j in topo_param_variances:
                         print(j,topo_param_variances[j])
                     print('***************')
@@ -261,8 +261,7 @@ import warnings
 warnings.filterwarnings("ignore")
 
 num_to_sample = 1000
-#for dset in ['TKO', 'RPM', 'cl_A']:
-for dset in ['cl_A']:
+for dset in ['TKO', 'RPM', 'cl_A']:
     kde_dict = {dset:{}}
     df = pd.read_pickle(indir+dset+'_betafit_postmarg_params_and_probabilities_from_postequalweights_somemissing_6_23_22.pklz',
                         compression='gzip')
@@ -323,9 +322,9 @@ for dset in ['cl_A']:
             plt.savefig(outdir+'/parambarplot_'+dset+'_struct'+topo_makeup_dict[topo]+'_'+strcontains[1]+'diffs.pdf',
                         format='pdf')
             plt.show()
-            print(dset)
-            print(topo)
-            print(strcontains)
+            #print(dset)
+            #print(topo)
+            #print(strcontains)
             try:
                 testsample = df_byhier.loc[~np.isnan(df_byhier.value)]
                 testsample = testsample.loc[testsample.topology == topo]
@@ -335,7 +334,7 @@ for dset in ['cl_A']:
                 topo_param_variances = {diff:np.var(testsample.loc[testsample.variable==diff]['value']) for diff in set(testsample.variable)}
                 if not np.all([magnitude(topo_param_variances[v]) for v in topo_param_variances]): # np.all() ignores NaNs
                     print('***************')
-                    print('variances are not the same (different order of magnitude)')
+                    print('variances are not the same (different order of magnitude) for params in topology ' + str(topo))
                     for j in topo_param_variances:
                         print(j,topo_param_variances[j])
                     print('***************')
@@ -358,14 +357,14 @@ for dset in ['cl_A']:
         plt.subplots_adjust(left=left, right=right, bottom=bottom, top=top, wspace=wspace, hspace=hspace)
         plt.savefig(outdir+'/parambarplot_'+dset+'_struct'+topo_makeup_dict[topo]+'_bothdiffs.pdf',format='pdf')
         plt.show()
-        print(dset)
-        print(topo)
+        #print(dset)
+        #print(topo)
         eqvar = True
         topo_param_variances = {diff: np.var(testsample.loc[testsample.variable == diff]['value']) for diff in
                                 set(testsample.variable)}
         if not np.all([magnitude(topo_param_variances[v]) for v in topo_param_variances]):  # np.all() ignores NaNs
             print('***************')
-            print('variances are not the same (different order of magnitude)')
+            print('variances are not the same (different order of magnitude) for params in topology ' + str(topo))
             for j in topo_param_variances:
                 print(j, topo_param_variances[j])
             print('***************')
