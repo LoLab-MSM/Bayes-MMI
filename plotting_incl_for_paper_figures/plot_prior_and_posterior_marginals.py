@@ -23,9 +23,6 @@ def magnitude(value):
 indir = '../posterior_marginals_and_predictives/'
 outdir = ''
 
-#with open('../helper_functions_and_files/all_possible_sampled_params.pickle', 'rb') as p:
-#    sampled_params_list = pickle.load(p)
-
 with open('../helper_functions_and_files/all_possible_sampled_params_dict.pickle', 'rb') as p:
     sampled_params_dict = pickle.load(p)
 
@@ -106,17 +103,6 @@ top = 0.9
 wspace = 0.5  # the proportion of the average of the left value and the right value -> for example, 0.2*((0.075+0.95)/2)
 hspace = 0.8
 
-####
-# run code on ACCRE for marginals (reasonably quick... lol)
-# ok gotta do it again so i can include them in the github
-# i guess wait to try to rerun some models
-
-####
-
-#sampleparamsdict = {}
-#for i in sampled_params_list:
-#    sampleparamsdict[i.name] = i
-
 colordict = {
     'TKO': {
         'distr': 'blue',
@@ -180,354 +166,354 @@ ordered_namelist = ['division_A_baseline',
 
 # Plot prior distributions only (Figure S2)
 
-# plt.rcParams.update({'font.size': 12})
-# plt.rcParams.update({'axes.titlesize': 12})
-#
-# ndims = len(ordered_namelist)
-# columns = 6
-# rows = int(np.ceil(ndims / 6))
-#
-# fig, axs = plt.subplots(rows, columns, figsize=(20, 20))
-# dims_plotted = []
-# # don't need to go through the different datasets because priors are the same for all of them
-# # for resdir in ['TKO','RPM','cell_line_A']:
-# removeind = 0  # also unnecessary since everything in ordered_namelist has a prior
-# for n, i in enumerate(ordered_namelist):
-#     dims_plotted.append(n - removeind)
-#     ax = axs[int(((n - removeind) - (n - removeind) % columns) / columns), ((n - removeind) % columns)]
-#     try:
-#         currprior = sampled_params_list[[k for k, v in names_dict.items() if v == i][0]]
-#         if currprior.a == -np.inf:
-#             # normal distribution
-#             plt_range = (-2, 1) if currprior.ppf(0.999) < 5 else (-2, 8)
-#             plot_priors(ax, currprior.dist, currprior.mean(),
-#                         currprior.std(), plt_range)
-#         else:
-#             # uniform distribution
-#             plt_range = (-3.5, 3)
-#             plot_priors(ax, uniform,
-#                         currprior.ppf(0.00001),
-#                         abs(currprior.ppf(0.00001)) +
-#                         currprior.ppf(0.99999), plt_range)
-#         ax.xaxis.set_major_formatter(ticker.FuncFormatter(ticks_format))
-#         ax.get_yaxis().set_visible(True)
-#         ax.tick_params(labelsize=16)
-#         ax.set_xlabel('')
-#         ax.set_title(i, fontsize=20)
-#     except KeyError:
-#         removeind += 1
-#         pass
-#
-# remove_empty_plots(fig, axs, dims_plotted, columns, rows)
-#
-# # sizes don't look ideal with plt.show() but saving it as a pdf then opening that pdf in adobe reader looks good
-#
-# fig.text(0.5, 0.02, 'Log parameter value', ha='center')
-# fig.text(0.01, 0.55, 'Probability', va='center', rotation='vertical')
-# plt.subplots_adjust(left=left, right=right, bottom=bottom, top=top, wspace=wspace, hspace=hspace)
-# #plt.savefig('../generated_figures/prior_marginals_suppfig.pdf',
-# #            format='pdf')
-#
-# plt.show()
+plt.rcParams.update({'font.size': 12})
+plt.rcParams.update({'axes.titlesize': 12})
+
+ndims = len(ordered_namelist)
+columns = 6
+rows = int(np.ceil(ndims / 6))
+
+fig, axs = plt.subplots(rows, columns, figsize=(20, 20))
+dims_plotted = []
+# don't need to go through the different datasets because priors are the same for all of them
+# for resdir in ['TKO','RPM','cell_line_A']:
+removeind = 0  # also unnecessary since everything in ordered_namelist has a prior
+for n, i in enumerate(ordered_namelist):
+    dims_plotted.append(n - removeind)
+    ax = axs[int(((n - removeind) - (n - removeind) % columns) / columns), ((n - removeind) % columns)]
+    try:
+        currprior = sampled_params_dict[[k for k, v in names_dict.items() if v == i][0]]
+        if currprior.a == -np.inf:
+            # normal distribution
+            plt_range = (-2, 1) if currprior.ppf(0.999) < 5 else (-2, 8)
+            plot_priors(ax, currprior.dist, currprior.mean(),
+                        currprior.std(), plt_range)
+        else:
+            # uniform distribution
+            plt_range = (-3.5, 3)
+            plot_priors(ax, uniform,
+                        currprior.ppf(0.00001),
+                        abs(currprior.ppf(0.00001)) +
+                        currprior.ppf(0.99999), plt_range)
+        ax.xaxis.set_major_formatter(ticker.FuncFormatter(ticks_format))
+        ax.get_yaxis().set_visible(True)
+        ax.tick_params(labelsize=16)
+        ax.set_xlabel('')
+        ax.set_title(i, fontsize=20)
+    except KeyError:
+        removeind += 1
+        pass
+
+remove_empty_plots(fig, axs, dims_plotted, columns, rows)
+
+# sizes don't look ideal with plt.show() but saving it as a pdf then opening that pdf in adobe reader looks good
+
+fig.text(0.5, 0.02, 'Log parameter value', ha='center')
+fig.text(0.01, 0.55, 'Probability', va='center', rotation='vertical')
+plt.subplots_adjust(left=left, right=right, bottom=bottom, top=top, wspace=wspace, hspace=hspace)
+#plt.savefig('../generated_figures/prior_marginals_suppfig.pdf',
+#            format='pdf')
+
+plt.show()
 
 # Priors and posteriors per model (the posteriors are the same as in the boxplot from Fig 5F, but a diff view of them)
 
-# plt.rcParams.update({'font.size': 12})
-# plt.rcParams.update({'axes.titlesize': 12})
-#
-# ndims = len(ordered_namelist)
-# columns = 6
-# rows = int(np.ceil(ndims / 6))
-#
-# for dset in ['TKO', 'RPM', 'cl_A']:
-#     fig, axs = plt.subplots(rows, columns, figsize=(20, 20))
-#     dims_plotted = []
-#     model_avgd = pd.read_pickle(
-#         indir + dset + '_betafit_postmarg_params_and_probabilities_from_postequalweights_somemissing_6_23_22.pklz',
-#         compression='gzip')
-#     model_avgd = model_avgd.loc[~np.isnan(model_avgd.model_pp)]  # only models with a posterior probability can be used
-#     model_avgd = model_avgd.loc[model_avgd.from_model.isin(upd_modnums)]
-#     ## comment out for any initiating subtype, currently has A +/- others
-#     model_avgd = model_avgd.loc[model_avgd.model_starting_subtype_makeup_code.str.contains('\...1')]
-#     ##
-#     removeind = 0
-#     for n, i in enumerate(ordered_namelist):
-#         dims_plotted.append(n - removeind)
-#         ax = axs[int(((n - removeind) - (n - removeind) % columns) / columns), ((n - removeind) % columns)]
-#         try:
-#             if np.isnan(model_avgd[i]).all():
-#                 continue
-#             model_avgd[i][model_avgd[i] == np.inf] = np.nan
-#             model_avgd[i][model_avgd[i] == -np.inf] = np.nan
-#             plt_range = (
-#                 model_avgd[i].dropna().values.min(),
-#                 model_avgd[i].dropna().values.max())
-#             k = gaussian_kde(model_avgd.loc[~np.isnan(model_avgd[i])][i],
-#                              weights=model_avgd.loc[~np.isnan(model_avgd[i])].model_pp)
-#             vals = np.linspace(plt_range[0], plt_range[1], 100)
-#             ax.hist(model_avgd[i].values, bins=100,
-#                     weights=model_avgd.model_pp,
-#                     color=colordict[dset]['distr'],
-#                     alpha=0.2, histtype='stepfilled',
-#                     range=plt_range, density=True)
-#             ax.plot(vals, k.evaluate(vals), color=colordict[dset]['kdeline'],
-#                     linewidth=2)
-#             ax2 = ax.twinx()  # instantiate a second axes that shares the same x-axis
-#             ax.get_shared_y_axes().join(ax, ax2)  # needs to share y-axis too
-#             currprior = sampled_params_list[[k for k, v in names_dict.items() if v == i][0]]
-#             # with whatever scipy stats update i have, this is needed on Notch
-#             if currprior.a == -np.inf:
-#                 plot_priors(ax2, currprior.dist, currprior.mean(),
-#                             currprior.std(), plt_range)
-#             else:
-#                 # again, notch with update whatever
-#                 plot_priors(ax2, uniform,
-#                             currprior.ppf(0.00001),
-#                             abs(currprior.ppf(0.00001)) +
-#                             currprior.ppf(0.99999), plt_range)
-#             ax.xaxis.set_major_formatter(ticker.FuncFormatter(ticks_format))
-#             ax.get_yaxis().set_visible(True)
-#             ax2.get_yaxis().set_visible(False)
-#             ax.tick_params(labelsize=16)
-#             ax.set_xlabel('')
-#             ax.set_title(i, fontsize=20)
-#         except KeyError:
-#             removeind += 1
-#             pass
-#     remove_empty_plots(fig, axs, dims_plotted, columns, rows)
-#     #
-#     # sizes don't look ideal with plt.show() but saving it as a pdf then opening that pdf in adobe reader looks good
-#     fig.text(0.5, 0.02, 'Log parameter value', ha='center')  # , fontsize=30)  ## need diff sizes for ACCRE
-#     fig.text(0.01, 0.55, 'Probability', va='center',
-#              rotation='vertical')  # , fontsize=30)  ## need diff sizes for ACCRE
-#     plt.subplots_adjust(left=left, right=right, bottom=bottom, top=top, wspace=wspace, hspace=hspace)
-# #    plt.savefig('../generated_figures/priors_modelavg_posterior_marginals_5891update_' + str(dset) + '.pdf',
-# #                format='pdf')
-#     plt.show()
+plt.rcParams.update({'font.size': 12})
+plt.rcParams.update({'axes.titlesize': 12})
+
+ndims = len(ordered_namelist)
+columns = 6
+rows = int(np.ceil(ndims / 6))
+
+for dset in ['TKO', 'RPM', 'cl_A']:
+    fig, axs = plt.subplots(rows, columns, figsize=(20, 20))
+    dims_plotted = []
+    model_avgd = pd.read_pickle(
+        indir + dset + '_betafit_postmarg_params_and_probabilities_from_postequalweights_somemissing_6_23_22.pklz',
+        compression='gzip')
+    model_avgd = model_avgd.loc[~np.isnan(model_avgd.model_pp)]  # only models with a posterior probability can be used
+    model_avgd = model_avgd.loc[model_avgd.from_model.isin(upd_modnums)]
+    ## comment out for any initiating subtype, currently has A +/- others
+    model_avgd = model_avgd.loc[model_avgd.model_starting_subtype_makeup_code.str.contains('\...1')]
+    ##
+    removeind = 0
+    for n, i in enumerate(ordered_namelist):
+        dims_plotted.append(n - removeind)
+        ax = axs[int(((n - removeind) - (n - removeind) % columns) / columns), ((n - removeind) % columns)]
+        try:
+            if np.isnan(model_avgd[i]).all():
+                continue
+            model_avgd[i][model_avgd[i] == np.inf] = np.nan
+            model_avgd[i][model_avgd[i] == -np.inf] = np.nan
+            plt_range = (
+                model_avgd[i].dropna().values.min(),
+                model_avgd[i].dropna().values.max())
+            k = gaussian_kde(model_avgd.loc[~np.isnan(model_avgd[i])][i],
+                             weights=model_avgd.loc[~np.isnan(model_avgd[i])].model_pp)
+            vals = np.linspace(plt_range[0], plt_range[1], 100)
+            ax.hist(model_avgd[i].values, bins=100,
+                    weights=model_avgd.model_pp,
+                    color=colordict[dset]['distr'],
+                    alpha=0.2, histtype='stepfilled',
+                    range=plt_range, density=True)
+            ax.plot(vals, k.evaluate(vals), color=colordict[dset]['kdeline'],
+                    linewidth=2)
+            ax2 = ax.twinx()  # instantiate a second axes that shares the same x-axis
+            ax.get_shared_y_axes().join(ax, ax2)  # needs to share y-axis too
+            currprior = sampled_params_dict[[k for k, v in names_dict.items() if v == i][0]]
+            # with whatever scipy stats update i have, this is needed on Notch
+            if currprior.a == -np.inf:
+                plot_priors(ax2, currprior.dist, currprior.mean(),
+                            currprior.std(), plt_range)
+            else:
+                # again, notch with update whatever
+                plot_priors(ax2, uniform,
+                            currprior.ppf(0.00001),
+                            abs(currprior.ppf(0.00001)) +
+                            currprior.ppf(0.99999), plt_range)
+            ax.xaxis.set_major_formatter(ticker.FuncFormatter(ticks_format))
+            ax.get_yaxis().set_visible(True)
+            ax2.get_yaxis().set_visible(False)
+            ax.tick_params(labelsize=16)
+            ax.set_xlabel('')
+            ax.set_title(i, fontsize=20)
+        except KeyError:
+            removeind += 1
+            pass
+    remove_empty_plots(fig, axs, dims_plotted, columns, rows)
+    #
+    # sizes don't look ideal with plt.show() but saving it as a pdf then opening that pdf in adobe reader looks good
+    fig.text(0.5, 0.02, 'Log parameter value', ha='center')  # , fontsize=30)  ## need diff sizes for ACCRE
+    fig.text(0.01, 0.55, 'Probability', va='center',
+             rotation='vertical')  # , fontsize=30)  ## need diff sizes for ACCRE
+    plt.subplots_adjust(left=left, right=right, bottom=bottom, top=top, wspace=wspace, hspace=hspace)
+#    plt.savefig('../generated_figures/priors_modelavg_posterior_marginals_5891update_' + str(dset) + '.pdf',
+#                format='pdf')
+    plt.show()
 
 # Priors and posteriors separated by initiating subtype (Figure S4)
-#
-# ndims = len(ordered_namelist)
-# columns = 6
-# rows = int(np.ceil(ndims / 6))
-#
-# for dset in ['TKO', 'RPM', 'cl_A']:
-#     fig, axs = plt.subplots(rows, columns, figsize=(20, 20))
-#     dims_plotted = []
-#     # below to look for 'starting with A +/- others', 'starting with N +/- others', etc
-#     # for starting in [(('1000','1200','1300','1400','1230','1240','1340','1234'),'blue','blue'),(('1200','1230','1240','1234','2000','2300','2400','2340'),'orange','goldenrod'),
-#     #                 (('1300','1230','1340','1234','2300','2340','3000','3400'),'green','darkgreen'),(('1400','1240','1340','1234','2400','2340','3400','4000'),'red','darkred')]:
-#     # below to look for 'starting with A only', 'starting with N only', etc
-#     for starting in [('1000', 'blue', 'blue'), (('2000'), 'orange', 'goldenrod'), ('3000', 'green', 'darkgreen'),
-#                      ('4000', 'red', 'darkred')]:
-#         removeind = 0
-#         model_avgd = pd.read_pickle(
-#             indir + dset + '_betafit_postmarg_params_and_probabilities_from_postequalweights_somemissing_6_23_22.pklz',
-#             compression='gzip')
-#         model_avgd = model_avgd.loc[
-#             ~np.isnan(model_avgd.model_pp)]  # only models with a posterior probability can be used
-#         model_avgd = model_avgd.loc[model_avgd.from_model.isin(upd_modnums)]
-#         model_avgd = model_avgd.loc[model_avgd.model_starting_subtype_makeup_code.str.endswith(starting[0])]
-#         for n, i in enumerate(ordered_namelist):
-#             dims_plotted.append(n - removeind)
-#             ax = axs[int(((n - removeind) - (n - removeind) % columns) / columns), ((n - removeind) % columns)]
-#             try:
-#                 if np.isnan(model_avgd[i]).all():
-#                     continue
-#                 model_avgd[i][model_avgd[i] == np.inf] = np.nan
-#                 model_avgd[i][model_avgd[i] == -np.inf] = np.nan
-#                 plt_range = (
-#                     model_avgd[i].dropna().values.min(),
-#                     model_avgd[i].dropna().values.max())
-#                 k = gaussian_kde(model_avgd.loc[~np.isnan(model_avgd[i])][i],
-#                                  weights=model_avgd.loc[~np.isnan(model_avgd[i])].model_pp)
-#                 vals = np.linspace(plt_range[0], plt_range[1], 100)
-#                 ax.hist(model_avgd[i].values, bins=100,
-#                         weights=model_avgd.model_pp,
-#                         color=starting[1],
-#                         alpha=0.2, histtype='stepfilled',
-#                         range=plt_range, density=True)
-#                 ax.plot(vals, k.evaluate(vals), color=starting[2],
-#                         linewidth=2)
-#                 ax2 = ax.twinx()  # instantiate a second axes that shares the same x-axis
-#                 ax.get_shared_y_axes().join(ax, ax2)  # needs to share y-axis too
-#                 currprior = sampled_params_list[[k for k, v in names_dict.items() if v == i][0]]
-#                 # with whatever scipy stats update i have, this is needed on Notch
-#                 if currprior.a == -np.inf:
-#                     plot_priors(ax2, currprior.dist, currprior.mean(),
-#                                 currprior.std(), plt_range)
-#                 else:
-#                     # again, notch with update whatever
-#                     plot_priors(ax2, uniform,
-#                                 currprior.ppf(0.00001),
-#                                 abs(currprior.ppf(0.00001)) +
-#                                 currprior.ppf(0.99999), plt_range)
-#                 ax.xaxis.set_major_formatter(ticker.FuncFormatter(ticks_format))
-#                 ax.get_yaxis().set_visible(True)
-#                 ax2.get_yaxis().set_visible(False)
-#                 ax.tick_params(labelsize=16)
-#                 ax.set_xlabel('')
-#                 ax.set_title(i, fontsize=20)
-#             except KeyError:
-#                 removeind += 1
-#                 pass
-#     remove_empty_plots(fig, axs, dims_plotted, columns, rows)
-#     #
-#     fig.text(0.5, 0.02, 'Log parameter value', ha='center')  # , fontsize=30)  ## need diff sizes for ACCRE
-#     fig.text(0.01, 0.55, 'Probability', va='center',
-#              rotation='vertical')  # , fontsize=30)  ## need diff sizes for ACCRE
-#     plt.subplots_adjust(left=left, right=right, bottom=bottom, top=top, wspace=wspace, hspace=hspace)
-# #    plt.savefig('../generated_figures/priors_modelavg_posterior_marginals_' + str(dset) + '_bystarting_suppfig.pdf',
-# #                format='pdf')
-#     plt.show()
 
-# # Priors and posteriors per structural topology (not a figure, but could be useful)
-#
-# topodict = {
-#     'TKO': [('0.', 'gray', 'black'), ('2.', 'blue', 'blue'), ('6.', 'orange', 'goldenrod'),
-#             ('7.', 'green', 'darkgreen')],
-#     'RPM': [('0.', 'gray', 'black'), ('1.', 'blue', 'blue'), ('5.', 'orange', 'goldenrod'),
-#             ('7.', 'green', 'darkgreen'), ('9.', 'red', 'darkred')],
-#     'cl_A': [('0.', 'gray', 'black'), ('1.', 'pink', 'deeppink'), ('2.', 'blue', 'blue'),
-#                     ('4.', 'orange', 'goldenrod'),
-#                     ('5.', 'red', 'darkred'), ('6.', 'cyan', 'turquoise'), ('7.', 'green', 'darkgreen')]
-# }
-#
-# ndims = len(ordered_namelist)
-# columns = 6
-# rows = int(np.ceil(ndims / 6))
-#
-# for dset in ['TKO', 'RPM', 'cl_A']:
-#     fig, axs = plt.subplots(rows, columns, figsize=(20, 20))
-#     dims_plotted = []
-#     for topo in topodict[dset]:
-#         removeind = 0
-#         model_avgd = pd.read_pickle(
-#             indir + dset + '_betafit_postmarg_params_and_probabilities_from_postequalweights_somemissing_6_23_22.pklz',
-#             compression='gzip')
-#         model_avgd = model_avgd.loc[~np.isnan(model_avgd.model_pp)]
-#         model_avgd = model_avgd.loc[model_avgd.from_model.isin(upd_modnums)]
-#         # this is only per structure, not initiating subtype
-#         model_avgd = model_avgd.loc[model_avgd.model_starting_subtype_makeup_code.str.startswith(topo[0])]
-#         #
-#         for n, i in enumerate(ordered_namelist):
-#             dims_plotted.append(n - removeind)
-#             ax = axs[int(((n - removeind) - (n - removeind) % columns) / columns), ((n - removeind) % columns)]
-#             try:
-#                 if np.isnan(model_avgd[i]).all():
-#                     continue
-#                 model_avgd[i][model_avgd[i] == np.inf] = np.nan
-#                 model_avgd[i][model_avgd[i] == -np.inf] = np.nan
-#                 plt_range = (
-#                     model_avgd[i].dropna().values.min(),
-#                     model_avgd[i].dropna().values.max())
-#                 k = gaussian_kde(model_avgd.loc[~np.isnan(model_avgd[i])][i],
-#                                  weights=model_avgd.loc[~np.isnan(model_avgd[i])].model_pp)
-#                 vals = np.linspace(plt_range[0], plt_range[1], 100)
-#                 ax.hist(model_avgd[i].values, bins=100,
-#                         weights=model_avgd.model_pp,
-#                         color=topo[1],
-#                         alpha=0.2, histtype='stepfilled',
-#                         range=plt_range, density=True)
-#                 ax.plot(vals, k.evaluate(vals), color=topo[2],
-#                         linewidth=2)
-#                 ax2 = ax.twinx()  # instantiate a second axes that shares the same x-axis
-#                 ax.get_shared_y_axes().join(ax, ax2)  # needs to share y-axis too
-#                 currprior = sampled_params_list[[k for k, v in names_dict.items() if v == i][0]]
-#                 # with whatever scipy stats update i have, this is needed on Notch
-#                 if currprior.a == -np.inf:
-#                     plot_priors(ax2, currprior.dist, currprior.mean(),
-#                                 currprior.std(), plt_range)
-#                 else:
-#                     # again, notch with update whatever
-#                     plot_priors(ax2, uniform,
-#                                 currprior.ppf(0.00001),
-#                                 abs(currprior.ppf(0.00001)) +
-#                                 currprior.ppf(0.99999), plt_range)
-#                 ax.xaxis.set_major_formatter(ticker.FuncFormatter(ticks_format))
-#                 ax.get_yaxis().set_visible(True)
-#                 ax2.get_yaxis().set_visible(False)
-#                 ax.tick_params(labelsize=16)
-#                 ax.set_xlabel('')
-#                 ax.set_title(i, fontsize=20)
-#             except KeyError:
-#                 removeind += 1
-#                 pass
-#     remove_empty_plots(fig, axs, dims_plotted, columns, rows)
-#     #
-#     fig.text(0.5, 0.02, 'Log parameter value', ha='center')  # , fontsize=30)  ## need diff sizes for ACCRE
-#     fig.text(0.01, 0.55, 'Probability', va='center',
-#              rotation='vertical')  # , fontsize=30)  ## need diff sizes for ACCRE
-#     plt.subplots_adjust(left=left, right=right, bottom=bottom, top=top, wspace=wspace, hspace=hspace)
-#     # plt.savefig('priors_modelavg_posterior_marginals_'+str(resdir)+'_bytopology.pdf',
-#     #          format='pdf')
-#     plt.show()
-#
-# # I think this is Figure 5F
-#
-# sampledict = {}
-# for dset in ['TKO', 'RPM', 'cl_A']:
-#     sampledict[dset] = {}
-#     model_avgd = pd.read_pickle(
-#         indir + dset + '_betafit_postmarg_params_and_probabilities_from_postequalweights_somemissing_6_23_22.pklz',
-#         compression='gzip')
-#     model_avgd = model_avgd.loc[~np.isnan(model_avgd.model_pp)]
-#     model_avgd = model_avgd.loc[model_avgd.from_model.isin(upd_modnums)]
-#     model_avgd = model_avgd.loc[model_avgd.model_starting_subtype_makeup_code.str.contains('\...1')]
-#     model_avgd = model_avgd.loc[model_avgd.model_starting_subtype_makeup_code.str.startswith('0')]
-#     for n, i in enumerate(ordered_namelist):
-#         try:
-#             if np.isnan(model_avgd[i]).all():
-#                 continue
-#             model_avgd[i][model_avgd[i] == np.inf] = np.nan
-#             model_avgd[i][model_avgd[i] == -np.inf] = np.nan
-#             plt_range = (
-#                 model_avgd[i].dropna().values.min(),
-#                 model_avgd[i].dropna().values.max())
-#             k = gaussian_kde(model_avgd.loc[~np.isnan(model_avgd[i])][i],
-#                              weights=model_avgd.loc[~np.isnan(model_avgd[i])].model_pp)
-#             sampledict[dset][i] = k.resample(1000)
-#         except KeyError:
-#             print('UH OH')
-#             pass
-#         # break
-#     sampledict[dset]['dataset'] = dset
-#
-# colpal = ['#4c72b0', '#dd8452', '#55a868']
-# # Hex values taken from the 'deep' color palette
-#
-# all_datasets_all_params_df = pd.DataFrame()
-# for dset in ['TKO', 'RPM', 'cl_A']:
-#     one_dataset_all_params_df = pd.DataFrame()
-#     for i in sampledict[dset]:
-#         if not 'equil' in i and not 'die' in i and not 'alter' in i and not i=='dataset':
-#             df = pd.DataFrame(sampledict[dset][i]).T
-#             df.columns = [i]
-#             one_dataset_all_params_df = pd.concat([one_dataset_all_params_df, df], axis=1)
-#     one_dataset_all_params_df['dataset'] = dset
-#     all_datasets_all_params_df = pd.concat([all_datasets_all_params_df, one_dataset_all_params_df], ignore_index=True)
-#     one_dataset_all_params_df = pd.DataFrame()
-#
-# all_datasets_all_params_df.columns = [x.split('_baseline')[0] for x in all_datasets_all_params_df.columns if not x == 'dataset'] + ['dataset']
-# df = pd.melt(all_datasets_all_params_df, id_vars=['dataset'], value_vars=[x for x in all_datasets_all_params_df.columns if not x == 'dataset'])
-#
-# fig, ax = plt.subplots(figsize=(20, 10))
-# g = sns.boxplot(x='variable', y='value', hue='dataset', data=df, palette=colpal)
-# for n in range(len(g.lines)):
-#     l = g.lines[n]
-#     l.set_linewidth(.25)
-#
-# plt.setp(ax.get_xticklabels(), rotation=90)
-# plt.title('Parameter values between datasets')
-# plt.subplots_adjust(left=left, right=right, bottom=bottom, top=top, wspace=wspace, hspace=hspace)
-# plt.legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
-# plt.xlabel('Parameter')
-# plt.ylabel('Log parameter value')
-# # plt.savefig('../generated_figures/parambarplot_updated5891.pdf',format='pdf')
-# plt.show()
+ndims = len(ordered_namelist)
+columns = 6
+rows = int(np.ceil(ndims / 6))
 
-import warnings
-warnings.filterwarnings("ignore")
+for dset in ['TKO', 'RPM', 'cl_A']:
+    fig, axs = plt.subplots(rows, columns, figsize=(20, 20))
+    dims_plotted = []
+    # below to look for 'starting with A +/- others', 'starting with N +/- others', etc
+    # for starting in [(('1000','1200','1300','1400','1230','1240','1340','1234'),'blue','blue'),(('1200','1230','1240','1234','2000','2300','2400','2340'),'orange','goldenrod'),
+    #                 (('1300','1230','1340','1234','2300','2340','3000','3400'),'green','darkgreen'),(('1400','1240','1340','1234','2400','2340','3400','4000'),'red','darkred')]:
+    # below to look for 'starting with A only', 'starting with N only', etc
+    for starting in [('1000', 'blue', 'blue'), (('2000'), 'orange', 'goldenrod'), ('3000', 'green', 'darkgreen'),
+                     ('4000', 'red', 'darkred')]:
+        removeind = 0
+        model_avgd = pd.read_pickle(
+            indir + dset + '_betafit_postmarg_params_and_probabilities_from_postequalweights_somemissing_6_23_22.pklz',
+            compression='gzip')
+        model_avgd = model_avgd.loc[
+            ~np.isnan(model_avgd.model_pp)]  # only models with a posterior probability can be used
+        model_avgd = model_avgd.loc[model_avgd.from_model.isin(upd_modnums)]
+        model_avgd = model_avgd.loc[model_avgd.model_starting_subtype_makeup_code.str.endswith(starting[0])]
+        for n, i in enumerate(ordered_namelist):
+            dims_plotted.append(n - removeind)
+            ax = axs[int(((n - removeind) - (n - removeind) % columns) / columns), ((n - removeind) % columns)]
+            try:
+                if np.isnan(model_avgd[i]).all():
+                    continue
+                model_avgd[i][model_avgd[i] == np.inf] = np.nan
+                model_avgd[i][model_avgd[i] == -np.inf] = np.nan
+                plt_range = (
+                    model_avgd[i].dropna().values.min(),
+                    model_avgd[i].dropna().values.max())
+                k = gaussian_kde(model_avgd.loc[~np.isnan(model_avgd[i])][i],
+                                 weights=model_avgd.loc[~np.isnan(model_avgd[i])].model_pp)
+                vals = np.linspace(plt_range[0], plt_range[1], 100)
+                ax.hist(model_avgd[i].values, bins=100,
+                        weights=model_avgd.model_pp,
+                        color=starting[1],
+                        alpha=0.2, histtype='stepfilled',
+                        range=plt_range, density=True)
+                ax.plot(vals, k.evaluate(vals), color=starting[2],
+                        linewidth=2)
+                ax2 = ax.twinx()  # instantiate a second axes that shares the same x-axis
+                ax.get_shared_y_axes().join(ax, ax2)  # needs to share y-axis too
+                currprior = sampled_params_dict[[k for k, v in names_dict.items() if v == i][0]]
+                # with whatever scipy stats update i have, this is needed on Notch
+                if currprior.a == -np.inf:
+                    plot_priors(ax2, currprior.dist, currprior.mean(),
+                                currprior.std(), plt_range)
+                else:
+                    # again, notch with update whatever
+                    plot_priors(ax2, uniform,
+                                currprior.ppf(0.00001),
+                                abs(currprior.ppf(0.00001)) +
+                                currprior.ppf(0.99999), plt_range)
+                ax.xaxis.set_major_formatter(ticker.FuncFormatter(ticks_format))
+                ax.get_yaxis().set_visible(True)
+                ax2.get_yaxis().set_visible(False)
+                ax.tick_params(labelsize=16)
+                ax.set_xlabel('')
+                ax.set_title(i, fontsize=20)
+            except KeyError:
+                removeind += 1
+                pass
+    remove_empty_plots(fig, axs, dims_plotted, columns, rows)
+    #
+    fig.text(0.5, 0.02, 'Log parameter value', ha='center')  # , fontsize=30)  ## need diff sizes for ACCRE
+    fig.text(0.01, 0.55, 'Probability', va='center',
+             rotation='vertical')  # , fontsize=30)  ## need diff sizes for ACCRE
+    plt.subplots_adjust(left=left, right=right, bottom=bottom, top=top, wspace=wspace, hspace=hspace)
+#    plt.savefig('../generated_figures/priors_modelavg_posterior_marginals_' + str(dset) + '_bystarting_suppfig.pdf',
+#                format='pdf')
+    plt.show()
+
+# Priors and posteriors per structural topology (not a figure, but could be useful)
+
+topodict = {
+    'TKO': [('0.', 'gray', 'black'), ('2.', 'blue', 'blue'), ('6.', 'orange', 'goldenrod'),
+            ('7.', 'green', 'darkgreen')],
+    'RPM': [('0.', 'gray', 'black'), ('1.', 'blue', 'blue'), ('5.', 'orange', 'goldenrod'),
+            ('7.', 'green', 'darkgreen'), ('9.', 'red', 'darkred')],
+    'cl_A': [('0.', 'gray', 'black'), ('1.', 'pink', 'deeppink'), ('2.', 'blue', 'blue'),
+                    ('4.', 'orange', 'goldenrod'),
+                    ('5.', 'red', 'darkred'), ('6.', 'cyan', 'turquoise'), ('7.', 'green', 'darkgreen')]
+}
+
+ndims = len(ordered_namelist)
+columns = 6
+rows = int(np.ceil(ndims / 6))
+
+for dset in ['TKO', 'RPM', 'cl_A']:
+    fig, axs = plt.subplots(rows, columns, figsize=(20, 20))
+    dims_plotted = []
+    for topo in topodict[dset]:
+        removeind = 0
+        model_avgd = pd.read_pickle(
+            indir + dset + '_betafit_postmarg_params_and_probabilities_from_postequalweights_somemissing_6_23_22.pklz',
+            compression='gzip')
+        model_avgd = model_avgd.loc[~np.isnan(model_avgd.model_pp)]
+        model_avgd = model_avgd.loc[model_avgd.from_model.isin(upd_modnums)]
+        # this is only per structure, not initiating subtype
+        model_avgd = model_avgd.loc[model_avgd.model_starting_subtype_makeup_code.str.startswith(topo[0])]
+        #
+        for n, i in enumerate(ordered_namelist):
+            dims_plotted.append(n - removeind)
+            ax = axs[int(((n - removeind) - (n - removeind) % columns) / columns), ((n - removeind) % columns)]
+            try:
+                if np.isnan(model_avgd[i]).all():
+                    continue
+                model_avgd[i][model_avgd[i] == np.inf] = np.nan
+                model_avgd[i][model_avgd[i] == -np.inf] = np.nan
+                plt_range = (
+                    model_avgd[i].dropna().values.min(),
+                    model_avgd[i].dropna().values.max())
+                k = gaussian_kde(model_avgd.loc[~np.isnan(model_avgd[i])][i],
+                                 weights=model_avgd.loc[~np.isnan(model_avgd[i])].model_pp)
+                vals = np.linspace(plt_range[0], plt_range[1], 100)
+                ax.hist(model_avgd[i].values, bins=100,
+                        weights=model_avgd.model_pp,
+                        color=topo[1],
+                        alpha=0.2, histtype='stepfilled',
+                        range=plt_range, density=True)
+                ax.plot(vals, k.evaluate(vals), color=topo[2],
+                        linewidth=2)
+                ax2 = ax.twinx()  # instantiate a second axes that shares the same x-axis
+                ax.get_shared_y_axes().join(ax, ax2)  # needs to share y-axis too
+                currprior = sampled_params_dict[[k for k, v in names_dict.items() if v == i][0]]
+                # with whatever scipy stats update i have, this is needed on Notch
+                if currprior.a == -np.inf:
+                    plot_priors(ax2, currprior.dist, currprior.mean(),
+                                currprior.std(), plt_range)
+                else:
+                    # again, notch with update whatever
+                    plot_priors(ax2, uniform,
+                                currprior.ppf(0.00001),
+                                abs(currprior.ppf(0.00001)) +
+                                currprior.ppf(0.99999), plt_range)
+                ax.xaxis.set_major_formatter(ticker.FuncFormatter(ticks_format))
+                ax.get_yaxis().set_visible(True)
+                ax2.get_yaxis().set_visible(False)
+                ax.tick_params(labelsize=16)
+                ax.set_xlabel('')
+                ax.set_title(i, fontsize=20)
+            except KeyError:
+                removeind += 1
+                pass
+    remove_empty_plots(fig, axs, dims_plotted, columns, rows)
+    #
+    fig.text(0.5, 0.02, 'Log parameter value', ha='center')  # , fontsize=30)  ## need diff sizes for ACCRE
+    fig.text(0.01, 0.55, 'Probability', va='center',
+             rotation='vertical')  # , fontsize=30)  ## need diff sizes for ACCRE
+    plt.subplots_adjust(left=left, right=right, bottom=bottom, top=top, wspace=wspace, hspace=hspace)
+    # plt.savefig('priors_modelavg_posterior_marginals_'+str(resdir)+'_bytopology.pdf',
+    #          format='pdf')
+    plt.show()
+
+# Figure 5F
+
+sampledict = {}
+for dset in ['TKO', 'RPM', 'cl_A']:
+    sampledict[dset] = {}
+    model_avgd = pd.read_pickle(
+        indir + dset + '_betafit_postmarg_params_and_probabilities_from_postequalweights_somemissing_6_23_22.pklz',
+        compression='gzip')
+    model_avgd = model_avgd.loc[~np.isnan(model_avgd.model_pp)]
+    model_avgd = model_avgd.loc[model_avgd.from_model.isin(upd_modnums)]
+    model_avgd = model_avgd.loc[model_avgd.model_starting_subtype_makeup_code.str.contains('\...1')]
+    model_avgd = model_avgd.loc[model_avgd.model_starting_subtype_makeup_code.str.startswith('0')]
+    for n, i in enumerate(ordered_namelist):
+        try:
+            if np.isnan(model_avgd[i]).all():
+                continue
+            model_avgd[i][model_avgd[i] == np.inf] = np.nan
+            model_avgd[i][model_avgd[i] == -np.inf] = np.nan
+            plt_range = (
+                model_avgd[i].dropna().values.min(),
+                model_avgd[i].dropna().values.max())
+            k = gaussian_kde(model_avgd.loc[~np.isnan(model_avgd[i])][i],
+                             weights=model_avgd.loc[~np.isnan(model_avgd[i])].model_pp)
+            sampledict[dset][i] = k.resample(1000)
+        except KeyError:
+            print('UH OH')
+            pass
+        # break
+    sampledict[dset]['dataset'] = dset
+
+colpal = ['#4c72b0', '#dd8452', '#55a868']
+# Hex values taken from the 'deep' color palette
+
+all_datasets_all_params_df = pd.DataFrame()
+for dset in ['TKO', 'RPM', 'cl_A']:
+    one_dataset_all_params_df = pd.DataFrame()
+    for i in sampledict[dset]:
+        if not 'equil' in i and not 'die' in i and not 'alter' in i and not i=='dataset':
+            df = pd.DataFrame(sampledict[dset][i]).T
+            df.columns = [i]
+            one_dataset_all_params_df = pd.concat([one_dataset_all_params_df, df], axis=1)
+    one_dataset_all_params_df['dataset'] = dset
+    all_datasets_all_params_df = pd.concat([all_datasets_all_params_df, one_dataset_all_params_df], ignore_index=True)
+    one_dataset_all_params_df = pd.DataFrame()
+
+all_datasets_all_params_df.columns = [x.split('_baseline')[0] for x in all_datasets_all_params_df.columns if not x == 'dataset'] + ['dataset']
+df = pd.melt(all_datasets_all_params_df, id_vars=['dataset'], value_vars=[x for x in all_datasets_all_params_df.columns if not x == 'dataset'])
+
+fig, ax = plt.subplots(figsize=(20, 10))
+g = sns.boxplot(x='variable', y='value', hue='dataset', data=df, palette=colpal)
+for n in range(len(g.lines)):
+    l = g.lines[n]
+    l.set_linewidth(.25)
+
+plt.setp(ax.get_xticklabels(), rotation=90)
+plt.title('Parameter values between datasets')
+plt.subplots_adjust(left=left, right=right, bottom=bottom, top=top, wspace=wspace, hspace=hspace)
+plt.legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
+plt.xlabel('Parameter')
+plt.ylabel('Log parameter value')
+# plt.savefig('../generated_figures/parambarplot_updated5891.pdf',format='pdf')
+plt.show()
+
+#import warnings
+#warnings.filterwarnings("ignore")
 
 results_from_dataset_comparisons = {}
 num_to_sample = 1000
