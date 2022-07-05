@@ -187,9 +187,8 @@ def likelihood(position, obs_list, param_values, rates_mask, solver):
             total_cost = np.inf * -1
         return total_cost
 
-
-with open('../helper_functions_and_files/all_possible_sampled_params.pickle', 'rb') as p:
-    sampled_params_list = pickle.load(p)
+with open('../helper_functions_and_files/all_possible_sampled_params_dict.pickle', 'rb') as p:
+    sampled_params_dict = pickle.load(p)
 
 # per model
 
@@ -207,12 +206,13 @@ for m in model_dict:
     #
     rates_mask = []
     for i in [x for x in model.parameters]:
-        rates_mask.append('sp_' + i.name in [y.name for y in sampled_params_list])
+        rates_mask.append('sp_' + i.name in [y for y in
+                                             sampled_params_dict])  # list comprehension will give all the names for sampled params (keys in the dict)
     #
     sp_list = []
-    for i in [x for x in sampled_params_list]:
-        if i.name.split('sp_')[1] in [y.name for y in model.parameters]:
-            sp_list.append(i)
+    for i in [x for x in sampled_params_dict]:
+        if i.split('sp_')[1] in [y.name for y in model.parameters]:
+            sp_list.append(sampled_params_dict[i])
     #
     sfr = "" + indir + "/dir_model_" + str(m) + "/model_" + str(m) + "_"
     #
@@ -300,7 +300,7 @@ for m in results_dict:
     df_list.append(pd.DataFrame(results_dict[m], index=[m]))
 
 full_rez_dict = pd.concat(df_list)
-full_rez_dict.to_pickle(outdir+'results_fromNS_gathered_TKO_somemissing.pickle')
+full_rez_dict.to_pickle(outdir+'results_fromNS_gathered_TKO_somemissing_test.pickle')
 
 # with open(outdir+'compare_clA_gleipnir_results_subset_betafit_12_10_2020_DIC_calc_values_in_case.pickle','wb') as f:
 #    pickle.dump(DIC_dict,f)
