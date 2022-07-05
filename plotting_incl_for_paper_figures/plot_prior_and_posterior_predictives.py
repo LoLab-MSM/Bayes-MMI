@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import pickle
 import numpy as np
 import pandas as pd
+import gzip
 from matplotlib import ticker
 from matplotlib.ticker import FormatStrFormatter
 from matplotlib.ticker import FuncFormatter
