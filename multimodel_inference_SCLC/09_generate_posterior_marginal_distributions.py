@@ -10,15 +10,15 @@ import os
 
 sys.path.append('/home/beiksp/maybe_pycharm_running/')
 
-with open('../helper_functions_and_files/all_possible_sampled_params.pickle', 'rb') as p:
-    sampled_params_list = pickle.load(p)
+with open('../helper_functions_and_files/all_possible_sampled_params_dict.pickle', 'rb') as p:
+    sampled_params_dict = pickle.load(p)
 
 analyzed_file_dir = "../files_generated_in_MMI_sclc/"
 mmi_indir = "../pymultinest_results/"
 outdir = "../posterior_marginals_and_predictives/posterior_marginals_all/"
 
 names_dict = {}
-for n, i in enumerate([x.name for x in sampled_params_list]):
+for n, i in enumerate([x for x in sampled_params_dict]):
     param_toprint = i
     ptp = param_toprint.split('sp_')[1]
     paramtoprint = ptp.split('_diff')
@@ -172,7 +172,6 @@ from helper_functions_and_files.modeldict_generator import generate_modeldict
 
 modeldict = generate_modeldict()
 
-dfdict = pd.read_pickle('../helper_functions_and_files/updatedinjune_all_9327_models_in_dataframe_with_subtype_starting_makeup_code.pickle')
 res_dict = {
     'TKO': pd.read_pickle(
         analyzed_file_dir+'/results_fromNS_gathered_TKO_somemissing_addlanalyses.pickle'),
@@ -188,6 +187,7 @@ modselection_postmarg = {
     'cl_A': pd.DataFrame()
 }
 
+dfdict = pd.read_pickle('../helper_functions_and_files/updatedinjune_all_9327_models_in_dataframe_with_subtype_starting_makeup_code.pickle')
 updated_modelmakeups = np.load('../helper_functions_and_files/updatedinjune_apr_11_all_model_makeups_from_redo_ignoring_uneven_bidirtxns.npy')
 upd_modnums = []
 for j in dfdict.index:
@@ -214,14 +214,15 @@ for dset in ['TKO', 'RPM', 'cl_A']:
         model = modeldict[m]
         param_values = np.array([p.value for p in model.parameters])
         sp_list = []
-        for i in [x for x in sampled_params_list]:
-            if i.name.split('sp_')[1] in [y.name for y in model.parameters]:
-                sp_list.append(i)
+        for i in [x for x in sampled_params_dict]:
+            if i.split('sp_')[1] in [y.name for y in model.parameters]:
+                # need the tuples here to include the names and not just the scipy stats object
+                sp_list.append((i,sampled_params_dict[i]))
         modeldir = mmi_indir +'/' + dset + '/'
         sfr = "" + modeldir + "/dir_model_" + str(m) + "/model_" + str(m) + "_"
         a = pymultinest.Analyzer(len(sp_list), outputfiles_basename=sfr)
         pos = pd.DataFrame(np.array([i for i in a.get_equal_weighted_posterior()]),
-                           columns=[names_dict[i.name] for i in sp_list] + ['paramset_likelihood'])
+                           columns=[names_dict[i[0]] for i in sp_list] + ['paramset_likelihood'])
         pos = pos.sort_values('paramset_likelihood', ascending=False)[:1000]  # get the top 1000
         pos.reset_index(inplace=True, drop=True)
         # bc multiple paramsets per model

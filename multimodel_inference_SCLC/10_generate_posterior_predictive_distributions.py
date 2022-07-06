@@ -11,6 +11,7 @@ import os
 
 # add this Bayes-MMI directory to the path to be able to import from helper_functions_and_files
 sys.path.append('/home/beiksp/Bayes-MMI')
+sys.path.append('/home/beiksp/maybe_pycharm_running/')
 
 class TimeoutException(RuntimeError):
     """ Time out occurred! """
@@ -20,14 +21,14 @@ def handler(signum, frame):
     print('forever is over!')
     raise TimeoutException()
 
-with open('../helper_functions_and_files/all_possible_sampled_params.pickle','rb') as p:
-    sampled_params_list = pickle.load(p)
+with open('../helper_functions_and_files/all_possible_sampled_params_dict.pickle','rb') as p:
+    sampled_params_dict = pickle.load(p)
 
 # Register the signal function handler
 signal.signal(signal.SIGALRM, handler)
 
 names_dict = {}
-for n,i in enumerate([x.name for x in sampled_params_list]):
+for n,i in enumerate([x for x in sampled_params_dict]):
     param_toprint = i
     ptp = param_toprint.split('sp_')[1]
     paramtoprint = ptp.split('_diff')
@@ -47,7 +48,7 @@ for n,i in enumerate([x.name for x in sampled_params_list]):
     finalparam = finalparam.replace('NonNE', 'Y').replace('NEv2', 'A2').replace('NEv1', 'N').replace('NE', 'A')
     names_dict[i] = finalparam
 
-#now just have to access the right dict object -- just add for any relevant new distributions
+#now just have to access the right stats object -- just add for any relevant new distributions
 randomgen_dict = {
     'norm':np.random.default_rng().normal,
     'uniform':np.random.default_rng().uniform
@@ -57,38 +58,16 @@ def gen_priors_for_predictive(howmany,dist,loc,scale):
     # howmany = how many sets you want
     # dist = the scipy.stats distribution
     # loc and scale the way they are defined for scipy.stats distributions
+    # for some reason loc and scale here represent the left and right bounds of the uniform distr
+    #   (unlike in plotting_incl_for_paper_figures/plot_prior_and_posterior_marginals.py's plot_priors,
+    #    where loc is the leftmost bound and loc+scale is the rightmost bound)
     return randomgen_dict[dist.name](loc,scale,size=howmany)
 
 margfile_dir = "../posterior_marginals_and_predictives/"
 outdir_prior = "../posterior_marginals_and_predictives/prior_posterior_predictives_all/prior_predictives_all/"
 outdir_post = "../posterior_marginals_and_predictives/prior_posterior_predictives_all/posterior_predictives_all/"
 
-
-fittingdatadict = {
-    'TKO':pd.read_csv('../cibersort_data/cibersort_data_Sage.csv'),
-    'RPM':pd.read_csv('../cibersort_datacibersort_data_Oliver.csv'),
-    'cl_A':pd.read_csv('../cibersort_datacibersort_data_cl_cluster_A.csv')
-}
-
 obs_list = ['NE_obs', 'NEv1_obs', 'NEv2_obs', 'NonNE_obs']
-
-for j in fittingdatadict:
-    dat = fittingdatadict[j]
-    newcol = []
-    for i in dat.columns:
-        if i=='ML':
-            newcol.append('NonNE_obs')
-        elif i=='MLH':
-            newcol.append('NEv2_obs')
-        elif i=='NEH':
-            newcol.append('NEv1_obs')
-        elif i=='NE':
-            newcol.append('NE_obs')
-        else:
-            newcol.append(i)
-    dat.columns = newcol
-    if j == 'RPM':
-        fittingdatadict[j] = dat.loc[dat['Input Sample'].str.startswith('PB',na=False)]
 
 tko_notdone = [24, 26, 34, 36, 39, 40, 41, 136, 138, 141, 143, 156, 158, 161, 163, 268, 270, 271, 274, 288, 290, 293, 295,
            542, 547, 549, 562, 564, 613, 615, 628, 630, 631, 679, 681, 682, 689, 694, 696, 1336, 1337, 1441, 1638, 1640,
@@ -223,8 +202,6 @@ from helper_functions_and_files.modeldict_generator import generate_modeldict
 
 modeldict = generate_modeldict()
 
-dfdict = pd.read_pickle('../helper_functions_and_files/updatedinjune_all_9327_models_in_dataframe_with_subtype_starting_makeup_code.pickle')
-
 modselection_postpred = {}
 for i in ['TKO','RPM','cl_A']:
     modselection_postpred[i] = {
@@ -244,6 +221,7 @@ for i in ['TKO','cl_A','RPM']:
             'NonNE_obs': pd.DataFrame()
         }
 
+dfdict = pd.read_pickle('../helper_functions_and_files/updatedinjune_all_9327_models_in_dataframe_with_subtype_starting_makeup_code.pickle')
 updated_modelmakeups = np.load('../helper_functions_and_files/updatedinjune_apr_11_all_model_makeups_from_redo_ignoring_uneven_bidirtxns.npy')
 upd_modnums = []
 for j in dfdict.index:
@@ -254,10 +232,11 @@ for j in dfdict.index:
 
 TOLERANCE = 1e-4
 for dset in ['TKO', 'RPM', 'cl_A']:
-    old_m = 3205
+    old_m = 5000
     ind = 1
     #postparamstosim only need to load once as long as it's for the correct dataset
-    postparamstosim = pd.read_pickle(margfile_dir + dset + '_betafit_postmarg_params_and_probabilities_from_postequalweights_somemissing_4_10_22.pickle')
+    postparamstosim = pd.read_pickle(margfile_dir + dset + '_betafit_postmarg_params_and_probabilities_from_postequalweights_somemissing_6_23_22.pklz',
+                                     compression='gzip')
     for m in modeldict:
         if m <= old_m: #first run should be <; anything past the first time this needs to be <=
             continue
@@ -275,7 +254,7 @@ for dset in ['TKO', 'RPM', 'cl_A']:
         #
         rates_mask = []
         for i in [x for x in model.parameters]:
-            rates_mask.append('sp_'+i.name in [y.name for y in sampled_params_list])
+            rates_mask.append('sp_' + i.name in [y for y in sampled_params_dict])
         #
         ### Prior predictive
         # "get" parameter sets
@@ -284,17 +263,16 @@ for dset in ['TKO', 'RPM', 'cl_A']:
                                           'NE_0']]  # ok fine i had to hardcode initials sorry
         ndims = len(parameters_idxs)
         pddict = {}
-        paramsets = []
         for dim in range(ndims):
-            thisprior = [i for i in sampled_params_list if i.name == 'sp_' + model.parameters[parameters_idxs[dim]].name][0]
+            thisprior = [sampled_params_dict[i] for i in sampled_params_dict if i == 'sp_' + model.parameters[parameters_idxs[dim]].name][0]
             priors_to_simulate = []
-            if thisprior.prior_dist.interval(1)[1] == np.inf:
-                priors_to_simulate = gen_priors_for_predictive(1000, thisprior.prior_dist.dist,
-                                        thisprior.prior_dist.mean(), thisprior.prior_dist.std())
+            if thisprior.a == np.inf or thisprior.a == -np.inf: #normal distribution
+                priors_to_simulate = gen_priors_for_predictive(1000, thisprior.dist,
+                                        thisprior.mean(), thisprior.std())
             else:
-                priors_to_simulate = gen_priors_for_predictive(1000, thisprior.prior_dist.dist,
-                                        thisprior.prior_dist.interval(1)[0],
-                                        thisprior.prior_dist.interval(1)[1]
+                priors_to_simulate = gen_priors_for_predictive(1000, thisprior.dist,
+                                        thisprior.ppf(0.00001),
+                                        thisprior.ppf(0.99999)
                                         )
             if len(priors_to_simulate)==0:
                 print ('Error: no priors returned for parameter '+model.parameters[parameters_idxs[dim]].name
@@ -347,19 +325,14 @@ for dset in ['TKO', 'RPM', 'cl_A']:
                 if not_eq:
                     print('not_eq')
                 else:
-                    paramsets.append(df_x.iloc[i])
                     priorNE.loc[i] = sim['NE_obs'] / sim['total_cells']
                     priorNEv1.loc[i] = sim['NEv1_obs'] / sim['total_cells']
                     priorNEv2.loc[i] = sim['NEv2_obs'] / sim['total_cells']
                     priorNonNE.loc[i] = sim['NonNE_obs'] / sim['total_cells']
         priorNE['from_model'] = m
-        priorNE['model_starting_subtype_makeup_code'] = makeup_code
         priorNEv1['from_model'] = m
-        priorNEv1['model_starting_subtype_makeup_code'] = makeup_code
         priorNEv2['from_model'] = m
-        priorNEv2['model_starting_subtype_makeup_code'] = makeup_code
         priorNonNE['from_model'] = m
-        priorNonNE['model_starting_subtype_makeup_code'] = makeup_code
         modselection_priorpred[dset]['NE_obs'] = pd.concat([modselection_priorpred[dset]['NE_obs'], priorNE])
         modselection_priorpred[dset]['NEv1_obs'] = pd.concat([modselection_priorpred[dset]['NEv1_obs'], priorNEv1])
         modselection_priorpred[dset]['NEv2_obs'] = pd.concat([modselection_priorpred[dset]['NEv2_obs'], priorNEv2])

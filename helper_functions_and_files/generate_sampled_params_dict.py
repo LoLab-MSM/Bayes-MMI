@@ -36,7 +36,7 @@ sampled_params_dict['sp_diff_uni_0_NE_cell_NonNE_diff_cell_1kf_0'] = uniform(loc
 sampled_params_dict['sp_diff_uni_0_NEv2_cell_NEv1_diff_cell_1kf_0'] = uniform(loc=np.log10(0.01), scale=3.5)
 sampled_params_dict['sp_diff_uni_0_NonNE_cell_NE_diff_cell_1kf_0'] = uniform(loc=np.log10(0.01), scale=3.5)
 
-# No more effects for diff - these are optional reactions (their other-direction rxns are always present - NE->NEv2, NEv2->NonNE, NE->NEv1, NEv1->NonNE)
+# No more effects for diff - these are optional reactions (if a rxn is present, its other-direction rxn is always present - e.g. NE->NEv2, NEv2->NonNE, NE->NEv1, NEv1->NonNE)
 sampled_params_dict['sp_diff_uni_0_NEv1_cell_NE_diff_cell_1kf_0'] = uniform(loc=np.log10(0.01), scale=3.5)
 sampled_params_dict['sp_diff_uni_0_NonNE_cell_NEv1_diff_cell_1kf_0'] = uniform(loc=np.log10(0.01), scale=3.5)
 sampled_params_dict['sp_diff_uni_0_NEv2_cell_NE_diff_cell_1kf_0'] = uniform(loc=np.log10(0.01), scale=3.5)

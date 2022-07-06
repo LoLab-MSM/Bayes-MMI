@@ -183,7 +183,7 @@ for n, i in enumerate(ordered_namelist):
     ax = axs[int(((n - removeind) - (n - removeind) % columns) / columns), ((n - removeind) % columns)]
     try:
         currprior = sampled_params_dict[[k for k, v in names_dict.items() if v == i][0]]
-        if currprior.a == -np.inf:
+        if currprior.a == -np.inf or currprior.a == np.inf:
             # normal distribution
             plt_range = (-2, 1) if currprior.ppf(0.999) < 5 else (-2, 8)
             plot_priors(ax, currprior.dist, currprior.mean(),
@@ -262,7 +262,7 @@ for dset in ['TKO', 'RPM', 'cl_A']:
             ax.get_shared_y_axes().join(ax, ax2)  # needs to share y-axis too
             currprior = sampled_params_dict[[k for k, v in names_dict.items() if v == i][0]]
             # with whatever scipy stats update i have, this is needed on Notch
-            if currprior.a == -np.inf:
+            if currprior.a == -np.inf or currprior.a == np.inf:
                 plot_priors(ax2, currprior.dist, currprior.mean(),
                             currprior.std(), plt_range)
             else:
@@ -339,7 +339,7 @@ for dset in ['TKO', 'RPM', 'cl_A']:
                 ax.get_shared_y_axes().join(ax, ax2)  # needs to share y-axis too
                 currprior = sampled_params_dict[[k for k, v in names_dict.items() if v == i][0]]
                 # with whatever scipy stats update i have, this is needed on Notch
-                if currprior.a == -np.inf:
+                if currprior.a == -np.inf or currprior.a == np.inf:
                     plot_priors(ax2, currprior.dist, currprior.mean(),
                                 currprior.std(), plt_range)
                 else:
@@ -421,7 +421,7 @@ for dset in ['TKO', 'RPM', 'cl_A']:
                 ax.get_shared_y_axes().join(ax, ax2)  # needs to share y-axis too
                 currprior = sampled_params_dict[[k for k, v in names_dict.items() if v == i][0]]
                 # with whatever scipy stats update i have, this is needed on Notch
-                if currprior.a == -np.inf:
+                if currprior.a == -np.inf or currprior.a == np.inf:
                     plot_priors(ax2, currprior.dist, currprior.mean(),
                                 currprior.std(), plt_range)
                 else:
