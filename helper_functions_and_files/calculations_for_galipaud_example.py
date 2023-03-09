@@ -183,14 +183,23 @@ def example_get_postprobs(df,add_to_dict=False,priordict={},which_evidence='Z'):
         print('x4 posterior probability: '+str(np.sum(to_sum)))
 
 
-def example_get_param_importance(df,add_to_dict=False,priordict={}):
-    # delta_AIC and w_AIC need to be calculated for whatever df is entered
-    df['delta_AICc'] = df.AICc - np.min(df.AICc)
-    df['w_AICc'] = np.exp(-.5 * df.delta_AICc) / np.sum(np.exp(-.5 * df.delta_AICc))
-    #priordict default empty dict, could be that or None
-    if not (type(priordict) is dict or priordict==None):
-        print('priordict passed as incorrect variable, priordict will now be None')
-        priordict = None
+def example_get_param_importance(df,add_to_dict=False,which_IC='AICc'):
+    # delta_AIC and w_AIC need to be calculated for the df (AIC or AICc), or delta_BIC and x
+    # actually the same calculation as for AIC/AICc but technically called a probability (p) rather than a weight (w)
+    delta_term = 'delta_'+which_IC
+    df[delta_term] = df[which_IC] - np.min(df[which_IC])
+    prob_related_term = -1
+    if which_IC in ['AIC','AICc']:
+        prob_related_term = 'w_'+which_IC
+    elif which_IC == 'BIC':
+        prob_related_term = 'p_'+which_IC
+    else:
+        print('Incompatible information criterion provided ('+which_IC+'). \'which_IC\' must be one of the following: AIC, AICc, BIC.')
+        return
+    df[prob_related_term] = np.exp(-.5 * df[delta_term]) / np.sum(np.exp(-.5 * df[delta_term]))
+    #df['delta_AICc'] = df.AICc - np.min(df.AICc)
+    #df['w_AICc'] = np.exp(-.5 * df.delta_AICc) / np.sum(np.exp(-.5 * df.delta_AICc))
+    #
     paramimp_dict = {}
     hasx1 = []
     nox1 = []
@@ -202,30 +211,12 @@ def example_get_param_importance(df,add_to_dict=False,priordict={}):
         else:
             print('PROBLEM')
     if len(hasx1) > 0 and len(nox1) > 0:
-        priorx1 = []
-        priorhas = .5/len(hasx1)
-        priorno = .5/len(nox1)
-        if priordict is not None:
-            priordict['priorx1'] = {}
-            priordict['priorx1']['priorhas'] = priorhas
-            priordict['priorx1']['priorno'] = priorno
-        for i in df.index:
-            if 'x1' in i or 'uniform' in i:
-                priorx1.append(priorhas)
-            elif not 'x1' in i and not 'uniform' in i:
-                priorx1.append(priorno)
-            else:
-                print('PROBLEM')
-        #df['priorx1'] = priorx1
-        #x1postlist = df.INS_Z*df.priorx1 / (np.sum(df.INS_Z*df.priorx1))
-        #df['x1post'] = x1postlist
         to_sum = []
         for i in df.index:
             if 'x1' in i or 'uniform' in i:
-#                to_sum.append(df.loc[i]['x1post'])
-                to_sum.append(df.loc[i]['w_AICc'])
+                to_sum.append(df.loc[i][prob_related_term])
     else:
-        print('Either x1 not included in model set or it is the only option, no posterior probability possible')
+        print('x1 not included in model set or it is the only option, SW will not be meaningful so returning zero')
         to_sum = [0]
     if add_to_dict:
         paramimp_dict['x1_present'] = np.sum(to_sum)
@@ -242,29 +233,12 @@ def example_get_param_importance(df,add_to_dict=False,priordict={}):
         else:
             print('PROBLEM')
     if len(hasx2) > 0 and len(nox2) > 0:
-        priorx2 = []
-        priorhas = .5/len(hasx2)
-        priorno = .5/len(nox2)
-        if priordict is not None:
-            priordict['priorx2'] = {}
-            priordict['priorx2']['priorhas'] = priorhas
-            priordict['priorx2']['priorno'] = priorno
-        for i in df.index:
-            if 'x2' in i or 'uniform' in i:
-                priorx2.append(priorhas)
-            elif not 'x2' in i and not 'uniform' in i:
-                priorx2.append(priorno)
-            else:
-                print('PROBLEM')
-        #df['priorx2'] = priorx2
-        #x2postlist = df.INS_Z*df.priorx2 / (np.sum(df.INS_Z*df.priorx2))
-        #df['x2post'] = x2postlist
         to_sum = []
         for i in df.index:
             if 'x2' in i or 'uniform' in i:
-                to_sum.append(df.loc[i]['w_AICc'])
+                to_sum.append(df.loc[i][prob_related_term])
     else:
-        print('Either x2 not included in model set or it is the only option, no posterior probability possible')
+        print('x2 not included in model set or it is the only option, SW will not be meaningful so returning zero')
         to_sum = [0]
     if add_to_dict:
             paramimp_dict['x2_present'] = np.sum(to_sum)
@@ -281,35 +255,18 @@ def example_get_param_importance(df,add_to_dict=False,priordict={}):
         else:
             print('PROBLEM')
     if len(hasx3) > 0 and len(nox3) > 0:
-        priorx3 = []
-        priorhas = .5/len(hasx3)
-        priorno = .5/len(nox3)
-        if priordict is not None:
-            priordict['priorx3'] = {}
-            priordict['priorx3']['priorhas'] = priorhas
-            priordict['priorx3']['priorno'] = priorno
-        for i in df.index:
-            if 'x3' in i or 'uniform' in i:
-                priorx3.append(priorhas)
-            elif not 'x3' in i and not 'uniform' in i:
-                priorx3.append(priorno)
-            else:
-                print('PROBLEM')
-        #df['priorx3'] = priorx3
-        #x3postlist = df.INS_Z*df.priorx3 / (np.sum(df.INS_Z*df.priorx3))
-        #df['x3post'] = x3postlist
         to_sum = []
         for i in df.index:
             if 'x3' in i or 'uniform' in i:
-                to_sum.append(df.loc[i]['w_AICc'])
+                to_sum.append(df.loc[i][prob_related_term])
     else:
-        print('Either x3 not included in model set or it is the only option, no posterior probability possible')
+        print('x3 not included in model set or it is the only option, SW will not be meaningful so returning zero')
         to_sum = [0]
     if add_to_dict:
         paramimp_dict['x3_present'] = 1-np.sum(to_sum)
     else:
         print('x3 posterior probability: '+str(np.sum(to_sum)))
-    # A2 to A
+    # x4
     hasx4 = []
     nox4 = []
     for i in df.index:
@@ -320,29 +277,12 @@ def example_get_param_importance(df,add_to_dict=False,priordict={}):
         else:
             print('PROBLEM')
     if len(hasx4) > 0 and len(nox4) > 0:
-        priorx4 = []
-        priorhas = .5/len(hasx4)
-        priorno = .5/len(nox4)
-        if priordict is not None:
-            priordict['priorx4'] = {}
-            priordict['priorx4']['priorhas'] = priorhas
-            priordict['priorx4']['priorno'] = priorno
-        for i in df.index:
-            if 'x4' in i or 'uniform' in i:
-                priorx4.append(priorhas)
-            elif not 'x4' in i and not 'uniform' in i:
-                priorx4.append(priorno)
-            else:
-                print('PROBLEM')
-        #df['priorx4'] = priorx4
-        #x4postlist = df.INS_Z*df.priorx4 / (np.sum(df.INS_Z*df.priorx4))
-        #df['x4post'] = x4postlist
         to_sum = []
         for i in df.index:
             if 'x4' in i or 'uniform' in i:
-                to_sum.append(df.loc[i]['w_AICc'])
+                to_sum.append(df.loc[i][prob_related_term])
     else:
-        print('Either A2 -> A not included or it is the only option, no posterior probability possible')
+        print('x4 not included in model set or it is the only option, SW will not be meaningful so returning zero')
         to_sum = [0]
     if add_to_dict:
         paramimp_dict['x4_present'] = np.sum(to_sum)
