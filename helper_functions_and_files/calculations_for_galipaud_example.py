@@ -39,7 +39,7 @@ def example_get_postprobs(df,add_to_dict=False,priordict={},which_evidence='Z'):
             else:
                 print('PROBLEM')
         df['priorx1_'+which_evidence] = priorx1
-        x1postlist = df[which_evidence]*df.priorx1 / (np.sum(df[which_evidence]*df.priorx1))
+        x1postlist = df[which_evidence]*df['priorx1_'+which_evidence] / (np.sum(df[which_evidence]*df['priorx1_'+which_evidence]))
         df['x1post_'+which_evidence] = x1postlist
         to_sum = []
         for i in df.index:
@@ -78,7 +78,7 @@ def example_get_postprobs(df,add_to_dict=False,priordict={},which_evidence='Z'):
             else:
                 print('PROBLEM')
         df['priorx2_'+which_evidence] = priorx2
-        x2postlist = df[which_evidence]*df.priorx2 / (np.sum(df[which_evidence]*df.priorx2))
+        x2postlist = df[which_evidence]*df['priorx2_'+which_evidence] / (np.sum(df[which_evidence]*df['priorx2_'+which_evidence]))
         df['x2post_'+which_evidence] = x2postlist
         to_sum = []
         for i in df.index:
@@ -117,7 +117,7 @@ def example_get_postprobs(df,add_to_dict=False,priordict={},which_evidence='Z'):
             else:
                 print('PROBLEM')
         df['priorx3_'+which_evidence] = priorx3
-        x3postlist = df[which_evidence]*df.priorx3 / (np.sum(df[which_evidence]*df.priorx3))
+        x3postlist = df[which_evidence]*df['priorx3_'+which_evidence] / (np.sum(df[which_evidence]*df['priorx3_'+which_evidence]))
         df['x3post_'+which_evidence] = x3postlist
         to_sum = []
         for i in df.index:
@@ -156,7 +156,7 @@ def example_get_postprobs(df,add_to_dict=False,priordict={},which_evidence='Z'):
             else:
                 print('PROBLEM')
         df['priorx4_'+which_evidence] = priorx4
-        x4postlist = df[which_evidence]*df.priorx4 / (np.sum(df[which_evidence]*df.priorx4))
+        x4postlist = df[which_evidence]*df['priorx4_'+which_evidence] / (np.sum(df[which_evidence]*df['priorx4_'+which_evidence]))
         df['x4post_'+which_evidence] = x4postlist
         to_sum = []
         for i in df.index:
