@@ -6,11 +6,11 @@ def example_get_postprobs(df,add_to_dict=False,priordict={},which_evidence='Z'):
         print('priordict passed as incorrect variable, priordict will now be None')
         priordict = None
     try:
-        if not (which_evidence.upper()=='Z' or which_evidence.upper()=='INS_Z'):
-            print('which_evidence passed as incorrect variable, which_evidence will default to Z rather than INS_Z')
+        if not which_evidence in ['Z','INS_Z','BIC_marglik_est']:
+            print('which_evidence passed as incorrect variable, \'which_evidence will\' default to Z')
             which_evidence='Z'
     except AttributeError:
-        print('which_evidence passed as incorrect variable, which_evidence will default to Z rather than INS_Z')
+        print('which_evidence passed as incorrect variable, \'which_evidence\' will default to Z')
         which_evidence = 'Z'
         pass
     postprob_dict = {}
@@ -38,16 +38,13 @@ def example_get_postprobs(df,add_to_dict=False,priordict={},which_evidence='Z'):
                 priorx1.append(priorno)
             else:
                 print('PROBLEM')
-        df['priorx1'] = priorx1
-        if which_evidence=='Z':
-            x1postlist = df.Z*df.priorx1 / (np.sum(df.Z*df.priorx1))
-        else:
-            x1postlist = df.INS_Z*df.priorx1 / (np.sum(df.INS_Z*df.priorx1))
-        df['x1post'] = x1postlist
+        df['priorx1_'+which_evidence] = priorx1
+        x1postlist = df[which_evidence]*df.priorx1 / (np.sum(df[which_evidence]*df.priorx1))
+        df['x1post_'+which_evidence] = x1postlist
         to_sum = []
         for i in df.index:
             if 'x1' in i or 'uniform' in i:
-                to_sum.append(df.loc[i]['x1post'])
+                to_sum.append(df.loc[i]['x1post_'+which_evidence])
     else:
         print('Either x1 not included in model set or it is the only option, no posterior probability possible')
         to_sum = [0]
@@ -80,16 +77,13 @@ def example_get_postprobs(df,add_to_dict=False,priordict={},which_evidence='Z'):
                 priorx2.append(priorno)
             else:
                 print('PROBLEM')
-        df['priorx2'] = priorx2
-        if which_evidence=='Z':
-            x2postlist = df.Z*df.priorx2 / (np.sum(df.Z*df.priorx2))
-        else:
-            x2postlist = df.INS_Z*df.priorx2 / (np.sum(df.INS_Z*df.priorx2))
-        df['x2post'] = x2postlist
+        df['priorx2_'+which_evidence] = priorx2
+        x2postlist = df[which_evidence]*df.priorx2 / (np.sum(df[which_evidence]*df.priorx2))
+        df['x2post_'+which_evidence] = x2postlist
         to_sum = []
         for i in df.index:
             if 'x2' in i or 'uniform' in i:
-                to_sum.append(df.loc[i]['x2post'])
+                to_sum.append(df.loc[i]['x2post_'+which_evidence])
     else:
         print('Either x2 not included in model set or it is the only option, no posterior probability possible')
         to_sum = [0]
@@ -122,16 +116,13 @@ def example_get_postprobs(df,add_to_dict=False,priordict={},which_evidence='Z'):
                 priorx3.append(priorno)
             else:
                 print('PROBLEM')
-        df['priorx3'] = priorx3
-        if which_evidence=='Z':
-            x3postlist = df.Z*df.priorx3 / (np.sum(df.Z*df.priorx3))
-        else:
-            x3postlist = df.INS_Z*df.priorx3 / (np.sum(df.INS_Z*df.priorx3))
-        df['x3post'] = x3postlist
+        df['priorx3_'+which_evidence] = priorx3
+        x3postlist = df[which_evidence]*df.priorx3 / (np.sum(df[which_evidence]*df.priorx3))
+        df['x3post_'+which_evidence] = x3postlist
         to_sum = []
         for i in df.index:
             if 'x3' in i or 'uniform' in i:
-                to_sum.append(df.loc[i]['x3post'])
+                to_sum.append(df.loc[i]['x3post_'+which_evidence])
     else:
         print('Either x3 not included in model set or it is the only option, no posterior probability possible')
         to_sum = [0]
@@ -164,16 +155,13 @@ def example_get_postprobs(df,add_to_dict=False,priordict={},which_evidence='Z'):
                 priorx4.append(priorno)
             else:
                 print('PROBLEM')
-        df['priorx4'] = priorx4
-        if which_evidence=='Z':
-            x4postlist = df.Z*df.priorx4 / (np.sum(df.Z*df.priorx4))
-        else:
-            x4postlist = df.INS_Z*df.priorx4 / (np.sum(df.INS_Z*df.priorx4))
-        df['x4post'] = x4postlist
+        df['priorx4_'+which_evidence] = priorx4
+        x4postlist = df[which_evidence]*df.priorx4 / (np.sum(df[which_evidence]*df.priorx4))
+        df['x4post_'+which_evidence] = x4postlist
         to_sum = []
         for i in df.index:
             if 'x4' in i or 'uniform' in i:
-                to_sum.append(df.loc[i]['x4post'])
+                to_sum.append(df.loc[i]['x4post_'+which_evidence])
     else:
         print('Either x4 not included in candidate models or it is the only option, no posterior probability possible')
         to_sum = [0]
