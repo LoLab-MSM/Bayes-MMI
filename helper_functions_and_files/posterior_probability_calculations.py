@@ -58,11 +58,19 @@ for j in [31,32,33]:
 for j in [34,35,36]:
     num_to_hypo[j]+='_N_Y'
 
-def get_postprobs_allbutstructure(df,add_to_dict=False,priordict={}):
+def get_postprobs_allbutstructure(df,add_to_dict=False,priordict={},which_evidence='INS_Z'):
     #priordict default empty dict, could be that or None
     if not (type(priordict) is dict or priordict==None):
         print('priordict passed as incorrect variable, priordict will now be None')
         priordict = None
+    try:
+        if not which_evidence in ['Z','INS_Z','BIC_marglik_est']:
+            print('which_evidence passed as incorrect variable, \'which_evidence will\' default to INS_Z')
+            which_evidence='INS_Z'
+    except AttributeError:
+        print('which_evidence passed as incorrect variable, \'which_evidence\' will default to INS_Z')
+        which_evidence = 'INS_Z'
+        pass
     postprob_dict = {}
     hasAN = []
     noAN = []
@@ -86,14 +94,14 @@ def get_postprobs_allbutstructure(df,add_to_dict=False,priordict={}):
                 priorAN.append(priorhas)
             if not (28 in x or 29 in x or 30 in x):
                 priorAN.append(priorno)
-        df['priorAN'] = priorAN
-        ANpostlist = df.INS_Z*df.priorAN / (np.sum(df.INS_Z*df.priorAN))
-        df['ANpost'] = ANpostlist
+        df['priorAN_'+which_evidence] = priorAN
+        ANpostlist = df[which_evidence]*df['priorAN_'+which_evidence] / (np.sum(df[which_evidence]*df['priorAN_'+which_evidence]))
+        df['ANpost_'+which_evidence] = ANpostlist
         to_sum = []
         for i in df.index:
             x = [int(j) for j in df.loc[i]['model_makeup'].split(',')]
             if 28 in x or 29 in x or 30 in x:
-                to_sum.append(df.loc[i]['ANpost'])
+                to_sum.append(df.loc[i]['ANpost_'+which_evidence])
     else:
         print('Either A ->N not included or it is the only option, no posterior probability possible')
         to_sum = [0]
@@ -125,14 +133,14 @@ def get_postprobs_allbutstructure(df,add_to_dict=False,priordict={}):
                 priorNA.append(priorhas)
             if not 41 in x:
                 priorNA.append(priorno)
-        df['priorNA'] = priorNA
-        NApostlist = df.INS_Z*df.priorNA / (np.sum(df.INS_Z*df.priorNA))
-        df['NApost'] = NApostlist
+        df['priorNA_'+which_evidence] = priorNA
+        NApostlist = df[which_evidence]*df['priorNA_'+which_evidence] / (np.sum(df[which_evidence]*df['priorNA_'+which_evidence]))
+        df['NApost_'+which_evidence] = NApostlist
         to_sum = []
         for i in df.index:
             x = [int(j) for j in df.loc[i]['model_makeup'].split(',')]
             if 41 in x:
-                to_sum.append(df.loc[i]['NApost'])
+                to_sum.append(df.loc[i]['NApost_'+which_evidence])
     else:
         print('Either N ->A not included or it is the only option, no posterior probability possible')
         to_sum = [0]
@@ -164,14 +172,14 @@ def get_postprobs_allbutstructure(df,add_to_dict=False,priordict={}):
                 priorAA2.append(priorhas)
             if not (25 in x or 26 in x or 27 in x):
                 priorAA2.append(priorno)
-        df['priorAA2'] = priorAA2
-        AA2postlist = df.INS_Z*df.priorAA2 / (np.sum(df.INS_Z*df.priorAA2))
-        df['AA2post'] = AA2postlist
+        df['priorAA2_'+which_evidence] = priorAA2
+        AA2postlist = df[which_evidence]*df['priorAA2_'+which_evidence] / (np.sum(df[which_evidence]*df['priorAA2_'+which_evidence]))
+        df['AA2post_'+which_evidence] = AA2postlist
         to_sum = []
         for i in df.index:
             x = [int(j) for j in df.loc[i]['model_makeup'].split(',')]
             if 25 in x or 26 in x or 27 in x:
-                to_sum.append(df.loc[i]['AA2post'])
+                to_sum.append(df.loc[i]['AA2post_'+which_evidence])
     else:
         print('Either A -> A2 not included or it is the only option, no posterior probability possible')
         to_sum = [0]
@@ -203,14 +211,14 @@ def get_postprobs_allbutstructure(df,add_to_dict=False,priordict={}):
                 priorA2A.append(priorhas)
             if not 43 in x:
                 priorA2A.append(priorno)
-        df['priorA2A'] = priorA2A
-        A2Apostlist = df.INS_Z*df.priorA2A / (np.sum(df.INS_Z*df.priorA2A))
-        df['A2Apost'] = A2Apostlist
+        df['priorA2A_'+which_evidence] = priorA2A
+        A2Apostlist = df[which_evidence]*df['priorA2A_'+which_evidence] / (np.sum(df[which_evidence]*df['priorA2A_'+which_evidence]))
+        df['A2Apost_'+which_evidence] = A2Apostlist
         to_sum = []
         for i in df.index:
             x = [int(j) for j in df.loc[i]['model_makeup'].split(',')]
             if 43 in x:
-                to_sum.append(df.loc[i]['A2Apost'])
+                to_sum.append(df.loc[i]['A2Apost_'+which_evidence])
     else:
         print('Either A2 -> A not included or it is the only option, no posterior probability possible')
         to_sum = [0]
@@ -242,14 +250,14 @@ def get_postprobs_allbutstructure(df,add_to_dict=False,priordict={}):
                 priorNY.append(priorhas)
             if not (34 in x or 35 in x or 36 in x):
                 priorNY.append(priorno)
-        df['priorNY'] = priorNY
-        NYpostlist = df.INS_Z*df.priorNY / (np.sum(df.INS_Z*df.priorNY))
-        df['NYpost'] = NYpostlist
+        df['priorNY_'+which_evidence] = priorNY
+        NYpostlist = df[which_evidence]*df['priorNY_'+which_evidence] / (np.sum(df[which_evidence]*df['priorNY_'+which_evidence]))
+        df['NYpost_'+which_evidence] = NYpostlist
         to_sum = []
         for i in df.index:
             x = [int(j) for j in df.loc[i]['model_makeup'].split(',')]
             if 34 in x or 35 in x or 36 in x:
-                to_sum.append(df.loc[i]['NYpost'])
+                to_sum.append(df.loc[i]['NYpost_'+which_evidence])
     else:
         print('Either N -> Y not included or it is the only option, no posterior probability possible')
         to_sum = [0]
@@ -281,14 +289,14 @@ def get_postprobs_allbutstructure(df,add_to_dict=False,priordict={}):
                 priorYN.append(priorhas)
             if not 42 in x:
                 priorYN.append(priorno)
-        df['priorYN'] = priorYN
-        YNpostlist = df.INS_Z*df.priorYN / (np.sum(df.INS_Z*df.priorYN))
-        df['YNpost'] = YNpostlist
+        df['priorYN_'+which_evidence] = priorYN
+        YNpostlist = df[which_evidence]*df['priorYN_'+which_evidence] / (np.sum(df[which_evidence]*df['priorYN_'+which_evidence]))
+        df['YNpost_'+which_evidence] = YNpostlist
         to_sum = []
         for i in df.index:
             x = [int(j) for j in df.loc[i]['model_makeup'].split(',')]
             if 42 in x:
-                to_sum.append(df.loc[i]['YNpost'])
+                to_sum.append(df.loc[i]['YNpost_'+which_evidence])
     else:
         print('Either Y -> N not included or it is the only option, no posterior probability possible')
         to_sum = [0]
@@ -320,14 +328,14 @@ def get_postprobs_allbutstructure(df,add_to_dict=False,priordict={}):
                 priorA2Y.append(priorhas)
             if not (31 in x or 32 in x or 33 in x):
                 priorA2Y.append(priorno)
-        df['priorA2Y'] = priorA2Y
-        A2Ypostlist = df.INS_Z*df.priorA2Y / (np.sum(df.INS_Z*df.priorA2Y))
-        df['A2Ypost'] = A2Ypostlist
+        df['priorA2Y_'+which_evidence] = priorA2Y
+        A2Ypostlist = df[which_evidence]*df['priorA2Y_'+which_evidence] / (np.sum(df[which_evidence]*df['priorA2Y_'+which_evidence]))
+        df['A2Ypost_'+which_evidence] = A2Ypostlist
         to_sum = []
         for i in df.index:
             x = [int(j) for j in df.loc[i]['model_makeup'].split(',')]
             if 31 in x or 32 in x or 33 in x:
-                to_sum.append(df.loc[i]['A2Ypost'])
+                to_sum.append(df.loc[i]['A2Ypost_'+which_evidence])
     else:
         print('Either A2 ->Y not included or it is the only option, no posterior probability possible')
         to_sum = [0]
@@ -359,14 +367,14 @@ def get_postprobs_allbutstructure(df,add_to_dict=False,priordict={}):
                 priorYA2.append(priorhas)
             if not 44 in x:
                 priorYA2.append(priorno)
-        df['priorYA2'] = priorYA2
-        YA2postlist = df.INS_Z*df.priorYA2 / (np.sum(df.INS_Z*df.priorYA2))
-        df['YA2post'] = YA2postlist
+        df['priorYA2_'+which_evidence] = priorYA2
+        YA2postlist = df[which_evidence]*df['priorYA2_'+which_evidence] / (np.sum(df[which_evidence]*df['priorYA2_'+which_evidence]))
+        df['YA2post_'+which_evidence] = YA2postlist
         to_sum = []
         for i in df.index:
             x = [int(j) for j in df.loc[i]['model_makeup'].split(',')]
             if 44 in x:
-                to_sum.append(df.loc[i]['YA2post'])
+                to_sum.append(df.loc[i]['YA2post_'+which_evidence])
     else:
         print('Either Y -> A2 not included or it is the only option, no posterior probability possible')
         to_sum = [0]
@@ -398,14 +406,14 @@ def get_postprobs_allbutstructure(df,add_to_dict=False,priordict={}):
                 priorAY.append(priorhas)
             if not 38 in x:
                 priorAY.append(priorno)
-        df['priorAY'] = priorAY
-        AYpostlist = df.INS_Z*df.priorAY / (np.sum(df.INS_Z*df.priorAY))
-        df['AYpost'] = AYpostlist
+        df['priorAY_'+which_evidence] = priorAY
+        AYpostlist = df[which_evidence]*df['priorAY_'+which_evidence] / (np.sum(df[which_evidence]*df['priorAY_'+which_evidence]))
+        df['AYpost_'+which_evidence] = AYpostlist
         to_sum = []
         for i in df.index:
             x = [int(j) for j in df.loc[i]['model_makeup'].split(',')]
             if 38 in x:
-                to_sum.append(df.loc[i]['AYpost'])
+                to_sum.append(df.loc[i]['AYpost_'+which_evidence])
     else:
         print('Either A -> Y not included or it is the only option, no posterior probability possible')
         to_sum = [0]
@@ -437,14 +445,14 @@ def get_postprobs_allbutstructure(df,add_to_dict=False,priordict={}):
                 priorYA.append(priorhas)
             if not 40 in x:
                 priorYA.append(priorno)
-        df['priorYA'] = priorYA
-        YApostlist = df.INS_Z*df.priorYA / (np.sum(df.INS_Z*df.priorYA))
-        df['YApost'] = YApostlist
+        df['priorYA_'+which_evidence] = priorYA
+        YApostlist = df[which_evidence]*df['priorYA_'+which_evidence] / (np.sum(df[which_evidence]*df['priorYA_'+which_evidence]))
+        df['YApost_'+which_evidence] = YApostlist
         to_sum = []
         for i in df.index:
             x = [int(j) for j in df.loc[i]['model_makeup'].split(',')]
             if 40 in x:
-                to_sum.append(df.loc[i]['YApost'])
+                to_sum.append(df.loc[i]['YApost_'+which_evidence])
     else:
         print('Either Y -> A not included or it is the only option, no posterior probability possible')
         to_sum = [0]
@@ -476,14 +484,14 @@ def get_postprobs_allbutstructure(df,add_to_dict=False,priordict={}):
                 priorNA2.append(priorhas)
             if not 37 in x:
                 priorNA2.append(priorno)
-        df['priorNA2'] = priorNA2
-        NA2postlist = df.INS_Z*df.priorNA2 / (np.sum(df.INS_Z*df.priorNA2))
-        df['NA2post'] = NA2postlist
+        df['priorNA2_'+which_evidence] = priorNA2
+        NA2postlist = df[which_evidence]*df['priorNA2_'+which_evidence] / (np.sum(df[which_evidence]*df['priorNA2_'+which_evidence]))
+        df['NA2post_'+which_evidence] = NA2postlist
         to_sum = []
         for i in df.index:
             x = [int(j) for j in df.loc[i]['model_makeup'].split(',')]
             if 37 in x:
-                to_sum.append(df.loc[i]['NA2post'])
+                to_sum.append(df.loc[i]['NA2post_'+which_evidence])
     else:
         print('Either N ->A2 not included or it is the only option, no posterior probability possible')
         to_sum = [0]
@@ -515,14 +523,14 @@ def get_postprobs_allbutstructure(df,add_to_dict=False,priordict={}):
                 priorA2N.append(priorhas)
             if not 39 in x:
                 priorA2N.append(priorno)
-        df['priorA2N'] = priorA2N
-        A2Npostlist = df.INS_Z*df.priorA2N / (np.sum(df.INS_Z*df.priorA2N))
-        df['A2Npost'] = A2Npostlist
+        df['priorA2N_'+which_evidence] = priorA2N
+        A2Npostlist = df[which_evidence]*df['priorA2N_'+which_evidence] / (np.sum(df[which_evidence]*df['priorA2N_'+which_evidence]))
+        df['A2Npost_'+which_evidence] = A2Npostlist
         to_sum = []
         for i in df.index:
             x = [int(j) for j in df.loc[i]['model_makeup'].split(',')]
             if 39 in x:
-                to_sum.append(df.loc[i]['A2Npost'])
+                to_sum.append(df.loc[i]['A2Npost_'+which_evidence])
     else:
         print('Either A2 ->N not included or it is the only option, no posterior probability possible')
         to_sum = [0]
@@ -554,10 +562,10 @@ def get_postprobs_allbutstructure(df,add_to_dict=False,priordict={}):
                 priordiveff.append(priorhas)
             if not (1 in x or 7 in x or 13 in x or 19 in x or 2 in x or 8 in x or 14 in x or 20 in x):
                 priordiveff.append(priorno)
-        df['priordiveff_any'] = priordiveff
-        diveff_postlist = df.INS_Z * df.priordiveff_any / (np.sum(df.INS_Z * df.priordiveff_any))
-        df['diveffpost_any'] = diveff_postlist
-        the_sum = np.sum(df.loc[df.priordiveff_any == priorhas].diveffpost_any)
+        df['priordiveff_any_'+which_evidence] = priordiveff
+        diveff_postlist = df[which_evidence] * df['priordiveff_any_'+which_evidence] / (np.sum(df[which_evidence] * df['priordiveff_any_'+which_evidence]))
+        df['diveffpost_any_'+which_evidence] = diveff_postlist
+        the_sum = np.sum(df.loc[df['priordiveff_any_'+which_evidence] == priorhas]['diveffpost_any_'+which_evidence])
     else:
         print('Only one possibility (all models have no division effects or all models have division effects), '
               'no posterior probability possible')
@@ -611,17 +619,17 @@ def get_postprobs_allbutstructure(df,add_to_dict=False,priordict={}):
                 priordiveffspec.append(priorhasA2Y)
             if not (1 in x or 7 in x or 13 in x or 19 in x or 2 in x or 8 in x or 14 in x or 20 in x):
                 priordiveffspec.append(priorno)
-        df['priordiveff_spec'] = priordiveffspec
-        diveff_spec_postlist = df.INS_Z*df.priordiveff_spec / (np.sum(df.INS_Z*df.priordiveff_spec))
-        df['diveffpost_spec'] = diveff_spec_postlist
+        df['priordiveff_spec_'+which_evidence] = priordiveffspec
+        diveff_spec_postlist = df[which_evidence]*df['priordiveff_spec_'+which_evidence] / (np.sum(df[which_evidence]*df['priordiveff_spec_'+which_evidence]))
+        df['diveffpost_spec_'+which_evidence] = diveff_spec_postlist
         to_sum_Y = []
         to_sum_A2Y = []
         for i in df.index:
             x = [int(j) for j in df.loc[i]['model_makeup'].split(',')]
             if 1 in x or 7 in x or 13 in x or 19 in x:
-                to_sum_Y.append(df.loc[i]['diveffpost_spec'])
+                to_sum_Y.append(df.loc[i]['diveffpost_spec_'+which_evidence])
             if 2 in x or 8 in x or 14 in x or 20 in x:
-                to_sum_A2Y.append(df.loc[i]['diveffpost_spec'])
+                to_sum_A2Y.append(df.loc[i]['diveffpost_spec_'+which_evidence])
     else:
         print('No comparisons between effect on division/death (only one effect tested), no posterior probability returned')
         to_sum_Y = [0]
@@ -660,10 +668,10 @@ def get_postprobs_allbutstructure(df,add_to_dict=False,priordict={}):
                 priorhalfeff.append(priorhas)
             if not (25 in x or 28 in x or 26 in x or 29 in x):
                 priorhalfeff.append(priorno)
-        df['priorhalfeff_any'] = priorhalfeff
-        halfeff_postlist = df.INS_Z * df.priorhalfeff_any / (np.sum(df.INS_Z * df.priorhalfeff_any))
-        df['halfeffpost_any'] = halfeff_postlist
-        the_sum = np.sum(df.loc[df.priorhalfeff_any == priorhas].halfeffpost_any)
+        df['priorhalfeff_any_'+which_evidence] = priorhalfeff
+        halfeff_postlist = df[which_evidence] * df['priorhalfeff_any_'+which_evidence] / (np.sum(df[which_evidence] * df['priorhalfeff_any_'+which_evidence]))
+        df['halfeffpost_any_'+which_evidence] = halfeff_postlist
+        the_sum = np.sum(df.loc[df['priorhalfeff_any_'+which_evidence] == priorhas]['halfeffpost_any_'+which_evidence])
     else:
         print('Only one possibility (all models have no early-transition effects or all models have these effects), '
               'no posterior probability possible')
@@ -713,17 +721,17 @@ def get_postprobs_allbutstructure(df,add_to_dict=False,priordict={}):
                 priorhalfeff_spec.append(priorhasA2Y)
             if not (25 in x or 28 in x or 26 in x or 29 in x):
                 priorhalfeff_spec.append(priorno)
-        df['priorhalfeff_spec'] = priorhalfeff_spec
-        halfeff_spec_postlist = df.INS_Z*df.priorhalfeff_spec / (np.sum(df.INS_Z*df.priorhalfeff_spec))
-        df['halfeffpost_spec'] = halfeff_spec_postlist
+        df['priorhalfeff_spec_'+which_evidence] = priorhalfeff_spec
+        halfeff_spec_postlist = df[which_evidence]*df['priorhalfeff_spec_'+which_evidence] / (np.sum(df[which_evidence]*df['priorhalfeff_spec_'+which_evidence]))
+        df['halfeffpost_spec_'+which_evidence] = halfeff_spec_postlist
         to_sum_Y = []
         to_sum_A2Y = []
         for i in df.index:
             x = [int(j) for j in df.loc[i]['model_makeup'].split(',')]
             if 25 in x or 28 in x:
-                to_sum_Y.append(df.loc[i]['halfeffpost_spec'])
+                to_sum_Y.append(df.loc[i]['halfeffpost_spec_'+which_evidence])
             if 26 in x or 29 in x:
-                to_sum_A2Y.append(df.loc[i]['halfeffpost_spec'])
+                to_sum_A2Y.append(df.loc[i]['halfeffpost_spec_'+which_evidence])
     else:
         print('No comparisons between effect on early transitions (only one effect tested), no posterior probability returned')
         to_sum_Y = [0]
@@ -762,10 +770,10 @@ def get_postprobs_allbutstructure(df,add_to_dict=False,priordict={}):
                 priorendeff.append(priorhas)
             if not (31 in x or 32 in x or 34 in x or 35 in x):
                 priorendeff.append(priorno)
-        df['priorendeff_any'] = priorendeff
-        endeff_postlist = df.INS_Z * df.priorendeff_any / (np.sum(df.INS_Z * df.priorendeff_any))
-        df['endeffpost_any'] = endeff_postlist
-        the_sum = np.sum(df.loc[df.priorendeff_any == priorhas].endeffpost_any)
+        df['priorendeff_any_'+which_evidence] = priorendeff
+        endeff_postlist = df[which_evidence] * df['priorendeff_any_'+which_evidence] / (np.sum(df[which_evidence] * df['priorendeff_any_'+which_evidence]))
+        df['endeffpost_any_'+which_evidence] = endeff_postlist
+        the_sum = np.sum(df.loc[df['priorendeff_any_'+which_evidence] == priorhas]['endeffpost_any_'+which_evidence])
     else:
         print('Only one possibility (all models have no late-transition effects or all models have these effects), '
               'no posterior probability possible')
@@ -815,17 +823,17 @@ def get_postprobs_allbutstructure(df,add_to_dict=False,priordict={}):
                 priorendeff_spec.append(priorhasA2Y)
             if not (31 in x or 32 in x or 34 in x or 35 in x):
                 priorendeff_spec.append(priorno)
-        df['priorendeff_spec'] = priorendeff_spec
-        endeff_spec_postlist = df.INS_Z*df.priorendeff_spec / (np.sum(df.INS_Z*df.priorendeff_spec))
-        df['endeffpost_spec'] = endeff_spec_postlist
+        df['priorendeff_spec_'+which_evidence] = priorendeff_spec
+        endeff_spec_postlist = df[which_evidence]*df['priorendeff_spec_'+which_evidence] / (np.sum(df[which_evidence]*df['priorendeff_spec_'+which_evidence]))
+        df['endeffpost_spec_'+which_evidence] = endeff_spec_postlist
         to_sum_Y = []
         to_sum_A2Y = []
         for i in df.index:
             x = [int(j) for j in df.loc[i]['model_makeup'].split(',')]
             if 31 in x or 34 in x:
-                to_sum_Y.append(df.loc[i]['endeffpost_spec'])
+                to_sum_Y.append(df.loc[i]['endeffpost_spec_'+which_evidence])
             if 32 in x or 35 in x:
-                to_sum_A2Y.append(df.loc[i]['endeffpost_spec'])
+                to_sum_A2Y.append(df.loc[i]['endeffpost_spec_'+which_evidence])
     else:
         print('No comparisons between effect on later transitions (only one effect tested), no posterior probability returned')
         to_sum_Y = [0]
@@ -870,11 +878,11 @@ def get_postprobs_allbutstructure(df,add_to_dict=False,priordict={}):
                 priorwhichNonNE.append(priorA2Y)
             else:
                 priorwhichNonNE.append(0)
-        df['priorwhichNonNE'] = priorwhichNonNE
-        whichNonNE_postlist = df.INS_Z * df.priorwhichNonNE / (np.sum(df.INS_Z * df.priorwhichNonNE))
-        df['whichNonNEpost'] = whichNonNE_postlist
-        the_sum_Y = np.sum(df.loc[df.priorwhichNonNE == priorY].whichNonNEpost)
-        the_sum_A2Y = np.sum(df.loc[df.priorwhichNonNE == priorA2Y].whichNonNEpost)
+        df['priorwhichNonNE_'+which_evidence] = priorwhichNonNE
+        whichNonNE_postlist = df[which_evidence] * df['priorwhichNonNE_'+which_evidence] / (np.sum(df[which_evidence] * df['priorwhichNonNE_'+which_evidence]))
+        df['whichNonNEpost_'+which_evidence] = whichNonNE_postlist
+        the_sum_Y = np.sum(df.loc[df['priorwhichNonNE_'+which_evidence] == priorY]['whichNonNEpost_'+which_evidence])
+        the_sum_A2Y = np.sum(df.loc[df['priorwhichNonNE_'+which_evidence] == priorA2Y]['whichNonNEpost_'+which_evidence])
     else:
         print('Only one effect type (all models have effects from Y, or all models have effects from A2&Y - so no'
               'comparison between models with effects from Y vs those with effects from A2&Y), so'
@@ -1016,25 +1024,25 @@ def get_postprobs_allbutstructure(df,add_to_dict=False,priordict={}):
             priorstarts.append(priorANA2Y)
         else:
             print('issue, model '+str(i))
-    df['priorstarts'] = priorstarts
-    startpostlist = df.INS_Z*df.priorstarts / (np.sum(df.INS_Z*df.priorstarts))
-    df['startspost'] = startpostlist
+    df['priorstarts_'+which_evidence] = priorstarts
+    startpostlist = df[which_evidence]*df['priorstarts_'+which_evidence] / (np.sum(df[which_evidence]*df['priorstarts_'+which_evidence]))
+    df['startspost_'+which_evidence] = startpostlist
     # make sure the posterior probability sums to 1
-    startA_sum = np.sum(df[df['subtype_starting_and_makeup_code'].str.endswith('1000')].startspost)
-    startN_sum = np.sum(df[df['subtype_starting_and_makeup_code'].str.endswith('2000')].startspost)
-    startA2_sum = np.sum(df[df['subtype_starting_and_makeup_code'].str.endswith('3000')].startspost)
-    startY_sum = np.sum(df[df['subtype_starting_and_makeup_code'].str.endswith('4000')].startspost)
-    startAN_sum = np.sum(df[df['subtype_starting_and_makeup_code'].str.endswith('1200')].startspost)
-    startAA2_sum = np.sum(df[df['subtype_starting_and_makeup_code'].str.endswith('1300')].startspost)
-    startAY_sum = np.sum(df[df['subtype_starting_and_makeup_code'].str.endswith('1400')].startspost)
-    startNA2_sum = np.sum(df[df['subtype_starting_and_makeup_code'].str.endswith('2300')].startspost)
-    startNY_sum = np.sum(df[df['subtype_starting_and_makeup_code'].str.endswith('2400')].startspost)
-    startA2Y_sum = np.sum(df[df['subtype_starting_and_makeup_code'].str.endswith('3400')].startspost)
-    startANA2_sum = np.sum(df[df['subtype_starting_and_makeup_code'].str.endswith('1230')].startspost)
-    startANY_sum = np.sum(df[df['subtype_starting_and_makeup_code'].str.endswith('1240')].startspost)
-    startAA2Y_sum = np.sum(df[df['subtype_starting_and_makeup_code'].str.endswith('1340')].startspost)
-    startNA2Y_sum = np.sum(df[df['subtype_starting_and_makeup_code'].str.endswith('2340')].startspost)
-    startANA2Y_sum = np.sum(df[df['subtype_starting_and_makeup_code'].str.endswith('1234')].startspost)
+    startA_sum = np.sum(df[df['subtype_starting_and_makeup_code'].str.endswith('1000')]['startspost_'+which_evidence])
+    startN_sum = np.sum(df[df['subtype_starting_and_makeup_code'].str.endswith('2000')]['startspost_'+which_evidence])
+    startA2_sum = np.sum(df[df['subtype_starting_and_makeup_code'].str.endswith('3000')]['startspost_'+which_evidence])
+    startY_sum = np.sum(df[df['subtype_starting_and_makeup_code'].str.endswith('4000')]['startspost_'+which_evidence])
+    startAN_sum = np.sum(df[df['subtype_starting_and_makeup_code'].str.endswith('1200')]['startspost_'+which_evidence])
+    startAA2_sum = np.sum(df[df['subtype_starting_and_makeup_code'].str.endswith('1300')]['startspost_'+which_evidence])
+    startAY_sum = np.sum(df[df['subtype_starting_and_makeup_code'].str.endswith('1400')]['startspost_'+which_evidence])
+    startNA2_sum = np.sum(df[df['subtype_starting_and_makeup_code'].str.endswith('2300')]['startspost_'+which_evidence])
+    startNY_sum = np.sum(df[df['subtype_starting_and_makeup_code'].str.endswith('2400')]['startspost_'+which_evidence])
+    startA2Y_sum = np.sum(df[df['subtype_starting_and_makeup_code'].str.endswith('3400')]['startspost_'+which_evidence])
+    startANA2_sum = np.sum(df[df['subtype_starting_and_makeup_code'].str.endswith('1230')]['startspost_'+which_evidence])
+    startANY_sum = np.sum(df[df['subtype_starting_and_makeup_code'].str.endswith('1240')]['startspost_'+which_evidence])
+    startAA2Y_sum = np.sum(df[df['subtype_starting_and_makeup_code'].str.endswith('1340')]['startspost_'+which_evidence])
+    startNA2Y_sum = np.sum(df[df['subtype_starting_and_makeup_code'].str.endswith('2340')]['startspost_'+which_evidence])
+    startANA2Y_sum = np.sum(df[df['subtype_starting_and_makeup_code'].str.endswith('1234')]['startspost_'+which_evidence])
     if add_to_dict:
         postprob_dict['starts_with_A'] = startA_sum
         postprob_dict['starts_with_N'] = startN_sum
@@ -1106,11 +1114,19 @@ def get_postprobs_allbutstructure(df,add_to_dict=False,priordict={}):
         print('returning posterior probability dict, this does not include model topology probabilities')
         return postprob_dict, priordict
 
-def get_structure_postprobs(df,add_to_dict=False,priordict={},rel_likelihood=False,by_initiating_sub=None):
+def get_structure_postprobs(df,add_to_dict=False,priordict={},rel_likelihood=False,by_initiating_sub=None,which_evidence='INS_Z'):
     #priordict default empty dict, could be that or None
     if not (type(priordict) is dict or priordict==None):
         print('priordict passed as incorrect variable, priordict will now be None')
         priordict = None
+    try:
+        if not which_evidence in ['Z','INS_Z','BIC_marglik_est']:
+            print('which_evidence passed as incorrect variable, \'which_evidence will\' default to INS_Z')
+            which_evidence='INS_Z'
+    except AttributeError:
+        print('which_evidence passed as incorrect variable, \'which_evidence\' will default to INS_Z')
+        which_evidence = 'INS_Z'
+        pass
     if by_initiating_sub:
         if type(by_initiating_sub) is tuple:
             # for instance if by_initiating_sub = ('1000', '1200', '1300', '1400', '1230', '1240', '1340', '1234')
@@ -1130,7 +1146,7 @@ def get_structure_postprobs(df,add_to_dict=False,priordict={},rel_likelihood=Fal
             print('returning None')
             return None
     if rel_likelihood:
-        df = df.loc[df.INS_Z > (np.max(df.INS_Z) / 10 ** .5)]
+        df = df.loc[df[which_evidence] > (np.max(df[which_evidence]) / 10 ** .5)]
     isstruct0 = len(df[df['subtype_starting_and_makeup_code'].str.startswith('0')])
     isstruct1 = len(df[df['subtype_starting_and_makeup_code'].str.startswith('1.')])
     isstruct2 = len(df[df['subtype_starting_and_makeup_code'].str.startswith('2')])
@@ -1228,24 +1244,24 @@ def get_structure_postprobs(df,add_to_dict=False,priordict={},rel_likelihood=Fal
         else:
             print('issue, model '+str(i))
     #
-    df['priorstructs'] = priorstructs
+    df['priorstructs_'+which_evidence] = priorstructs
     #
-    structpostlist = df.INS_Z*df.priorstructs / (np.sum(df.INS_Z*df.priorstructs))
-    df['structspost'] = structpostlist
+    structpostlist = df[which_evidence]*df['priorstructs_'+which_evidence] / (np.sum(df[which_evidence]*df['priorstructs_'+which_evidence]))
+    df['structspost_'+which_evidence] = structpostlist
     #
     np.sum(structpostlist)
     #
-    struct0_sum = np.sum(df[df['subtype_starting_and_makeup_code'].str.startswith('0')].structspost)
-    struct1_sum = np.sum(df[df['subtype_starting_and_makeup_code'].str.startswith('1.')].structspost)
-    struct2_sum = np.sum(df[df['subtype_starting_and_makeup_code'].str.startswith('2')].structspost)
-    struct3_sum = np.sum(df[df['subtype_starting_and_makeup_code'].str.startswith('3')].structspost)
-    struct4_sum = np.sum(df[df['subtype_starting_and_makeup_code'].str.startswith('4')].structspost)
-    struct5_sum = np.sum(df[df['subtype_starting_and_makeup_code'].str.startswith('5')].structspost)
-    struct6_sum = np.sum(df[df['subtype_starting_and_makeup_code'].str.startswith('6')].structspost)
-    struct7_sum = np.sum(df[df['subtype_starting_and_makeup_code'].str.startswith('7')].structspost)
-    struct8_sum = np.sum(df[df['subtype_starting_and_makeup_code'].str.startswith('8')].structspost)
-    struct9_sum = np.sum(df[df['subtype_starting_and_makeup_code'].str.startswith('9')].structspost)
-    struct10_sum = np.sum(df[df['subtype_starting_and_makeup_code'].str.startswith('10')].structspost)
+    struct0_sum = np.sum(df[df['subtype_starting_and_makeup_code'].str.startswith('0')]['structspost_'+which_evidence])
+    struct1_sum = np.sum(df[df['subtype_starting_and_makeup_code'].str.startswith('1.')]['structspost_'+which_evidence])
+    struct2_sum = np.sum(df[df['subtype_starting_and_makeup_code'].str.startswith('2')]['structspost_'+which_evidence])
+    struct3_sum = np.sum(df[df['subtype_starting_and_makeup_code'].str.startswith('3')]['structspost_'+which_evidence])
+    struct4_sum = np.sum(df[df['subtype_starting_and_makeup_code'].str.startswith('4')]['structspost_'+which_evidence])
+    struct5_sum = np.sum(df[df['subtype_starting_and_makeup_code'].str.startswith('5')]['structspost_'+which_evidence])
+    struct6_sum = np.sum(df[df['subtype_starting_and_makeup_code'].str.startswith('6')]['structspost_'+which_evidence])
+    struct7_sum = np.sum(df[df['subtype_starting_and_makeup_code'].str.startswith('7')]['structspost_'+which_evidence])
+    struct8_sum = np.sum(df[df['subtype_starting_and_makeup_code'].str.startswith('8')]['structspost_'+which_evidence])
+    struct9_sum = np.sum(df[df['subtype_starting_and_makeup_code'].str.startswith('9')]['structspost_'+which_evidence])
+    struct10_sum = np.sum(df[df['subtype_starting_and_makeup_code'].str.startswith('10')]['structspost_'+which_evidence])
     #
     if not add_to_dict:
         print('topology with A, N, A2, Y (structure 0) posterior probability: '+str(struct0_sum))
