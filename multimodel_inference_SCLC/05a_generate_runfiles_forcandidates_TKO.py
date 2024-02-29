@@ -3,16 +3,15 @@
 import os
 import sys
 import pandas as pd
+
 # to determine whether A2 acts like NE or NonNE
-dfdict = pd.read_pickle('../helper_functions_and_files/updatedinjune_all_9327_models_in_dataframe_with_subtype_starting_makeup_code.pickle')
+dfdict = pd.read_pickle('../helper_functions_and_files/all_5891_models_in_dataframe_with_subtype_starting_makeup_code.pickle')
 
 candidate_model_dir = '../candidate_models/'
 run_file_dir = '../run_files_for_candidate_models/'
 
 for number in [x.split('_')[-1].split('.')[0] for x in os.listdir(candidate_model_dir) if
                'model_' in x and '.py' in x and not 'run' in x and not 'plot' in x and not 'posttx' in x and not 'testing' in x]:
-    if int(number) < 87 or int(number) > 88:
-        continue
     print(number)
     str_to_write_1 = """import os
 import sys
@@ -57,17 +56,6 @@ parser.add_argument("-p", "--population_size", help="Number of live points in th
 
 args = parser.parse_args()
 
-# maybe add later
-#outdir = args.outfile_directory if args.outfile_directory else print ('Using current working directory '+os.getcwd()+' for outfiles')
-#if outdir:
-#    outdir = outdir if os.path.exists(outdir) else print('path \''+outdir+'\' does not exist, using current working directory '+os.getcwd()+' for outfiles')
-#if not outdir:
-#    outdir = os.getcwd()
-#if args.write_job_completes:
-#    print ('Writing to '+str(args.write_job_completes)+' when each model run finishes. Will include exit status.')
-#    with open(args.write_job_completes,'w') as jobs_file:
-#        jobs_file.write('Running '+__file__+'starting at '+str(datetime.now())+'.\\n')
-
 modeliter = args.model_iteration if args.model_iteration else False
 uses_modeliter = True if modeliter else False # False as default because more often i'm not using modeliter
 
@@ -76,7 +64,6 @@ ceff = args.constant_efficiency
 f = args.sampling_efficiency if args.sampling_efficiency else 0.05
 popsize = args.population_size if args.population_size else 3000
 paramdir = args.dirmodels
-#paramdir = "/data/lola/beiksp/TKO_betafit_"+str(f)+"_"+str(popsize)+"_inprogress"
 
 if INS:
     fn_ins = "T"

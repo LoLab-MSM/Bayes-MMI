@@ -2,7 +2,7 @@ import sys
 import numpy as np
 
 # run command: python 04_remove_placeholders_fromcandidates.py dir_with_candidate_models a b
-#   where a is the model to start with and b is the model to end with (e.g., a=0 b=9327)
+#   where a is the model to start with and b is the model to end with (e.g., a=0 b=5890)
 #   more specifically: python 04_remove_placeholders_fromcandidates.py /home/beiksp/Bayes-MMI/candidate_models/ 0 5890
 
 args = sys.argv
