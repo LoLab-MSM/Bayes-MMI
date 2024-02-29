@@ -3,18 +3,13 @@ import numpy as np
 
 in_and_outdir = '../files_generated_in_MMI_sclc/'
 
-dfdict = pd.read_pickle('../helper_functions_and_files/updatedinjune_all_9327_models_in_dataframe_with_subtype_starting_makeup_code.pickle')
-updated_modelmakeups = np.load('../helper_functions_and_files/updatedinjune_apr_11_all_model_makeups_from_redo_ignoring_uneven_bidirtxns.npy')
-upd_modnums = []
-for j in dfdict.index:
-    if dfdict.loc[j]['model_makeup'] in updated_modelmakeups:
-        upd_modnums.append(j)
+dfdict = pd.read_pickle('../helper_functions_and_files/all_5891_models_in_dataframe_with_subtype_starting_makeup_code.pickle')
 
 for dset in ['TKO','RPM','clA']:
-    df = pd.read_pickle(in_and_outdir+'results_fromNS_gathered_'+dset+'_somemissing.pickle')
+    df = pd.read_pickle(in_and_outdir+'results_fromNS_gathered_'+dset+'.pickle')
     df['INS_Z'] = np.exp(df.INS_log_Z)
     df['posterior_prob'] = df.INS_Z/np.sum(df.INS_Z)
     df = pd.concat([df, dfdict.loc[df.index]], axis=1)
-    df.to_pickle(in_and_outdir+'results_fromNS_gathered_'+dset+'_somemissing_addlanalyses.pickle')
+    df.to_pickle(in_and_outdir+'results_fromNS_gathered_'+dset+'_addlanalyses.pickle')
 
 
