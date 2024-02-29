@@ -4,6 +4,7 @@
 import pandas as pd
 import gzip
 import pickle
+import sys
 
 indirdict = {
     'TKO': '../posterior_marginals_and_predictives/posterior_marginals_all/TKO/',
@@ -14,17 +15,17 @@ indirdict = {
 outdir = '../posterior_marginals_and_predictives/'
 
 ###
-
+#
 # TKO
 indir_TKO = indirdict['TKO']
 
 post_picklelist_names = [
-    indir_TKO + 'TKO_betafit_postmarg_params_and_probabilities_from_postequalweights_from_model_0_to_1651.pickle',
-    indir_TKO + 'TKO_betafit_postmarg_params_and_probabilities_from_postequalweights_from_model_1651_to_2933.pickle',
-    indir_TKO + 'TKO_betafit_postmarg_params_and_probabilities_from_postequalweights_from_model_2933_to_4766.pickle',
-    indir_TKO + 'TKO_betafit_postmarg_params_and_probabilities_from_postequalweights_from_model_4766_to_7640.pickle',
-    indir_TKO + 'TKO_betafit_postmarg_params_and_probabilities_from_postequalweights_from_model_7640_to_8921.pickle',
-    indir_TKO + 'TKO_betafit_postmarg_params_and_probabilities_from_postequalweights_from_model_8921_to_9327.pickle']
+    indir_TKO + 'TKO_betafit_postmarg_params_and_probabilities_from_postequalweights_from_model_0_to_1004.pickle',
+    indir_TKO + 'TKO_betafit_postmarg_params_and_probabilities_from_postequalweights_from_model_1004_to_2038.pickle',
+    indir_TKO + 'TKO_betafit_postmarg_params_and_probabilities_from_postequalweights_from_model_2038_to_3054.pickle',
+    indir_TKO + 'TKO_betafit_postmarg_params_and_probabilities_from_postequalweights_from_model_3054_to_4084.pickle',
+    indir_TKO + 'TKO_betafit_postmarg_params_and_probabilities_from_postequalweights_from_model_4084_to_5134.pickle',
+    indir_TKO + 'TKO_betafit_postmarg_params_and_probabilities_from_postequalweights_from_model_5134_to_5890.pickle']
 
 post_picklelist = []
 for f in post_picklelist_names:
@@ -39,22 +40,19 @@ for n, p in enumerate(post_picklelist):
         [modselection_postmarg, p])
 
 modselection_postmarg.to_pickle(
-    outdir + 'TKO_betafit_postmarg_params_and_probabilities_from_postequalweights_somemissing_6_23_22.pklz',
+    outdir + 'TKO_betafit_postmarg_params_and_probabilities_from_postequalweights.pklz',
             compression='gzip')
-
-
+#
 # RPM
 indir_RPM = indirdict['RPM']
 
 post_picklelist_names = [
-    indir_RPM+'RPM_betafit_postmarg_params_and_probabilities_from_postequalweights_from_model_0_to_1652.pickle',
-    indir_RPM+'RPM_betafit_postmarg_params_and_probabilities_from_postequalweights_from_model_1652_to_2872.pickle',
-    indir_RPM+'RPM_betafit_postmarg_params_and_probabilities_from_postequalweights_from_model_2872_to_4690.pickle',
-    indir_RPM+'RPM_betafit_postmarg_params_and_probabilities_from_postequalweights_from_model_4690_to_7546.pickle',
-    indir_RPM+'RPM_betafit_postmarg_params_and_probabilities_from_postequalweights_from_model_7546_to_8744.pickle',
-    indir_RPM+'RPM_betafit_postmarg_params_and_probabilities_from_postequalweights_from_model_8744_to_9327.pickle']
-
-
+    indir_RPM+'RPM_betafit_postmarg_params_and_probabilities_from_postequalweights_from_model_0_to_1014.pickle',
+    indir_RPM+'RPM_betafit_postmarg_params_and_probabilities_from_postequalweights_from_model_1014_to_2080.pickle',
+    indir_RPM+'RPM_betafit_postmarg_params_and_probabilities_from_postequalweights_from_model_2080_to_3103.pickle',
+    indir_RPM+'RPM_betafit_postmarg_params_and_probabilities_from_postequalweights_from_model_3103_to_4142.pickle',
+    indir_RPM+'RPM_betafit_postmarg_params_and_probabilities_from_postequalweights_from_model_4142_to_5177.pickle',
+    indir_RPM+'RPM_betafit_postmarg_params_and_probabilities_from_postequalweights_from_model_5177_to_5890.pickle']
 
 post_picklelist = []
 for f in post_picklelist_names:
@@ -69,19 +67,19 @@ for n, p in enumerate(post_picklelist):
         [modselection_postmarg, p])
 
 modselection_postmarg.to_pickle(
-    outdir + 'RPM_betafit_postmarg_params_and_probabilities_from_postequalweights_somemissing_6_23_22.pklz',
+    outdir + 'RPM_betafit_postmarg_params_and_probabilities_from_postequalweights.pklz',
         compression='gzip')
 
 # cell lines cluster A
 indir_clA = indirdict['cl_A']
 
 post_picklelist_names = [
-    indir_clA+'cl_A_betafit_postmarg_params_and_probabilities_from_postequalweights_from_model_0_to_1650.pickle',
-    indir_clA+'cl_A_betafit_postmarg_params_and_probabilities_from_postequalweights_from_model_1650_to_2877.pickle',
-    indir_clA+'cl_A_betafit_postmarg_params_and_probabilities_from_postequalweights_from_model_2877_to_4718.pickle',
-    indir_clA+'cl_A_betafit_postmarg_params_and_probabilities_from_postequalweights_from_model_4718_to_7602.pickle',
-    indir_clA+'cl_A_betafit_postmarg_params_and_probabilities_from_postequalweights_from_model_7602_to_8825.pickle',
-    indir_clA+'cl_A_betafit_postmarg_params_and_probabilities_from_postequalweights_from_model_8825_to_9327.pickle']
+    indir_clA+'cl_A_betafit_postmarg_params_and_probabilities_from_postequalweights_from_model_0_to_1007.pickle',
+    indir_clA+'cl_A_betafit_postmarg_params_and_probabilities_from_postequalweights_from_model_1007_to_2059.pickle',
+    indir_clA+'cl_A_betafit_postmarg_params_and_probabilities_from_postequalweights_from_model_2059_to_3087.pickle',
+    indir_clA+'cl_A_betafit_postmarg_params_and_probabilities_from_postequalweights_from_model_3087_to_4131.pickle',
+    indir_clA+'cl_A_betafit_postmarg_params_and_probabilities_from_postequalweights_from_model_4131_to_5173.pickle',
+    indir_clA+'cl_A_betafit_postmarg_params_and_probabilities_from_postequalweights_from_model_5173_to_5890.pickle']
 
 post_picklelist = []
 for f in post_picklelist_names:
@@ -96,7 +94,7 @@ for n, p in enumerate(post_picklelist):
         [modselection_postmarg, p])
 
 modselection_postmarg.to_pickle(
-    outdir + 'cl_A_betafit_postmarg_params_and_probabilities_from_postequalweights_somemissing_6_23_22.pklz',
+    outdir + 'cl_A_betafit_postmarg_params_and_probabilities_from_postequalweights.pklz',
             compression='gzip') #,protocol=4 ?
 
 

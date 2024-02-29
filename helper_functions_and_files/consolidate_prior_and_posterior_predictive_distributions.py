@@ -3,192 +3,281 @@
 import pandas as pd
 import gzip
 import pickle
+import sys
 
 indirdict = {
-    'TKO': {'prior':'../posterior_marginals_and_predictives/prior_posterior_predictives_all/priors_TKO/',
-            'post':'../posterior_marginals_and_predictives/prior_posterior_predictives_all/posteriors_TKO/'},
-    'RPM': {'prior':'../posterior_marginals_and_predictives/prior_posterior_predictives_all/priors_RPM/',
-            'post':'../posterior_marginals_and_predictives/prior_posterior_predictives_all/posteriors_RPM/'},
-    'cl_A': {'prior':'../posterior_marginals_and_predictives/prior_posterior_predictives_all/priors_cl_A/',
-                    'post':'../posterior_marginals_and_predictives/prior_posterior_predictives_all/posteriors_cl_A/'}
+    'prior':'../posterior_marginals_and_predictives/prior_posterior_predictives_all/prior_predictives_all/',
+    'post':'../posterior_marginals_and_predictives/prior_posterior_predictives_all/posterior_predictives_all/'
 }
 
+indir_post = indirdict['post']
+indir_prior = indirdict['prior']
 outdir = '../posterior_marginals_and_predictives/'
 ###
 
+### Put together the posterior predictive (from joint posterior distribution) simulations, which
+#   involves consolidating within each dataset and saving
+
 # TKO
-indir_TKO_post = indirdict['TKO']['post']
 
-post_picklelist = []
-for f in [indir_TKO_post
-            +'TKO_trajectories_as_postpredictive_from_postequalweights_from_model_0_to_264_onlyupdatedmodels.pickle',
-          indir_TKO_post
-            +'TKO_trajectories_as_postpredictive_from_postequalweights_from_model_264_to_522_onlyupdatedmodels.pickle',
-          indir_TKO_post
-            +'TKO_trajectories_as_postpredictive_from_postequalweights_from_model_522_to_788_onlyupdatedmodels.pickle',
-          indir_TKO_post
-            +'TKO_trajectories_as_postpredictive_from_postequalweights_from_model_788_to_1038_onlyupdatedmodels.pickle',
-          indir_TKO_post
-            +'TKO_trajectories_as_postpredictive_from_postequalweights_from_model_1038_to_1288_onlyupdatedmodels.pickle',
-          indir_TKO_post
-            +'TKO_trajectories_as_postpredictive_from_postequalweights_from_model_1288_to_1541_onlyupdatedmodels.pickle',
-          indir_TKO_post
-            +'TKO_trajectories_as_postpredictive_from_postequalweights_from_model_1541_to_1800_onlyupdatedmodels.pickle',
-          indir_TKO_post
-            +'TKO_trajectories_as_postpredictive_from_postequalweights_from_model_1800_to_2067_onlyupdatedmodels.pickle',
-          indir_TKO_post
-            +'TKO_trajectories_as_postpredictive_from_postequalweights_from_model_2067_to_2327_onlyupdatedmodels.pickle',
-          indir_TKO_post
-            +'TKO_trajectories_as_postpredictive_from_postequalweights_from_model_2327_to_2587_onlyupdatedmodels.pickle',
-          indir_TKO_post
-            +'TKO_trajectories_as_postpredictive_from_postequalweights_from_model_2587_to_2859_onlyupdatedmodels.pickle',
-          indir_TKO_post+'TKO_trajectories_as_postpredictive_from_postequalweights_from_model_2859_to_3199.pickle',
-          indir_TKO_post+'TKO_trajectories_as_postpredictive_from_postequalweights_from_model_3199_to_3866.pickle',
-          indir_TKO_post+'TKO_trajectories_as_postpredictive_from_postequalweights_from_model_3866_to_4454.pickle',
-          indir_TKO_post+'TKO_trajectories_as_postpredictive_from_postequalweights_from_model_4454_to_4708.pickle',
-          indir_TKO_post+'TKO_trajectories_as_postpredictive_from_postequalweights_from_model_4708_to_4967.pickle',
-          indir_TKO_post+'TKO_trajectories_as_postpredictive_from_postequalweights_from_model_4967_to_5230.pickle',
-          indir_TKO_post+'TKO_trajectories_as_postpredictive_from_postequalweights_from_model_5230_to_7306.pickle',
-          indir_TKO_post+'TKO_trajectories_as_postpredictive_from_postequalweights_from_model_7306_to_7572.pickle',
-          indir_TKO_post+'TKO_trajectories_as_postpredictive_from_postequalweights_from_model_7572_to_7866.pickle',
-          indir_TKO_post+'TKO_trajectories_as_postpredictive_from_postequalweights_from_model_7866_to_8147.pickle',
-          indir_TKO_post+'TKO_trajectories_as_postpredictive_from_postequalweights_from_model_8147_to_8449.pickle',
-          indir_TKO_post+'TKO_trajectories_as_postpredictive_from_postequalweights_from_model_8449_to_8806.pickle',
-          indir_TKO_post+'TKO_trajectories_as_postpredictive_from_postequalweights_from_model_8806_to_9151.pickle',
-          indir_TKO_post+'TKO_trajectories_as_postpredictive_from_postequalweights_from_model_9151_to_9264.pickle']:
+# top topologies
+post_picklelist_top = []
+for f in [indirdict['post'] + 'TKO_trajectories_as_postpredictive_from_postequalweights_from_model_0_to_944_toptopologies.pickle',
+          indirdict['post'] + 'TKO_trajectories_as_postpredictive_from_postequalweights_from_model_944_to_1197_toptopologies.pickle',
+          indirdict['post'] + 'TKO_trajectories_as_postpredictive_from_postequalweights_from_model_1197_to_1449_toptopologies.pickle',
+          indirdict['post'] + 'TKO_trajectories_as_postpredictive_from_postequalweights_from_model_1449_to_1711_toptopologies.pickle',
+          indirdict['post'] + 'TKO_trajectories_as_postpredictive_from_postequalweights_from_model_1711_to_1863_toptopologies.pickle']:
     print(f)
     p = pd.read_pickle(f)
-    post_picklelist.append(p)
+    post_picklelist_top.append(p)
 
-modselection_postpred = {
+modselection_postpred_top = {
     'NE_obs': pd.DataFrame(),
     'NEv1_obs': pd.DataFrame(),
     'NEv2_obs': pd.DataFrame(),
     'NonNE_obs': pd.DataFrame()
     }
 
-for n,p in enumerate(post_picklelist):
+for n,p in enumerate(post_picklelist_top):
     print(n)
-    modselection_postpred['NE_obs'] = pd.concat(
-        [modselection_postpred['NE_obs'], p['NE_obs']])
-    modselection_postpred['NEv1_obs'] = pd.concat(
-        [modselection_postpred['NEv1_obs'], p['NEv1_obs']])
-    modselection_postpred['NEv2_obs'] = pd.concat(
-        [modselection_postpred['NEv2_obs'], p['NEv2_obs']])
-    modselection_postpred['NonNE_obs'] = pd.concat(
-        [modselection_postpred['NonNE_obs'], p['NonNE_obs']])
+    modselection_postpred_top['NE_obs'] = pd.concat(
+        [modselection_postpred_top['NE_obs'], p['NE_obs']])
+    modselection_postpred_top['NEv1_obs'] = pd.concat(
+        [modselection_postpred_top['NEv1_obs'], p['NEv1_obs']])
+    modselection_postpred_top['NEv2_obs'] = pd.concat(
+        [modselection_postpred_top['NEv2_obs'], p['NEv2_obs']])
+    modselection_postpred_top['NonNE_obs'] = pd.concat(
+        [modselection_postpred_top['NonNE_obs'], p['NonNE_obs']])
 
-with gzip.open(outdir+'TKO_trajectories_as_postpredictive_from_postequalweights_allmodels_somemissing_6_10_22.pklz',
+with gzip.open(outdir+'TKO_trajectories_as_postpredictive_from_postequalweights_toptopologies.pklz',
           'wb') as fp:
-    pickle.dump(modselection_postpred,fp,protocol=4)
+    pickle.dump(modselection_postpred_top,fp,protocol=4)
 
-#
+# all topologies
+post_picklelist_all = []
+for f in [indirdict['post'] + 'TKO_trajectories_as_postpredictive_from_postequalweights_from_model_0_to_249_alltopologies.pickle',
+          indirdict['post'] + 'TKO_trajectories_as_postpredictive_from_postequalweights_from_model_249_to_505_alltopologies.pickle',
+          indirdict['post'] + 'TKO_trajectories_as_postpredictive_from_postequalweights_from_model_505_to_755_alltopologies.pickle',
+          indirdict['post'] + 'TKO_trajectories_as_postpredictive_from_postequalweights_from_model_755_to_1005_alltopologies.pickle',
+          indirdict['post'] + 'TKO_trajectories_as_postpredictive_from_postequalweights_from_model_1005_to_1258_alltopologies.pickle',
+          indirdict['post'] + 'TKO_trajectories_as_postpredictive_from_postequalweights_from_model_1258_to_1511_alltopologies.pickle',
+          indirdict['post'] + 'TKO_trajectories_as_postpredictive_from_postequalweights_from_model_1511_to_1773_alltopologies.pickle',
+          indirdict['post'] + 'TKO_trajectories_as_postpredictive_from_postequalweights_from_model_1773_to_1863_alltopologies.pickle',
+          indirdict['post'] + 'TKO_trajectories_as_postpredictive_from_postequalweights_from_model_1863_to_2042_alltopologies.pickle',
+          indirdict['post'] + 'TKO_trajectories_as_postpredictive_from_postequalweights_from_model_2042_to_2294_alltopologies.pickle',
+          indirdict['post'] + 'TKO_trajectories_as_postpredictive_from_postequalweights_from_model_2294_to_2552_alltopologies.pickle',
+          indirdict['post'] + 'TKO_trajectories_as_postpredictive_from_postequalweights_from_model_2552_to_2803_alltopologies.pickle',
+          indirdict['post'] + 'TKO_trajectories_as_postpredictive_from_postequalweights_from_model_2803_to_3060_alltopologies.pickle',
+          indirdict['post'] + 'TKO_trajectories_as_postpredictive_from_postequalweights_from_model_3060_to_3318_alltopologies.pickle',
+          indirdict['post'] + 'TKO_trajectories_as_postpredictive_from_postequalweights_from_model_3318_to_3582_alltopologies.pickle',
+          indirdict['post'] + 'TKO_trajectories_as_postpredictive_from_postequalweights_from_model_3582_to_3836_alltopologies.pickle',
+          indirdict['post'] + 'TKO_trajectories_as_postpredictive_from_postequalweights_from_model_3836_to_4090_alltopologies.pickle',
+          indirdict['post'] + 'TKO_trajectories_as_postpredictive_from_postequalweights_from_model_4090_to_4353_alltopologies.pickle',
+          indirdict['post'] + 'TKO_trajectories_as_postpredictive_from_postequalweights_from_model_4353_to_4618_alltopologies.pickle',
+          indirdict['post'] + 'TKO_trajectories_as_postpredictive_from_postequalweights_from_model_4618_to_4876_alltopologies.pickle',
+          indirdict['post'] + 'TKO_trajectories_as_postpredictive_from_postequalweights_from_model_4876_to_5140_alltopologies.pickle',
+          indirdict['post'] + 'TKO_trajectories_as_postpredictive_from_postequalweights_from_model_5140_to_5400_alltopologies.pickle',
+          indirdict['post'] + 'TKO_trajectories_as_postpredictive_from_postequalweights_from_model_5400_to_5668_alltopologies.pickle',
+          indirdict['post'] + 'TKO_trajectories_as_postpredictive_from_postequalweights_from_model_5668_to_5890_alltopologies.pickle'
+          ]:
+    print(f)
+    p = pd.read_pickle(f)
+    post_picklelist_all.append(p)
+
+modselection_postpred_all = {
+    'NE_obs': pd.DataFrame(),
+    'NEv1_obs': pd.DataFrame(),
+    'NEv2_obs': pd.DataFrame(),
+    'NonNE_obs': pd.DataFrame()
+    }
+
+for n,p in enumerate(post_picklelist_all):
+    print(n)
+    modselection_postpred_all['NE_obs'] = pd.concat(
+        [modselection_postpred_all['NE_obs'], p['NE_obs']])
+    modselection_postpred_all['NEv1_obs'] = pd.concat(
+        [modselection_postpred_all['NEv1_obs'], p['NEv1_obs']])
+    modselection_postpred_all['NEv2_obs'] = pd.concat(
+        [modselection_postpred_all['NEv2_obs'], p['NEv2_obs']])
+    modselection_postpred_all['NonNE_obs'] = pd.concat(
+        [modselection_postpred_all['NonNE_obs'], p['NonNE_obs']])
+
+with gzip.open(outdir+'TKO_trajectories_as_postpredictive_from_postequalweights_alltopologies.pklz',
+          'wb') as fp:
+    pickle.dump(modselection_postpred_all,fp,protocol=4)
+
+
 # RPM
-indir_RPM_post = indirdict['RPM']['post']
 
-post_picklelist = []
-for f in [indir_RPM_post+'RPM_trajectories_as_postpredictive_from_postequalweights_from_model_0_to_552.pickle',
-          indir_RPM_post+'RPM_trajectories_as_postpredictive_from_postequalweights_from_model_552_to_1138.pickle',
-          indir_RPM_post+'RPM_trajectories_as_postpredictive_from_postequalweights_from_model_1138_to_1395.pickle',
-          indir_RPM_post+'RPM_trajectories_as_postpredictive_from_postequalweights_from_model_1395_to_1652.pickle',
-          indir_RPM_post+'RPM_trajectories_as_postpredictive_from_postequalweights_from_model_1652_to_1946.pickle',
-          indir_RPM_post+'RPM_trajectories_as_postpredictive_from_postequalweights_from_model_1946_to_2249.pickle',
-          indir_RPM_post+'RPM_trajectories_as_postpredictive_from_postequalweights_from_model_2249_to_2578.pickle',
-          indir_RPM_post+'RPM_trajectories_as_postpredictive_from_postequalweights_from_model_2578_to_2859.pickle',
-          indir_RPM_post+'RPM_trajectories_as_postpredictive_from_postequalweights_from_model_2859_to_3178.pickle',
-          indir_RPM_post+'RPM_trajectories_as_postpredictive_from_postequalweights_from_model_3178_to_3745.pickle',
-          indir_RPM_post+'RPM_trajectories_as_postpredictive_from_postequalweights_from_model_3745_to_4424.pickle',
-          indir_RPM_post+'RPM_trajectories_as_postpredictive_from_postequalweights_from_model_4424_to_4677.pickle',
-          indir_RPM_post+'RPM_trajectories_as_postpredictive_from_postequalweights_from_model_4677_to_4932.pickle',
-          indir_RPM_post+'RPM_trajectories_as_postpredictive_from_postequalweights_from_model_4932_to_5184.pickle',
-          indir_RPM_post+'RPM_trajectories_as_postpredictive_from_postequalweights_from_model_5184_to_6681.pickle',
-          indir_RPM_post+'RPM_trajectories_as_postpredictive_from_postequalweights_from_model_6681_to_7533.pickle',
-          indir_RPM_post+'RPM_trajectories_as_postpredictive_from_postequalweights_from_model_7533_to_7824.pickle',
-          indir_RPM_post+'RPM_trajectories_as_postpredictive_from_postequalweights_from_model_7824_to_8113.pickle',
-          indir_RPM_post+'RPM_trajectories_as_postpredictive_from_postequalweights_from_model_8113_to_8336.pickle',
-          indir_RPM_post+'RPM_trajectories_as_postpredictive_from_postequalweights_from_model_8336_to_8565.pickle',
-          indir_RPM_post+'RPM_trajectories_as_postpredictive_from_postequalweights_from_model_8565_to_8908.pickle',
-          indir_RPM_post+'RPM_trajectories_as_postpredictive_from_postequalweights_from_model_8908_to_9128.pickle',
-          indir_RPM_post+'RPM_trajectories_as_postpredictive_from_postequalweights_from_model_9128_to_9262.pickle']:
+# top topologies
+post_picklelist_top = []
+for f in [indirdict['post']+'RPM_trajectories_as_postpredictive_from_postequalweights_from_model_0_to_329_toptopologies.pickle',
+          indirdict['post']+'RPM_trajectories_as_postpredictive_from_postequalweights_from_model_329_to_587_toptopologies.pickle',
+          indirdict['post']+'RPM_trajectories_as_postpredictive_from_postequalweights_from_model_587_to_726_toptopologies.pickle']:
     print(f)
     p = pd.read_pickle(f)
-    post_picklelist.append(p)
+    post_picklelist_top.append(p)
 
-modselection_postpred = {
+modselection_postpred_top = {
     'NE_obs': pd.DataFrame(),
     'NEv1_obs': pd.DataFrame(),
     'NEv2_obs': pd.DataFrame(),
     'NonNE_obs': pd.DataFrame()
     }
 
-for n,p in enumerate(post_picklelist):
+for n,p in enumerate(post_picklelist_top):
     print(n)
-    modselection_postpred['NE_obs'] = pd.concat(
-        [modselection_postpred['NE_obs'], p['NE_obs']])
-    modselection_postpred['NEv1_obs'] = pd.concat(
-        [modselection_postpred['NEv1_obs'], p['NEv1_obs']])
-    modselection_postpred['NEv2_obs'] = pd.concat(
-        [modselection_postpred['NEv2_obs'], p['NEv2_obs']])
-    modselection_postpred['NonNE_obs'] = pd.concat(
-        [modselection_postpred['NonNE_obs'], p['NonNE_obs']])
+    modselection_postpred_top['NE_obs'] = pd.concat(
+        [modselection_postpred_top['NE_obs'], p['NE_obs']])
+    modselection_postpred_top['NEv1_obs'] = pd.concat(
+        [modselection_postpred_top['NEv1_obs'], p['NEv1_obs']])
+    modselection_postpred_top['NEv2_obs'] = pd.concat(
+        [modselection_postpred_top['NEv2_obs'], p['NEv2_obs']])
+    modselection_postpred_top['NonNE_obs'] = pd.concat(
+        [modselection_postpred_top['NonNE_obs'], p['NonNE_obs']])
 
-with gzip.open(outdir+'RPM_trajectories_as_postpredictive_from_postequalweights_allmodels_somemissing_6_10_22.pklz',
+with gzip.open(outdir+'RPM_trajectories_as_postpredictive_from_postequalweights_toptopologies.pklz',
           'wb') as fp:
-    pickle.dump(modselection_postpred,fp,protocol=4)
+    pickle.dump(modselection_postpred_top,fp,protocol=4)
+
+# all topologies
+post_picklelist_all = []
+for f in [indirdict['post'] + 'RPM_trajectories_as_postpredictive_from_postequalweights_from_model_0_to_252_alltopologies.pickle',
+          indirdict['post'] + 'RPM_trajectories_as_postpredictive_from_postequalweights_from_model_252_to_505_alltopologies.pickle',
+          indirdict['post'] + 'RPM_trajectories_as_postpredictive_from_postequalweights_from_model_505_to_726_alltopologies.pickle',
+          indirdict['post'] + 'RPM_trajectories_as_postpredictive_from_postequalweights_from_model_726_to_764_alltopologies.pickle',
+          indirdict['post'] + 'RPM_trajectories_as_postpredictive_from_postequalweights_from_model_764_to_1014_alltopologies.pickle',
+          indirdict['post'] + 'RPM_trajectories_as_postpredictive_from_postequalweights_from_model_1014_to_1269_alltopologies.pickle',
+          indirdict['post'] + 'RPM_trajectories_as_postpredictive_from_postequalweights_from_model_1269_to_1543_alltopologies.pickle',
+          indirdict['post'] + 'RPM_trajectories_as_postpredictive_from_postequalweights_from_model_1543_to_1822_alltopologies.pickle',
+          indirdict['post'] + 'RPM_trajectories_as_postpredictive_from_postequalweights_from_model_1822_to_2080_alltopologies.pickle',
+          indirdict['post'] + 'RPM_trajectories_as_postpredictive_from_postequalweights_from_model_2080_to_2333_alltopologies.pickle',
+          indirdict['post'] + 'RPM_trajectories_as_postpredictive_from_postequalweights_from_model_2333_to_2590_alltopologies.pickle',
+          indirdict['post'] + 'RPM_trajectories_as_postpredictive_from_postequalweights_from_model_2590_to_2844_alltopologies.pickle',
+          indirdict['post'] + 'RPM_trajectories_as_postpredictive_from_postequalweights_from_model_2844_to_3105_alltopologies.pickle',
+          indirdict['post'] + 'RPM_trajectories_as_postpredictive_from_postequalweights_from_model_3105_to_3367_alltopologies.pickle',
+          indirdict['post'] + 'RPM_trajectories_as_postpredictive_from_postequalweights_from_model_3367_to_3630_alltopologies.pickle',
+          indirdict['post'] + 'RPM_trajectories_as_postpredictive_from_postequalweights_from_model_3630_to_3890_alltopologies.pickle',
+          indirdict['post'] + 'RPM_trajectories_as_postpredictive_from_postequalweights_from_model_3890_to_4146_alltopologies.pickle',
+          indirdict['post'] + 'RPM_trajectories_as_postpredictive_from_postequalweights_from_model_4146_to_4409_alltopologies.pickle',
+          indirdict['post'] + 'RPM_trajectories_as_postpredictive_from_postequalweights_from_model_4409_to_4670_alltopologies.pickle',
+          indirdict['post'] + 'RPM_trajectories_as_postpredictive_from_postequalweights_from_model_4670_to_4924_alltopologies.pickle',
+          indirdict['post'] + 'RPM_trajectories_as_postpredictive_from_postequalweights_from_model_4924_to_5179_alltopologies.pickle',
+          indirdict['post'] + 'RPM_trajectories_as_postpredictive_from_postequalweights_from_model_5179_to_5433_alltopologies.pickle',
+          indirdict['post'] + 'RPM_trajectories_as_postpredictive_from_postequalweights_from_model_5433_to_5692_alltopologies.pickle',
+          indirdict['post'] + 'RPM_trajectories_as_postpredictive_from_postequalweights_from_model_5692_to_5890_alltopologies.pickle'
+          ]:
+    print(f)
+    p = pd.read_pickle(f)
+    post_picklelist_all.append(p)
+
+modselection_postpred_all = {
+    'NE_obs': pd.DataFrame(),
+    'NEv1_obs': pd.DataFrame(),
+    'NEv2_obs': pd.DataFrame(),
+    'NonNE_obs': pd.DataFrame()
+    }
+
+for n,p in enumerate(post_picklelist_all):
+    print(n)
+    modselection_postpred_all['NE_obs'] = pd.concat(
+        [modselection_postpred_all['NE_obs'], p['NE_obs']])
+    modselection_postpred_all['NEv1_obs'] = pd.concat(
+        [modselection_postpred_all['NEv1_obs'], p['NEv1_obs']])
+    modselection_postpred_all['NEv2_obs'] = pd.concat(
+        [modselection_postpred_all['NEv2_obs'], p['NEv2_obs']])
+    modselection_postpred_all['NonNE_obs'] = pd.concat(
+        [modselection_postpred_all['NonNE_obs'], p['NonNE_obs']])
+
+with gzip.open(outdir+'RPM_trajectories_as_postpredictive_from_postequalweights_alltopologies.pklz',
+          'wb') as fp:
+    pickle.dump(modselection_postpred_all,fp,protocol=4)
 
 #
 # cell_line_A
-indir_clA_post = indirdict['cl_A']['post']
 
-post_picklelist = []
-for f in [indir_clA_post+'cl_A_trajectories_as_postpredictive_from_postequalweights_from_model_0_to_552.pickle',
-          indir_clA_post+'cl_A_trajectories_as_postpredictive_from_postequalweights_from_model_552_to_1137.pickle',
-          indir_clA_post+'cl_A_trajectories_as_postpredictive_from_postequalweights_from_model_1137_to_1392.pickle',
-          indir_clA_post+'cl_A_trajectories_as_postpredictive_from_postequalweights_from_model_1392_to_1650.pickle',
-          indir_clA_post+'cl_A_trajectories_as_postpredictive_from_postequalweights_from_model_1650_to_1949.pickle',
-          indir_clA_post+'cl_A_trajectories_as_postpredictive_from_postequalweights_from_model_1949_to_2252.pickle',
-          indir_clA_post+'cl_A_trajectories_as_postpredictive_from_postequalweights_from_model_2252_to_2581.pickle',
-          indir_clA_post+'cl_A_trajectories_as_postpredictive_from_postequalweights_from_model_2581_to_2877.pickle',
-          indir_clA_post+'cl_A_trajectories_as_postpredictive_from_postequalweights_from_model_2877_to_3205.pickle',
-          indir_clA_post+'cl_A_trajectories_as_postpredictive_from_postequalweights_from_model_3205_to_3861.pickle',
-          indir_clA_post+'cl_A_trajectories_as_postpredictive_from_postequalweights_from_model_3861_to_4445.pickle',
-          indir_clA_post+'cl_A_trajectories_as_postpredictive_from_postequalweights_from_model_4445_to_4718.pickle',
-          indir_clA_post+'cl_A_trajectories_as_postpredictive_from_postequalweights_from_model_4718_to_4979.pickle',
-          indir_clA_post+'cl_A_trajectories_as_postpredictive_from_postequalweights_from_model_4979_to_5000.pickle',
-          indir_clA_post+'cl_A_trajectories_as_postpredictive_from_postequalweights_from_model_5000_to_5257.pickle',
-          indir_clA_post+'cl_A_trajectories_as_postpredictive_from_postequalweights_from_model_5257_to_7293.pickle',
-          indir_clA_post+'cl_A_trajectories_as_postpredictive_from_postequalweights_from_model_7293_to_7568.pickle',
-          indir_clA_post+'cl_A_trajectories_as_postpredictive_from_postequalweights_from_model_7568_to_7859.pickle',
-          indir_clA_post+'cl_A_trajectories_as_postpredictive_from_postequalweights_from_model_7859_to_8141.pickle',
-          indir_clA_post+'cl_A_trajectories_as_postpredictive_from_postequalweights_from_model_8141_to_8426.pickle',
-          indir_clA_post+'cl_A_trajectories_as_postpredictive_from_postequalweights_from_model_8426_to_8768.pickle',
-          indir_clA_post+'cl_A_trajectories_as_postpredictive_from_postequalweights_from_model_8768_to_9133.pickle',
-          indir_clA_post+'cl_A_trajectories_as_postpredictive_from_postequalweights_from_model_9133_to_9262.pickle']:
+# top topologies
+post_picklelist_top = []
+for f in [indirdict['post']+'cl_A_trajectories_as_postpredictive_from_postequalweights_from_model_0_to_2078_toptopologies.pickle',
+          indirdict['post']+'cl_A_trajectories_as_postpredictive_from_postequalweights_from_model_2078_to_2193_toptopologies.pickle']:
     print(f)
     p = pd.read_pickle(f)
-    post_picklelist.append(p)
+    post_picklelist_top.append(p)
 
-modselection_postpred = {
+modselection_postpred_top = {
     'NE_obs': pd.DataFrame(),
     'NEv1_obs': pd.DataFrame(),
     'NEv2_obs': pd.DataFrame(),
     'NonNE_obs': pd.DataFrame()
     }
 
-for n,p in enumerate(post_picklelist):
+for n,p in enumerate(post_picklelist_top):
     print(n)
-    modselection_postpred['NE_obs'] = pd.concat(
-        [modselection_postpred['NE_obs'], p['NE_obs']])
-    modselection_postpred['NEv1_obs'] = pd.concat(
-        [modselection_postpred['NEv1_obs'], p['NEv1_obs']])
-    modselection_postpred['NEv2_obs'] = pd.concat(
-        [modselection_postpred['NEv2_obs'], p['NEv2_obs']])
-    modselection_postpred['NonNE_obs'] = pd.concat(
-        [modselection_postpred['NonNE_obs'], p['NonNE_obs']])
+    modselection_postpred_top['NE_obs'] = pd.concat(
+        [modselection_postpred_top['NE_obs'], p['NE_obs']])
+    modselection_postpred_top['NEv1_obs'] = pd.concat(
+        [modselection_postpred_top['NEv1_obs'], p['NEv1_obs']])
+    modselection_postpred_top['NEv2_obs'] = pd.concat(
+        [modselection_postpred_top['NEv2_obs'], p['NEv2_obs']])
+    modselection_postpred_top['NonNE_obs'] = pd.concat(
+        [modselection_postpred_top['NonNE_obs'], p['NonNE_obs']])
 
-with gzip.open(outdir+indir_clA_post+'cl_A_trajectories_as_postpredictive_from_postequalweights_allmodels_somemissing_6_10_22.pklz',
+with gzip.open(outdir+'cl_A_trajectories_as_postpredictive_from_postequalweights_toptopologies.pklz',
           'wb') as fp:
-    pickle.dump(modselection_postpred,fp,protocol=4)
+    pickle.dump(modselection_postpred_top,fp,protocol=4)
+
+# all topologies
+post_picklelist_all = []
+for f in [indirdict['post'] + 'cl_A_trajectories_as_postpredictive_from_postequalweights_from_model_0_to_252_alltopologies.pickle',
+          indirdict['post'] + 'cl_A_trajectories_as_postpredictive_from_postequalweights_from_model_252_to_504_alltopologies.pickle',
+          indirdict['post'] + 'cl_A_trajectories_as_postpredictive_from_postequalweights_from_model_504_to_757_alltopologies.pickle',
+          indirdict['post'] + 'cl_A_trajectories_as_postpredictive_from_postequalweights_from_model_757_to_1007_alltopologies.pickle',
+          indirdict['post'] + 'cl_A_trajectories_as_postpredictive_from_postequalweights_from_model_1007_to_1260_alltopologies.pickle',
+          indirdict['post'] + 'cl_A_trajectories_as_postpredictive_from_postequalweights_from_model_1260_to_1522_alltopologies.pickle',
+          indirdict['post'] + 'cl_A_trajectories_as_postpredictive_from_postequalweights_from_model_1522_to_1800_alltopologies.pickle',
+          indirdict['post'] + 'cl_A_trajectories_as_postpredictive_from_postequalweights_from_model_1800_to_2059_alltopologies.pickle',
+          indirdict['post'] + 'cl_A_trajectories_as_postpredictive_from_postequalweights_from_model_2059_to_2193_alltopologies.pickle',
+          indirdict['post'] + 'cl_A_trajectories_as_postpredictive_from_postequalweights_from_model_2193_to_2313_alltopologies.pickle',
+          indirdict['post'] + 'cl_A_trajectories_as_postpredictive_from_postequalweights_from_model_2313_to_2570_alltopologies.pickle',
+          indirdict['post'] + 'cl_A_trajectories_as_postpredictive_from_postequalweights_from_model_2570_to_2825_alltopologies.pickle',
+          indirdict['post'] + 'cl_A_trajectories_as_postpredictive_from_postequalweights_from_model_2825_to_3088_alltopologies.pickle',
+          indirdict['post'] + 'cl_A_trajectories_as_postpredictive_from_postequalweights_from_model_3088_to_3349_alltopologies.pickle',
+          indirdict['post'] + 'cl_A_trajectories_as_postpredictive_from_postequalweights_from_model_3349_to_3619_alltopologies.pickle',
+          indirdict['post'] + 'cl_A_trajectories_as_postpredictive_from_postequalweights_from_model_3619_to_3877_alltopologies.pickle',
+          indirdict['post'] + 'cl_A_trajectories_as_postpredictive_from_postequalweights_from_model_3877_to_4132_alltopologies.pickle',
+          indirdict['post'] + 'cl_A_trajectories_as_postpredictive_from_postequalweights_from_model_4132_to_4405_alltopologies.pickle',
+          indirdict['post'] + 'cl_A_trajectories_as_postpredictive_from_postequalweights_from_model_4405_to_4667_alltopologies.pickle',
+          indirdict['post'] + 'cl_A_trajectories_as_postpredictive_from_postequalweights_from_model_4667_to_4920_alltopologies.pickle',
+          indirdict['post'] + 'cl_A_trajectories_as_postpredictive_from_postequalweights_from_model_4920_to_5174_alltopologies.pickle',
+          indirdict['post'] + 'cl_A_trajectories_as_postpredictive_from_postequalweights_from_model_5174_to_5425_alltopologies.pickle',
+          indirdict['post'] + 'cl_A_trajectories_as_postpredictive_from_postequalweights_from_model_5425_to_5681_alltopologies.pickle',
+          indirdict['post'] + 'cl_A_trajectories_as_postpredictive_from_postequalweights_from_model_5681_to_5890_alltopologies.pickle'
+          ]:
+    print(f)
+    p = pd.read_pickle(f)
+    post_picklelist_all.append(p)
+
+modselection_postpred_all = {
+    'NE_obs': pd.DataFrame(),
+    'NEv1_obs': pd.DataFrame(),
+    'NEv2_obs': pd.DataFrame(),
+    'NonNE_obs': pd.DataFrame()
+    }
+
+for n,p in enumerate(post_picklelist_all):
+    print(n)
+    modselection_postpred_all['NE_obs'] = pd.concat(
+        [modselection_postpred_all['NE_obs'], p['NE_obs']])
+    modselection_postpred_all['NEv1_obs'] = pd.concat(
+        [modselection_postpred_all['NEv1_obs'], p['NEv1_obs']])
+    modselection_postpred_all['NEv2_obs'] = pd.concat(
+        [modselection_postpred_all['NEv2_obs'], p['NEv2_obs']])
+    modselection_postpred_all['NonNE_obs'] = pd.concat(
+        [modselection_postpred_all['NonNE_obs'], p['NonNE_obs']])
+
+with gzip.open(outdir+'cl_A_trajectories_as_postpredictive_from_postequalweights_alltopologies.pklz',
+          'wb') as fp:
+    pickle.dump(modselection_postpred_all,fp,protocol=4)
 
 ### Put together the prior predictive simulations, which involves consolidating within each dataset and saving
 
@@ -196,165 +285,528 @@ with gzip.open(outdir+indir_clA_post+'cl_A_trajectories_as_postpredictive_from_p
 # TKO
 # can't just for loop TKO, RPM, cl_A because the numbers ("from_model_x_to_y") are different for the pickle files
 
-indir_TKO_prior = indirdict['TKO']['prior']
+# TKO
 
-prior_picklelist = []
-for f in [indir_TKO_prior+'TKO_trajectories_as_priorpredictive_from_model_0_to_560.pickle',
-          indir_TKO_prior+'TKO_trajectories_as_priorpredictive_from_model_560_to_1146.pickle',
-          indir_TKO_prior+'TKO_trajectories_as_priorpredictive_from_model_1146_to_1288.pickle',
-          indir_TKO_prior+'TKO_trajectories_as_priorpredictive_from_model_1288_to_1541.pickle',
-          indir_TKO_prior+'TKO_trajectories_as_priorpredictive_from_model_1541_to_1650.pickle',
-          indir_TKO_prior+'TKO_trajectories_as_priorpredictive_from_model_1650_to_1959.pickle',
-          indir_TKO_prior+'TKO_trajectories_as_priorpredictive_from_model_1959_to_2274.pickle',
-          indir_TKO_prior+'TKO_trajectories_as_priorpredictive_from_model_2274_to_2604.pickle',
-          indir_TKO_prior+'TKO_trajectories_as_priorpredictive_from_model_2604_to_2859.pickle',
-          indir_TKO_prior+'TKO_trajectories_as_priorpredictive_from_model_2859_to_3199.pickle',
-          indir_TKO_prior+'TKO_trajectories_as_priorpredictive_from_model_3199_to_3866.pickle',
-          indir_TKO_prior+'TKO_trajectories_as_priorpredictive_from_model_3866_to_4454.pickle',
-          indir_TKO_prior+'TKO_trajectories_as_priorpredictive_from_model_4454_to_4708.pickle',
-          indir_TKO_prior+'TKO_trajectories_as_priorpredictive_from_model_4708_to_4967.pickle',
-          indir_TKO_prior+'TKO_trajectories_as_priorpredictive_from_model_4967_to_5230.pickle',
-          indir_TKO_prior+'TKO_trajectories_as_priorpredictive_from_model_5230_to_7306.pickle',
-          indir_TKO_prior+'TKO_trajectories_as_priorpredictive_from_model_7306_to_7572.pickle',
-          indir_TKO_prior+'TKO_trajectories_as_priorpredictive_from_model_7572_to_7866.pickle',
-          indir_TKO_prior+'TKO_trajectories_as_priorpredictive_from_model_7866_to_8147.pickle',
-          indir_TKO_prior+'TKO_trajectories_as_priorpredictive_from_model_8147_to_8449.pickle',
-          indir_TKO_prior+'TKO_trajectories_as_priorpredictive_from_model_8449_to_8806.pickle',
-          indir_TKO_prior+'TKO_trajectories_as_priorpredictive_from_model_8806_to_9151.pickle',
-          indir_TKO_prior+'TKO_trajectories_as_priorpredictive_from_model_9151_to_9264.pickle']:
+# top topologies
+prior_picklelist_top = []
+for f in [indirdict['prior'] + 'TKO_trajectories_as_priorpredictive_from_model_0_to_944_toptopologies.pickle',
+          indirdict['prior'] + 'TKO_trajectories_as_priorpredictive_from_model_944_to_1197_toptopologies.pickle',
+          indirdict['prior'] + 'TKO_trajectories_as_priorpredictive_from_model_1197_to_1449_toptopologies.pickle',
+          indirdict['prior'] + 'TKO_trajectories_as_priorpredictive_from_model_1449_to_1711_toptopologies.pickle',
+          indirdict['prior'] + 'TKO_trajectories_as_priorpredictive_from_model_1711_to_1863_toptopologies.pickle']:
     print(f)
     p = pd.read_pickle(f)
-    prior_picklelist.append(p)
+    prior_picklelist_top.append(p)
 
-modselection_priorpred = {
+modselection_priorpred_top = {
     'NE_obs': pd.DataFrame(),
     'NEv1_obs': pd.DataFrame(),
     'NEv2_obs': pd.DataFrame(),
     'NonNE_obs': pd.DataFrame()
     }
 
-for n,p in enumerate(prior_picklelist):
+for n,p in enumerate(prior_picklelist_top):
     print(n)
-    modselection_priorpred['NE_obs'] = pd.concat(
-        [modselection_priorpred['NE_obs'], p['NE_obs']])
-    modselection_priorpred['NEv1_obs'] = pd.concat(
-        [modselection_priorpred['NEv1_obs'], p['NEv1_obs']])
-    modselection_priorpred['NEv2_obs'] = pd.concat(
-        [modselection_priorpred['NEv2_obs'], p['NEv2_obs']])
-    modselection_priorpred['NonNE_obs'] = pd.concat(
-        [modselection_priorpred['NonNE_obs'], p['NonNE_obs']])
+    modselection_priorpred_top['NE_obs'] = pd.concat(
+        [modselection_priorpred_top['NE_obs'], p['NE_obs']])
+    modselection_priorpred_top['NEv1_obs'] = pd.concat(
+        [modselection_priorpred_top['NEv1_obs'], p['NEv1_obs']])
+    modselection_priorpred_top['NEv2_obs'] = pd.concat(
+        [modselection_priorpred_top['NEv2_obs'], p['NEv2_obs']])
+    modselection_priorpred_top['NonNE_obs'] = pd.concat(
+        [modselection_priorpred_top['NonNE_obs'], p['NonNE_obs']])
 
-with gzip.open(outdir+'TKO_trajectories_as_priorpredictive_allmodels_somemissing_6_10_22.pklz',
+with gzip.open(outdir+'TKO_trajectories_as_priorpredictive_toptopologies.pklz',
           'wb') as fp:
-    pickle.dump(modselection_priorpred,fp,protocol=4)
+    pickle.dump(modselection_priorpred_top,fp,protocol=4)
 
-#
+# all topologies
+prior_picklelist_all = []
+for f in [indirdict['prior'] + 'TKO_trajectories_as_priorpredictive_from_model_0_to_249_alltopologies.pickle',
+          indirdict['prior'] + 'TKO_trajectories_as_priorpredictive_from_model_249_to_505_alltopologies.pickle',
+          indirdict['prior'] + 'TKO_trajectories_as_priorpredictive_from_model_505_to_755_alltopologies.pickle',
+          indirdict['prior'] + 'TKO_trajectories_as_priorpredictive_from_model_755_to_1005_alltopologies.pickle',
+          indirdict['prior'] + 'TKO_trajectories_as_priorpredictive_from_model_1005_to_1258_alltopologies.pickle',
+          indirdict['prior'] + 'TKO_trajectories_as_priorpredictive_from_model_1258_to_1511_alltopologies.pickle',
+          indirdict['prior'] + 'TKO_trajectories_as_priorpredictive_from_model_1511_to_1773_alltopologies.pickle',
+          indirdict['prior'] + 'TKO_trajectories_as_priorpredictive_from_model_1773_to_1863_alltopologies.pickle',
+          indirdict['prior'] + 'TKO_trajectories_as_priorpredictive_from_model_1863_to_2042_alltopologies.pickle',
+          indirdict['prior'] + 'TKO_trajectories_as_priorpredictive_from_model_2042_to_2294_alltopologies.pickle',
+          indirdict['prior'] + 'TKO_trajectories_as_priorpredictive_from_model_2294_to_2552_alltopologies.pickle',
+          indirdict['prior'] + 'TKO_trajectories_as_priorpredictive_from_model_2552_to_2803_alltopologies.pickle',
+          indirdict['prior'] + 'TKO_trajectories_as_priorpredictive_from_model_2803_to_3060_alltopologies.pickle',
+          indirdict['prior'] + 'TKO_trajectories_as_priorpredictive_from_model_3060_to_3318_alltopologies.pickle',
+          indirdict['prior'] + 'TKO_trajectories_as_priorpredictive_from_model_3318_to_3582_alltopologies.pickle',
+          indirdict['prior'] + 'TKO_trajectories_as_priorpredictive_from_model_3582_to_3836_alltopologies.pickle',
+          indirdict['prior'] + 'TKO_trajectories_as_priorpredictive_from_model_3836_to_4090_alltopologies.pickle',
+          indirdict['prior'] + 'TKO_trajectories_as_priorpredictive_from_model_4090_to_4353_alltopologies.pickle',
+          indirdict['prior'] + 'TKO_trajectories_as_priorpredictive_from_model_4353_to_4618_alltopologies.pickle',
+          indirdict['prior'] + 'TKO_trajectories_as_priorpredictive_from_model_4618_to_4876_alltopologies.pickle',
+          indirdict['prior'] + 'TKO_trajectories_as_priorpredictive_from_model_4876_to_5140_alltopologies.pickle',
+          indirdict['prior'] + 'TKO_trajectories_as_priorpredictive_from_model_5140_to_5400_alltopologies.pickle',
+          indirdict['prior'] + 'TKO_trajectories_as_priorpredictive_from_model_5400_to_5668_alltopologies.pickle',
+          indirdict['prior'] + 'TKO_trajectories_as_priorpredictive_from_model_5668_to_5890_alltopologies.pickle'
+          ]:
+    print(f)
+    p = pd.read_pickle(f)
+    prior_picklelist_all.append(p)
+
+modselection_priorpred_all = {
+    'NE_obs': pd.DataFrame(),
+    'NEv1_obs': pd.DataFrame(),
+    'NEv2_obs': pd.DataFrame(),
+    'NonNE_obs': pd.DataFrame()
+    }
+
+for n,p in enumerate(prior_picklelist_all):
+    print(n)
+    modselection_priorpred_all['NE_obs'] = pd.concat(
+        [modselection_priorpred_all['NE_obs'], p['NE_obs']])
+    modselection_priorpred_all['NEv1_obs'] = pd.concat(
+        [modselection_priorpred_all['NEv1_obs'], p['NEv1_obs']])
+    modselection_priorpred_all['NEv2_obs'] = pd.concat(
+        [modselection_priorpred_all['NEv2_obs'], p['NEv2_obs']])
+    modselection_priorpred_all['NonNE_obs'] = pd.concat(
+        [modselection_priorpred_all['NonNE_obs'], p['NonNE_obs']])
+
+with gzip.open(outdir+'TKO_trajectories_as_priorpredictive_alltopologies.pklz',
+          'wb') as fp:
+    pickle.dump(modselection_priorpred_all,fp,protocol=4)
+
+
 # RPM
-indir_RPM_prior = indirdict['RPM']['prior']
 
-prior_picklelist = []
-for f in [indir_RPM_prior+'RPM_trajectories_as_priorpredictive_from_model_0_to_552.pickle',
-          indir_RPM_prior+'RPM_trajectories_as_priorpredictive_from_model_552_to_1138.pickle',
-          indir_RPM_prior+'RPM_trajectories_as_priorpredictive_from_model_1138_to_1395.pickle',
-          indir_RPM_prior+'RPM_trajectories_as_priorpredictive_from_model_1395_to_1652.pickle',
-          indir_RPM_prior+'RPM_trajectories_as_priorpredictive_from_model_1652_to_1946.pickle',
-          indir_RPM_prior+'RPM_trajectories_as_priorpredictive_from_model_1946_to_2249.pickle',
-          indir_RPM_prior+'RPM_trajectories_as_priorpredictive_from_model_2249_to_2578.pickle',
-          indir_RPM_prior+'RPM_trajectories_as_priorpredictive_from_model_2578_to_2859.pickle',
-          indir_RPM_prior+'RPM_trajectories_as_priorpredictive_from_model_2859_to_3178.pickle',
-          indir_RPM_prior+'RPM_trajectories_as_priorpredictive_from_model_3178_to_3745.pickle',
-          indir_RPM_prior+'RPM_trajectories_as_priorpredictive_from_model_3745_to_4424.pickle',
-          indir_RPM_prior+'RPM_trajectories_as_priorpredictive_from_model_4424_to_4677.pickle',
-          indir_RPM_prior+'RPM_trajectories_as_priorpredictive_from_model_4677_to_4932.pickle',
-          indir_RPM_prior+'RPM_trajectories_as_priorpredictive_from_model_4932_to_5184.pickle',
-          indir_RPM_prior+'RPM_trajectories_as_priorpredictive_from_model_5184_to_6681.pickle',
-          indir_RPM_prior+'RPM_trajectories_as_priorpredictive_from_model_6681_to_7533.pickle',
-          indir_RPM_prior+'RPM_trajectories_as_priorpredictive_from_model_7533_to_7824.pickle',
-          indir_RPM_prior+'RPM_trajectories_as_priorpredictive_from_model_7824_to_8113.pickle',
-          indir_RPM_prior+'RPM_trajectories_as_priorpredictive_from_model_8113_to_8336.pickle',
-          indir_RPM_prior+'RPM_trajectories_as_priorpredictive_from_model_8336_to_8565.pickle',
-          indir_RPM_prior+'RPM_trajectories_as_priorpredictive_from_model_8565_to_8908.pickle',
-          indir_RPM_prior+'RPM_trajectories_as_priorpredictive_from_model_8908_to_9128.pickle',
-          indir_RPM_prior+'RPM_trajectories_as_priorpredictive_from_model_9128_to_9262.pickle']:
+# top topologies
+prior_picklelist_top = []
+for f in [indirdict['prior'] + 'RPM_trajectories_as_priorpredictive_from_model_0_to_329_toptopologies.pickle',
+          indirdict['prior'] + 'RPM_trajectories_as_priorpredictive_from_model_329_to_587_toptopologies.pickle',
+          indirdict['prior'] + 'RPM_trajectories_as_priorpredictive_from_model_587_to_726_toptopologies.pickle']:
     print(f)
     p = pd.read_pickle(f)
-    prior_picklelist.append(p)
+    prior_picklelist_top.append(p)
 
-modselection_priorpred = {
+modselection_priorpred_top = {
     'NE_obs': pd.DataFrame(),
     'NEv1_obs': pd.DataFrame(),
     'NEv2_obs': pd.DataFrame(),
     'NonNE_obs': pd.DataFrame()
     }
 
-for n,p in enumerate(prior_picklelist):
+for n,p in enumerate(prior_picklelist_top):
     print(n)
-    modselection_priorpred['NE_obs'] = pd.concat(
-        [modselection_priorpred['NE_obs'], p['NE_obs']])
-    modselection_priorpred['NEv1_obs'] = pd.concat(
-        [modselection_priorpred['NEv1_obs'], p['NEv1_obs']])
-    modselection_priorpred['NEv2_obs'] = pd.concat(
-        [modselection_priorpred['NEv2_obs'], p['NEv2_obs']])
-    modselection_priorpred['NonNE_obs'] = pd.concat(
-        [modselection_priorpred['NonNE_obs'], p['NonNE_obs']])
+    modselection_priorpred_top['NE_obs'] = pd.concat(
+        [modselection_priorpred_top['NE_obs'], p['NE_obs']])
+    modselection_priorpred_top['NEv1_obs'] = pd.concat(
+        [modselection_priorpred_top['NEv1_obs'], p['NEv1_obs']])
+    modselection_priorpred_top['NEv2_obs'] = pd.concat(
+        [modselection_priorpred_top['NEv2_obs'], p['NEv2_obs']])
+    modselection_priorpred_top['NonNE_obs'] = pd.concat(
+        [modselection_priorpred_top['NonNE_obs'], p['NonNE_obs']])
 
-with gzip.open(outdir+'RPM_trajectories_as_priorpredictive_allmodels_somemissing_6_10_22.pklz',
+with gzip.open(outdir+'RPM_trajectories_as_priorpredictive_toptopologies.pklz',
           'wb') as fp:
-    pickle.dump(modselection_priorpred,fp,protocol=4)
+    pickle.dump(modselection_priorpred_top,fp,protocol=4)
+
+# all topologies
+prior_picklelist_all = []
+for f in [indirdict['prior'] + 'RPM_trajectories_as_priorpredictive_from_model_0_to_252_alltopologies.pickle',
+          indirdict['prior'] + 'RPM_trajectories_as_priorpredictive_from_model_252_to_505_alltopologies.pickle',
+          indirdict['prior'] + 'RPM_trajectories_as_priorpredictive_from_model_505_to_726_alltopologies.pickle',
+          indirdict['prior'] + 'RPM_trajectories_as_priorpredictive_from_model_726_to_764_alltopologies.pickle',
+          indirdict['prior'] + 'RPM_trajectories_as_priorpredictive_from_model_764_to_1014_alltopologies.pickle',
+          indirdict['prior'] + 'RPM_trajectories_as_priorpredictive_from_model_1014_to_1269_alltopologies.pickle',
+          indirdict['prior'] + 'RPM_trajectories_as_priorpredictive_from_model_1269_to_1543_alltopologies.pickle',
+          indirdict['prior'] + 'RPM_trajectories_as_priorpredictive_from_model_1543_to_1822_alltopologies.pickle',
+          indirdict['prior'] + 'RPM_trajectories_as_priorpredictive_from_model_1822_to_2080_alltopologies.pickle',
+          indirdict['prior'] + 'RPM_trajectories_as_priorpredictive_from_model_2080_to_2333_alltopologies.pickle',
+          indirdict['prior'] + 'RPM_trajectories_as_priorpredictive_from_model_2333_to_2590_alltopologies.pickle',
+          indirdict['prior'] + 'RPM_trajectories_as_priorpredictive_from_model_2590_to_2844_alltopologies.pickle',
+          indirdict['prior'] + 'RPM_trajectories_as_priorpredictive_from_model_2844_to_3105_alltopologies.pickle',
+          indirdict['prior'] + 'RPM_trajectories_as_priorpredictive_from_model_3105_to_3367_alltopologies.pickle',
+          indirdict['prior'] + 'RPM_trajectories_as_priorpredictive_from_model_3367_to_3630_alltopologies.pickle',
+          indirdict['prior'] + 'RPM_trajectories_as_priorpredictive_from_model_3630_to_3890_alltopologies.pickle',
+          indirdict['prior'] + 'RPM_trajectories_as_priorpredictive_from_model_3890_to_4146_alltopologies.pickle',
+          indirdict['prior'] + 'RPM_trajectories_as_priorpredictive_from_model_4146_to_4409_alltopologies.pickle',
+          indirdict['prior'] + 'RPM_trajectories_as_priorpredictive_from_model_4409_to_4670_alltopologies.pickle',
+          indirdict['prior'] + 'RPM_trajectories_as_priorpredictive_from_model_4670_to_4924_alltopologies.pickle',
+          indirdict['prior'] + 'RPM_trajectories_as_priorpredictive_from_model_4924_to_5179_alltopologies.pickle',
+          indirdict['prior'] + 'RPM_trajectories_as_priorpredictive_from_model_5179_to_5433_alltopologies.pickle',
+          indirdict['prior'] + 'RPM_trajectories_as_priorpredictive_from_model_5433_to_5692_alltopologies.pickle',
+          indirdict['prior'] + 'RPM_trajectories_as_priorpredictive_from_model_5692_to_5890_alltopologies.pickle'
+          ]:
+    print(f)
+    p = pd.read_pickle(f)
+    prior_picklelist_all.append(p)
+
+modselection_priorpred_all = {
+    'NE_obs': pd.DataFrame(),
+    'NEv1_obs': pd.DataFrame(),
+    'NEv2_obs': pd.DataFrame(),
+    'NonNE_obs': pd.DataFrame()
+    }
+
+for n,p in enumerate(prior_picklelist_all):
+    print(n)
+    modselection_priorpred_all['NE_obs'] = pd.concat(
+        [modselection_priorpred_all['NE_obs'], p['NE_obs']])
+    modselection_priorpred_all['NEv1_obs'] = pd.concat(
+        [modselection_priorpred_all['NEv1_obs'], p['NEv1_obs']])
+    modselection_priorpred_all['NEv2_obs'] = pd.concat(
+        [modselection_priorpred_all['NEv2_obs'], p['NEv2_obs']])
+    modselection_priorpred_all['NonNE_obs'] = pd.concat(
+        [modselection_priorpred_all['NonNE_obs'], p['NonNE_obs']])
+
+with gzip.open(outdir+'RPM_trajectories_as_priorpredictive_alltopologies.pklz',
+          'wb') as fp:
+    pickle.dump(modselection_priorpred_all,fp,protocol=4)
 
 #
 # cl_A
-indir_clA_prior = indirdict['cl_A']['prior']
 
-prior_picklelist = []
-for f in [indir_clA_prior+'cl_A_trajectories_as_priorpredictive_from_model_0_to_552.pickle',
-          indir_clA_prior+'cl_A_trajectories_as_priorpredictive_from_model_552_to_1137.pickle',
-          indir_clA_prior+'cl_A_trajectories_as_priorpredictive_from_model_1137_to_1392.pickle',
-          indir_clA_prior+'cl_A_trajectories_as_priorpredictive_from_model_1392_to_1650.pickle',
-          indir_clA_prior+'cl_A_trajectories_as_priorpredictive_from_model_1650_to_1949.pickle',
-          indir_clA_prior+'cl_A_trajectories_as_priorpredictive_from_model_1949_to_2252.pickle',
-          indir_clA_prior+'cl_A_trajectories_as_priorpredictive_from_model_2252_to_2581.pickle',
-          indir_clA_prior+'cl_A_trajectories_as_priorpredictive_from_model_2581_to_2877.pickle',
-          indir_clA_prior+'cl_A_trajectories_as_priorpredictive_from_model_2877_to_3205.pickle',
-          indir_clA_prior+'cl_A_trajectories_as_priorpredictive_from_model_3205_to_3861.pickle',
-          indir_clA_prior+'cl_A_trajectories_as_priorpredictive_from_model_3861_to_4445.pickle',
-          indir_clA_prior+'cl_A_trajectories_as_priorpredictive_from_model_4445_to_4718.pickle',
-          indir_clA_prior+'cl_A_trajectories_as_priorpredictive_from_model_4718_to_4979.pickle',
-          indir_clA_prior+'cl_A_trajectories_as_priorpredictive_from_model_4979_to_5000.pickle',
-          indir_clA_prior+'cl_A_trajectories_as_priorpredictive_from_model_5000_to_5257.pickle',
-          indir_clA_prior+'cl_A_trajectories_as_priorpredictive_from_model_5257_to_7293.pickle',
-          indir_clA_prior+'cl_A_trajectories_as_priorpredictive_from_model_7293_to_7568.pickle',
-          indir_clA_prior+'cl_A_trajectories_as_priorpredictive_from_model_7568_to_7859.pickle',
-          indir_clA_prior+'cl_A_trajectories_as_priorpredictive_from_model_7859_to_8141.pickle',
-          indir_clA_prior+'cl_A_trajectories_as_priorpredictive_from_model_8141_to_8426.pickle',
-          indir_clA_prior+'cl_A_trajectories_as_priorpredictive_from_model_8426_to_8768.pickle',
-          indir_clA_prior+'cl_A_trajectories_as_priorpredictive_from_model_8768_to_9133.pickle',
-          indir_clA_prior+'cl_A_trajectories_as_priorpredictive_from_model_9133_to_9262.pickle']:
+# top topologies
+prior_picklelist_top = []
+for f in [indirdict['prior'] + 'cl_A_trajectories_as_priorpredictive_from_model_0_to_2078_toptopologies.pickle',
+          indirdict['prior'] + 'cl_A_trajectories_as_priorpredictive_from_model_2078_to_2193_toptopologies.pickle']:
     print(f)
     p = pd.read_pickle(f)
-    prior_picklelist.append(p)
+    prior_picklelist_top.append(p)
 
 
 
-modselection_priorpred = {
+modselection_priorpred_top = {
     'NE_obs': pd.DataFrame(),
     'NEv1_obs': pd.DataFrame(),
     'NEv2_obs': pd.DataFrame(),
     'NonNE_obs': pd.DataFrame()
     }
 
-for n,p in enumerate(prior_picklelist):
+for n,p in enumerate(prior_picklelist_top):
     print(n)
-    modselection_priorpred['NE_obs'] = pd.concat(
-        [modselection_priorpred['NE_obs'], p['NE_obs']])
-    modselection_priorpred['NEv1_obs'] = pd.concat(
-        [modselection_priorpred['NEv1_obs'], p['NEv1_obs']])
-    modselection_priorpred['NEv2_obs'] = pd.concat(
-        [modselection_priorpred['NEv2_obs'], p['NEv2_obs']])
-    modselection_priorpred['NonNE_obs'] = pd.concat(
-        [modselection_priorpred['NonNE_obs'], p['NonNE_obs']])
+    modselection_priorpred_top['NE_obs'] = pd.concat(
+        [modselection_priorpred_top['NE_obs'], p['NE_obs']])
+    modselection_priorpred_top['NEv1_obs'] = pd.concat(
+        [modselection_priorpred_top['NEv1_obs'], p['NEv1_obs']])
+    modselection_priorpred_top['NEv2_obs'] = pd.concat(
+        [modselection_priorpred_top['NEv2_obs'], p['NEv2_obs']])
+    modselection_priorpred_top['NonNE_obs'] = pd.concat(
+        [modselection_priorpred_top['NonNE_obs'], p['NonNE_obs']])
 
-with gzip.open(outdir+'cl_A_trajectories_as_priorpredictive_allmodels_somemissing_6_10_22.pklz',
+with gzip.open(outdir+'cl_A_trajectories_as_priorpredictive_toptopologies.pklz',
           'wb') as fp:
-    pickle.dump(modselection_priorpred,fp,protocol=4)
+    pickle.dump(modselection_priorpred_top,fp,protocol=4)
 
+# all topologies
+prior_picklelist_all = []
+for f in [indirdict['prior'] + 'cl_A_trajectories_as_priorpredictive_from_model_0_to_252_alltopologies.pickle',
+          indirdict['prior'] + 'cl_A_trajectories_as_priorpredictive_from_model_252_to_504_alltopologies.pickle',
+          indirdict['prior'] + 'cl_A_trajectories_as_priorpredictive_from_model_504_to_757_alltopologies.pickle',
+          indirdict['prior'] + 'cl_A_trajectories_as_priorpredictive_from_model_757_to_1007_alltopologies.pickle',
+          indirdict['prior'] + 'cl_A_trajectories_as_priorpredictive_from_model_1007_to_1260_alltopologies.pickle',
+          indirdict['prior'] + 'cl_A_trajectories_as_priorpredictive_from_model_1260_to_1522_alltopologies.pickle',
+          indirdict['prior'] + 'cl_A_trajectories_as_priorpredictive_from_model_1522_to_1800_alltopologies.pickle',
+          indirdict['prior'] + 'cl_A_trajectories_as_priorpredictive_from_model_1800_to_2059_alltopologies.pickle',
+          indirdict['prior'] + 'cl_A_trajectories_as_priorpredictive_from_model_2059_to_2193_alltopologies.pickle',
+          indirdict['prior'] + 'cl_A_trajectories_as_priorpredictive_from_model_2193_to_2313_alltopologies.pickle',
+          indirdict['prior'] + 'cl_A_trajectories_as_priorpredictive_from_model_2313_to_2570_alltopologies.pickle',
+          indirdict['prior'] + 'cl_A_trajectories_as_priorpredictive_from_model_2570_to_2825_alltopologies.pickle',
+          indirdict['prior'] + 'cl_A_trajectories_as_priorpredictive_from_model_2825_to_3088_alltopologies.pickle',
+          indirdict['prior'] + 'cl_A_trajectories_as_priorpredictive_from_model_3088_to_3349_alltopologies.pickle',
+          indirdict['prior'] + 'cl_A_trajectories_as_priorpredictive_from_model_3349_to_3619_alltopologies.pickle',
+          indirdict['prior'] + 'cl_A_trajectories_as_priorpredictive_from_model_3619_to_3877_alltopologies.pickle',
+          indirdict['prior'] + 'cl_A_trajectories_as_priorpredictive_from_model_3877_to_4132_alltopologies.pickle',
+          indirdict['prior'] + 'cl_A_trajectories_as_priorpredictive_from_model_4132_to_4405_alltopologies.pickle',
+          indirdict['prior'] + 'cl_A_trajectories_as_priorpredictive_from_model_4405_to_4667_alltopologies.pickle',
+          indirdict['prior'] + 'cl_A_trajectories_as_priorpredictive_from_model_4667_to_4920_alltopologies.pickle',
+          indirdict['prior'] + 'cl_A_trajectories_as_priorpredictive_from_model_4920_to_5174_alltopologies.pickle',
+          indirdict['prior'] + 'cl_A_trajectories_as_priorpredictive_from_model_5174_to_5425_alltopologies.pickle',
+          indirdict['prior'] + 'cl_A_trajectories_as_priorpredictive_from_model_5425_to_5681_alltopologies.pickle',
+          indirdict['prior'] + 'cl_A_trajectories_as_priorpredictive_from_model_5681_to_5890_alltopologies.pickle'
+          ]:
+    print(f)
+    p = pd.read_pickle(f)
+    prior_picklelist_all.append(p)
+
+modselection_priorpred_all = {
+    'NE_obs': pd.DataFrame(),
+    'NEv1_obs': pd.DataFrame(),
+    'NEv2_obs': pd.DataFrame(),
+    'NonNE_obs': pd.DataFrame()
+    }
+
+for n,p in enumerate(prior_picklelist_all):
+    print(n)
+    modselection_priorpred_all['NE_obs'] = pd.concat(
+        [modselection_priorpred_all['NE_obs'], p['NE_obs']])
+    modselection_priorpred_all['NEv1_obs'] = pd.concat(
+        [modselection_priorpred_all['NEv1_obs'], p['NEv1_obs']])
+    modselection_priorpred_all['NEv2_obs'] = pd.concat(
+        [modselection_priorpred_all['NEv2_obs'], p['NEv2_obs']])
+    modselection_priorpred_all['NonNE_obs'] = pd.concat(
+        [modselection_priorpred_all['NonNE_obs'], p['NonNE_obs']])
+
+with gzip.open(outdir+'cl_A_trajectories_as_priorpredictive_alltopologies.pklz',
+          'wb') as fp:
+    pickle.dump(modselection_priorpred_all,fp,protocol=4)
+
+## Put together the posterior independently-sampled param simulations, which involves consolidating within each dataset and saving
+
+# TKO
+
+# top topologies
+post_picklelist_top = []
+for f in [indirdict['post'] + 'TKO_trajectories_as_postpredictive_from_independentsampling_from_model_0_to_944_toptopologies.pickle',
+          indirdict['post'] + 'TKO_trajectories_as_postpredictive_from_independentsampling_from_model_944_to_1197_toptopologies.pickle',
+          indirdict['post'] + 'TKO_trajectories_as_postpredictive_from_independentsampling_from_model_1197_to_1449_toptopologies.pickle',
+          indirdict['post'] + 'TKO_trajectories_as_postpredictive_from_independentsampling_from_model_1449_to_1711_toptopologies.pickle',
+          indirdict['post'] + 'TKO_trajectories_as_postpredictive_from_independentsampling_from_model_1711_to_1863_toptopologies.pickle']:
+    print(f)
+    p = pd.read_pickle(f)
+    post_picklelist_top.append(p)
+
+modselection_postpred_top = {
+    'NE_obs': pd.DataFrame(),
+    'NEv1_obs': pd.DataFrame(),
+    'NEv2_obs': pd.DataFrame(),
+    'NonNE_obs': pd.DataFrame()
+    }
+
+for n,p in enumerate(post_picklelist_top):
+    print(n)
+    modselection_postpred_top['NE_obs'] = pd.concat(
+        [modselection_postpred_top['NE_obs'], p['NE_obs']])
+    modselection_postpred_top['NEv1_obs'] = pd.concat(
+        [modselection_postpred_top['NEv1_obs'], p['NEv1_obs']])
+    modselection_postpred_top['NEv2_obs'] = pd.concat(
+        [modselection_postpred_top['NEv2_obs'], p['NEv2_obs']])
+    modselection_postpred_top['NonNE_obs'] = pd.concat(
+        [modselection_postpred_top['NonNE_obs'], p['NonNE_obs']])
+
+with gzip.open(outdir+'TKO_trajectories_as_postpredictive_from_independentsampling_toptopologies.pklz',
+          'wb') as fp:
+    pickle.dump(modselection_postpred_top,fp,protocol=4)
+
+# all topologies
+post_picklelist_all = []
+for f in [indirdict['post'] + 'TKO_trajectories_as_postpredictive_from_independentsampling_from_model_0_to_249_alltopologies.pickle',
+          indirdict['post'] + 'TKO_trajectories_as_postpredictive_from_independentsampling_from_model_249_to_505_alltopologies.pickle',
+          indirdict['post'] + 'TKO_trajectories_as_postpredictive_from_independentsampling_from_model_505_to_755_alltopologies.pickle',
+          indirdict['post'] + 'TKO_trajectories_as_postpredictive_from_independentsampling_from_model_755_to_1005_alltopologies.pickle',
+          indirdict['post'] + 'TKO_trajectories_as_postpredictive_from_independentsampling_from_model_1005_to_1258_alltopologies.pickle',
+          indirdict['post'] + 'TKO_trajectories_as_postpredictive_from_independentsampling_from_model_1258_to_1511_alltopologies.pickle',
+          indirdict['post'] + 'TKO_trajectories_as_postpredictive_from_independentsampling_from_model_1511_to_1773_alltopologies.pickle',
+          indirdict['post'] + 'TKO_trajectories_as_postpredictive_from_independentsampling_from_model_1773_to_1863_alltopologies.pickle',
+          indirdict['post'] + 'TKO_trajectories_as_postpredictive_from_independentsampling_from_model_1863_to_2042_alltopologies.pickle',
+          indirdict['post'] + 'TKO_trajectories_as_postpredictive_from_independentsampling_from_model_2042_to_2294_alltopologies.pickle',
+          indirdict['post'] + 'TKO_trajectories_as_postpredictive_from_independentsampling_from_model_2294_to_2552_alltopologies.pickle',
+          indirdict['post'] + 'TKO_trajectories_as_postpredictive_from_independentsampling_from_model_2552_to_2803_alltopologies.pickle',
+          indirdict['post'] + 'TKO_trajectories_as_postpredictive_from_independentsampling_from_model_2803_to_3060_alltopologies.pickle',
+          indirdict['post'] + 'TKO_trajectories_as_postpredictive_from_independentsampling_from_model_3060_to_3318_alltopologies.pickle',
+          indirdict['post'] + 'TKO_trajectories_as_postpredictive_from_independentsampling_from_model_3318_to_3582_alltopologies.pickle',
+          indirdict['post'] + 'TKO_trajectories_as_postpredictive_from_independentsampling_from_model_3582_to_3836_alltopologies.pickle',
+          indirdict['post'] + 'TKO_trajectories_as_postpredictive_from_independentsampling_from_model_3836_to_4090_alltopologies.pickle',
+          indirdict['post'] + 'TKO_trajectories_as_postpredictive_from_independentsampling_from_model_4090_to_4353_alltopologies.pickle',
+          indirdict['post'] + 'TKO_trajectories_as_postpredictive_from_independentsampling_from_model_4353_to_4618_alltopologies.pickle',
+          indirdict['post'] + 'TKO_trajectories_as_postpredictive_from_independentsampling_from_model_4618_to_4876_alltopologies.pickle',
+          indirdict['post'] + 'TKO_trajectories_as_postpredictive_from_independentsampling_from_model_4876_to_5140_alltopologies.pickle',
+          indirdict['post'] + 'TKO_trajectories_as_postpredictive_from_independentsampling_from_model_5140_to_5400_alltopologies.pickle',
+          indirdict['post'] + 'TKO_trajectories_as_postpredictive_from_independentsampling_from_model_5400_to_5668_alltopologies.pickle',
+          indirdict['post'] + 'TKO_trajectories_as_postpredictive_from_independentsampling_from_model_5668_to_5890_alltopologies.pickle'
+          ]:
+    print(f)
+    p = pd.read_pickle(f)
+    post_picklelist_all.append(p)
+
+modselection_postpred_all = {
+    'NE_obs': pd.DataFrame(),
+    'NEv1_obs': pd.DataFrame(),
+    'NEv2_obs': pd.DataFrame(),
+    'NonNE_obs': pd.DataFrame()
+    }
+
+for n,p in enumerate(post_picklelist_all):
+    print(n)
+    modselection_postpred_all['NE_obs'] = pd.concat(
+        [modselection_postpred_all['NE_obs'], p['NE_obs']])
+    modselection_postpred_all['NEv1_obs'] = pd.concat(
+        [modselection_postpred_all['NEv1_obs'], p['NEv1_obs']])
+    modselection_postpred_all['NEv2_obs'] = pd.concat(
+        [modselection_postpred_all['NEv2_obs'], p['NEv2_obs']])
+    modselection_postpred_all['NonNE_obs'] = pd.concat(
+        [modselection_postpred_all['NonNE_obs'], p['NonNE_obs']])
+
+with gzip.open(outdir+'TKO_trajectories_as_postpredictive_from_independentsampling_alltopologies.pklz',
+          'wb') as fp:
+    pickle.dump(modselection_postpred_all,fp,protocol=4)
+
+#
+# RPM
+
+# top topologies
+post_picklelist_top = []
+for f in [indirdict['post'] + 'RPM_trajectories_as_postpredictive_from_independentsampling_from_model_0_to_329_toptopologies.pickle',
+          indirdict['post'] + 'RPM_trajectories_as_postpredictive_from_independentsampling_from_model_329_to_587_toptopologies.pickle',
+          indirdict['post'] + 'RPM_trajectories_as_postpredictive_from_independentsampling_from_model_587_to_726_toptopologies.pickle']:
+    print(f)
+    p = pd.read_pickle(f)
+    post_picklelist_top.append(p)
+
+modselection_postpred_top = {
+    'NE_obs': pd.DataFrame(),
+    'NEv1_obs': pd.DataFrame(),
+    'NEv2_obs': pd.DataFrame(),
+    'NonNE_obs': pd.DataFrame()
+    }
+
+for n,p in enumerate(post_picklelist_top):
+    print(n)
+    modselection_postpred_top['NE_obs'] = pd.concat(
+        [modselection_postpred_top['NE_obs'], p['NE_obs']])
+    modselection_postpred_top['NEv1_obs'] = pd.concat(
+        [modselection_postpred_top['NEv1_obs'], p['NEv1_obs']])
+    modselection_postpred_top['NEv2_obs'] = pd.concat(
+        [modselection_postpred_top['NEv2_obs'], p['NEv2_obs']])
+    modselection_postpred_top['NonNE_obs'] = pd.concat(
+        [modselection_postpred_top['NonNE_obs'], p['NonNE_obs']])
+
+with gzip.open(outdir+'RPM_trajectories_as_postpredictive_from_independentsampling_toptopologies.pklz',
+          'wb') as fp:
+    pickle.dump(modselection_postpred_top,fp,protocol=4)
+
+# all topologies
+post_picklelist_all = []
+for f in [indirdict['post'] + 'RPM_trajectories_as_postpredictive_from_independentsampling_from_model_0_to_252_alltopologies.pickle',
+          indirdict['post'] + 'RPM_trajectories_as_postpredictive_from_independentsampling_from_model_252_to_505_alltopologies.pickle',
+          indirdict['post'] + 'RPM_trajectories_as_postpredictive_from_independentsampling_from_model_505_to_726_alltopologies.pickle',
+          indirdict['post'] + 'RPM_trajectories_as_postpredictive_from_independentsampling_from_model_726_to_764_alltopologies.pickle',
+          indirdict['post'] + 'RPM_trajectories_as_postpredictive_from_independentsampling_from_model_764_to_1014_alltopologies.pickle',
+          indirdict['post'] + 'RPM_trajectories_as_postpredictive_from_independentsampling_from_model_1014_to_1269_alltopologies.pickle',
+          indirdict['post'] + 'RPM_trajectories_as_postpredictive_from_independentsampling_from_model_1269_to_1543_alltopologies.pickle',
+          indirdict['post'] + 'RPM_trajectories_as_postpredictive_from_independentsampling_from_model_1543_to_1822_alltopologies.pickle',
+          indirdict['post'] + 'RPM_trajectories_as_postpredictive_from_independentsampling_from_model_1822_to_2080_alltopologies.pickle',
+          indirdict['post'] + 'RPM_trajectories_as_postpredictive_from_independentsampling_from_model_2080_to_2333_alltopologies.pickle',
+          indirdict['post'] + 'RPM_trajectories_as_postpredictive_from_independentsampling_from_model_2333_to_2590_alltopologies.pickle',
+          indirdict['post'] + 'RPM_trajectories_as_postpredictive_from_independentsampling_from_model_2590_to_2844_alltopologies.pickle',
+          indirdict['post'] + 'RPM_trajectories_as_postpredictive_from_independentsampling_from_model_2844_to_3105_alltopologies.pickle',
+          indirdict['post'] + 'RPM_trajectories_as_postpredictive_from_independentsampling_from_model_3105_to_3367_alltopologies.pickle',
+          indirdict['post'] + 'RPM_trajectories_as_postpredictive_from_independentsampling_from_model_3367_to_3630_alltopologies.pickle',
+          indirdict['post'] + 'RPM_trajectories_as_postpredictive_from_independentsampling_from_model_3630_to_3890_alltopologies.pickle',
+          indirdict['post'] + 'RPM_trajectories_as_postpredictive_from_independentsampling_from_model_3890_to_4146_alltopologies.pickle',
+          indirdict['post'] + 'RPM_trajectories_as_postpredictive_from_independentsampling_from_model_4146_to_4409_alltopologies.pickle',
+          indirdict['post'] + 'RPM_trajectories_as_postpredictive_from_independentsampling_from_model_4409_to_4670_alltopologies.pickle',
+          indirdict['post'] + 'RPM_trajectories_as_postpredictive_from_independentsampling_from_model_4670_to_4924_alltopologies.pickle',
+          indirdict['post'] + 'RPM_trajectories_as_postpredictive_from_independentsampling_from_model_4924_to_5179_alltopologies.pickle',
+          indirdict['post'] + 'RPM_trajectories_as_postpredictive_from_independentsampling_from_model_5179_to_5433_alltopologies.pickle',
+          indirdict['post'] + 'RPM_trajectories_as_postpredictive_from_independentsampling_from_model_5433_to_5692_alltopologies.pickle',
+          indirdict['post'] + 'RPM_trajectories_as_postpredictive_from_independentsampling_from_model_5692_to_5890_alltopologies.pickle'
+          ]:
+    print(f)
+    p = pd.read_pickle(f)
+    post_picklelist_all.append(p)
+
+modselection_postpred_all = {
+    'NE_obs': pd.DataFrame(),
+    'NEv1_obs': pd.DataFrame(),
+    'NEv2_obs': pd.DataFrame(),
+    'NonNE_obs': pd.DataFrame()
+    }
+
+for n,p in enumerate(post_picklelist_all):
+    print(n)
+    modselection_postpred_all['NE_obs'] = pd.concat(
+        [modselection_postpred_all['NE_obs'], p['NE_obs']])
+    modselection_postpred_all['NEv1_obs'] = pd.concat(
+        [modselection_postpred_all['NEv1_obs'], p['NEv1_obs']])
+    modselection_postpred_all['NEv2_obs'] = pd.concat(
+        [modselection_postpred_all['NEv2_obs'], p['NEv2_obs']])
+    modselection_postpred_all['NonNE_obs'] = pd.concat(
+        [modselection_postpred_all['NonNE_obs'], p['NonNE_obs']])
+
+with gzip.open(outdir+'RPM_trajectories_as_postpredictive_from_independentsampling_alltopologies_new.pklz',
+          'wb') as fp:
+    pickle.dump(modselection_postpred_all,fp,protocol=4)
+
+#
+# cell_line_A
+
+# top topologies
+post_picklelist_top = []
+for f in [indirdict['post'] + 'cl_A_trajectories_as_postpredictive_from_independentsampling_from_model_0_to_2078_toptopologies.pickle',
+          indirdict['post'] + 'cl_A_trajectories_as_postpredictive_from_independentsampling_from_model_2078_to_2193_toptopologies.pickle']:
+    print(f)
+    p = pd.read_pickle(f)
+    post_picklelist_top.append(p)
+
+modselection_postpred_top = {
+    'NE_obs': pd.DataFrame(),
+    'NEv1_obs': pd.DataFrame(),
+    'NEv2_obs': pd.DataFrame(),
+    'NonNE_obs': pd.DataFrame()
+    }
+
+for n,p in enumerate(post_picklelist_top):
+    print(n)
+    modselection_postpred_top['NE_obs'] = pd.concat(
+        [modselection_postpred_top['NE_obs'], p['NE_obs']])
+    modselection_postpred_top['NEv1_obs'] = pd.concat(
+        [modselection_postpred_top['NEv1_obs'], p['NEv1_obs']])
+    modselection_postpred_top['NEv2_obs'] = pd.concat(
+        [modselection_postpred_top['NEv2_obs'], p['NEv2_obs']])
+    modselection_postpred_top['NonNE_obs'] = pd.concat(
+        [modselection_postpred_top['NonNE_obs'], p['NonNE_obs']])
+
+with gzip.open(outdir+'cl_A_trajectories_as_postpredictive_from_independentsampling_toptopologies.pklz',
+          'wb') as fp:
+    pickle.dump(modselection_postpred_top,fp,protocol=4)
+
+# all topologies
+post_picklelist_all = []
+for f in [indirdict['post'] + 'cl_A_trajectories_as_postpredictive_from_independentsampling_from_model_0_to_252_alltopologies.pickle',
+          indirdict['post'] + 'cl_A_trajectories_as_postpredictive_from_independentsampling_from_model_252_to_504_alltopologies.pickle',
+          indirdict['post'] + 'cl_A_trajectories_as_postpredictive_from_independentsampling_from_model_504_to_757_alltopologies.pickle',
+          indirdict['post'] + 'cl_A_trajectories_as_postpredictive_from_independentsampling_from_model_757_to_1007_alltopologies.pickle',
+          indirdict['post'] + 'cl_A_trajectories_as_postpredictive_from_independentsampling_from_model_1007_to_1260_alltopologies.pickle',
+          indirdict['post'] + 'cl_A_trajectories_as_postpredictive_from_independentsampling_from_model_1260_to_1522_alltopologies.pickle',
+          indirdict['post'] + 'cl_A_trajectories_as_postpredictive_from_independentsampling_from_model_1522_to_1800_alltopologies.pickle',
+          indirdict['post'] + 'cl_A_trajectories_as_postpredictive_from_independentsampling_from_model_1800_to_2059_alltopologies.pickle',
+          indirdict['post'] + 'cl_A_trajectories_as_postpredictive_from_independentsampling_from_model_2059_to_2193_alltopologies.pickle',
+          indirdict['post'] + 'cl_A_trajectories_as_postpredictive_from_independentsampling_from_model_2193_to_2313_alltopologies.pickle',
+          indirdict['post'] + 'cl_A_trajectories_as_postpredictive_from_independentsampling_from_model_2313_to_2570_alltopologies.pickle',
+          indirdict['post'] + 'cl_A_trajectories_as_postpredictive_from_independentsampling_from_model_2570_to_2825_alltopologies.pickle',
+          indirdict['post'] + 'cl_A_trajectories_as_postpredictive_from_independentsampling_from_model_2825_to_3088_alltopologies.pickle',
+          indirdict['post'] + 'cl_A_trajectories_as_postpredictive_from_independentsampling_from_model_3088_to_3349_alltopologies.pickle',
+          indirdict['post'] + 'cl_A_trajectories_as_postpredictive_from_independentsampling_from_model_3349_to_3619_alltopologies.pickle',
+          indirdict['post'] + 'cl_A_trajectories_as_postpredictive_from_independentsampling_from_model_3619_to_3877_alltopologies.pickle',
+          indirdict['post'] + 'cl_A_trajectories_as_postpredictive_from_independentsampling_from_model_3877_to_4132_alltopologies.pickle',
+          indirdict['post'] + 'cl_A_trajectories_as_postpredictive_from_independentsampling_from_model_4132_to_4405_alltopologies.pickle',
+          indirdict['post'] + 'cl_A_trajectories_as_postpredictive_from_independentsampling_from_model_4405_to_4667_alltopologies.pickle',
+          indirdict['post'] + 'cl_A_trajectories_as_postpredictive_from_independentsampling_from_model_4667_to_4920_alltopologies.pickle',
+          indirdict['post'] + 'cl_A_trajectories_as_postpredictive_from_independentsampling_from_model_4920_to_5174_alltopologies.pickle',
+          indirdict['post'] + 'cl_A_trajectories_as_postpredictive_from_independentsampling_from_model_5174_to_5425_alltopologies.pickle',
+          indirdict['post'] + 'cl_A_trajectories_as_postpredictive_from_independentsampling_from_model_5425_to_5681_alltopologies.pickle',
+          indirdict['post'] + 'cl_A_trajectories_as_postpredictive_from_independentsampling_from_model_5681_to_5890_alltopologies.pickle'
+          ]:
+    print(f)
+    p = pd.read_pickle(f)
+    post_picklelist_all.append(p)
+
+modselection_postpred_all = {
+    'NE_obs': pd.DataFrame(),
+    'NEv1_obs': pd.DataFrame(),
+    'NEv2_obs': pd.DataFrame(),
+    'NonNE_obs': pd.DataFrame()
+    }
+
+for n,p in enumerate(post_picklelist_all):
+    print(n)
+    modselection_postpred_all['NE_obs'] = pd.concat(
+        [modselection_postpred_all['NE_obs'], p['NE_obs']])
+    modselection_postpred_all['NEv1_obs'] = pd.concat(
+        [modselection_postpred_all['NEv1_obs'], p['NEv1_obs']])
+    modselection_postpred_all['NEv2_obs'] = pd.concat(
+        [modselection_postpred_all['NEv2_obs'], p['NEv2_obs']])
+    modselection_postpred_all['NonNE_obs'] = pd.concat(
+        [modselection_postpred_all['NonNE_obs'], p['NonNE_obs']])
+
+with gzip.open(outdir+'cl_A_trajectories_as_postpredictive_from_independentsampling_alltopologies.pklz',
+          'wb') as fp:
+    pickle.dump(modselection_postpred_all,fp,protocol=4)
