@@ -10,6 +10,7 @@ import signal
 
 # add this Bayes-MMI directory to the path to be able to import from helper_functions_and_files
 sys.path.append('/home/beiksp/Bayes-MMI')
+sys.path.append('/home/beiksp/maybe_pycharm_running/')
 
 indir = '../pymultinest_results/RPM/'
 outdir = "../files_generated_in_MMI_sclc/"
@@ -29,50 +30,24 @@ from helper_functions_and_files.modeldict_generator import generate_modeldict
 
 model_dict = generate_modeldict()
 
-# remove any that haven't finished
+# this is rpm_retired (retired = job took more than 28 days without finishing)
+# 15 + 12*10 + 6*10 = 195
+failedjobs_models = [31, 46, 75, 378, 379, 458, 572, 573, 574, 575, 579, 670, 671, 672, 727, 1015, 1016, 1037, 1038, 1044, 1331,
+                     1332, 1353, 1354, 1417, 1422, 1487, 1488, 1491, 1492, 1514, 1515, 1516, 1517, 1518, 1519, 1520, 1521, 1522,
+                     1524, 1525, 1526, 1527, 1528, 1585, 1589, 1639, 1655, 1656, 1659, 1668, 1683, 1685, 1686, 1688, 1689, 1690,
+                     1691, 1692, 1693, 1694, 1695, 1736, 1780, 1782, 1783, 1785, 1787, 1788, 1789, 1811, 1815, 1816, 1833, 1834,
+                     1838, 1854, 1859, 1860, 1865, 2030, 2255, 2317, 2318, 2358, 2420, 2481, 2482, 2522, 2645, 2707, 2708, 2766,
+                     2935, 2941, 2942, 2943, 3005, 3006, 3007, 3012, 3013, 3075, 3076, 3271, 3272, 3274, 3280, 3281, 3282, 3284,
+                     3348, 3350, 3354, 3355, 3356, 3427, 3429, 3434, 3435, 3505, 3549, 3551, 3552, 3561, 3562, 3563, 3564, 3803,
+                     3804, 3805, 3810, 3811, 3873, 3875, 3880, 3881, 3882, 3944, 3945, 4139, 4140, 4143, 4145, 4148, 4149, 4150,
+                     4151, 4216, 4218, 4222, 4223, 4224, 4295, 4297, 4302, 4373, 4417, 4419, 4420, 4422, 4423, 4428, 4429, 4430,
+                     4432, 4517, 4553, 4805, 4841, 4873, 4917, 4953, 5013, 5023, 5063, 5099, 5329, 5353, 5389, 5421, 5468, 5498,
+                     5538, 5544, 5583, 5593, 5623, 5633, 5669, 5771, 5787, 5797, 5867, 5873]
 
-# as of 6/20/22
-notdone = [1128, 1281, 1282, 1334, 1335, 1336, 1337, 1338, 1438, 1439, 1446, 1546, 1567, 1568, 1570, 4409, 4472,
-           4532, 4533, 4804, 4805, 4806, 4807, 4812, 4986, 4988, 5251, 5264, 5265, 5272, 5273, 5274, 5275, 5276,
-           5277, 5285, 5286, 5287, 5288, 5289, 5301, 5361, 5362, 5363, 5364, 5365, 5379, 5380, 5381, 5382, 5383,
-           5397, 5398, 5399, 5401, 5402, 5403, 5492, 5495, 5507, 5516, 5518, 5580, 5583, 5598, 5601, 5712, 5713,
-           5714, 5718, 5719, 5720, 5725, 5726, 5727, 5730, 5731, 5734, 5735, 5736, 5740, 5741, 5742, 5756, 5757,
-           5758, 5762, 5763, 5764, 5769, 5774, 5776, 5778, 5779, 5780, 5784, 5785, 5786, 5807, 5812, 5817, 5888,
-           5889, 5890, 5891, 5892, 5893, 5894, 5895, 5902, 5903, 5906, 5907, 5916, 5930, 5931, 6510, 6511, 6512,
-           6513, 6518, 6519, 6531, 6552, 6553, 6556, 6557, 6560, 6561, 6562, 6563, 6564, 6565, 6566, 6567, 6570,
-           6594, 6595, 6613, 6614, 6615, 6616, 6617, 6625, 6633, 6634, 6641, 6657, 6659, 6661, 6666, 6667, 6670,
-           6687, 6688, 6689, 6714, 6716, 6722, 6723, 6724, 6726, 6727, 6734, 6735, 6736, 6739, 6766, 6767, 6768,
-           6778, 6779, 6780, 6810, 6811, 6812, 6813, 6814, 6815, 6828, 6829, 6830, 6831, 6832, 6833, 6846, 6848,
-           6876, 6877, 6878, 6894, 6895, 6896, 6942, 6943, 6944, 6945, 6946, 6954, 6955, 6956, 6957, 6958, 6959,
-           6966, 6967, 6968, 6969, 6971, 6972, 6973, 6974, 6986, 6987, 6988, 6998, 6999, 7000, 7030, 7031, 7032,
-           7033, 7048, 7051, 7052, 7096, 7097, 7098, 7114, 7115, 7162, 7163, 7164, 7174, 7175, 7176, 7228, 7229,
-           7230, 7240, 7241, 7242, 7378, 7379, 7380, 7381, 7394, 7395, 7396, 7397, 7398, 7399, 7400, 7401, 7402,
-           7435, 7436, 7437, 7438, 7441, 7467, 7468, 7469, 7470, 7473, 7474, 7511, 7548, 7549, 7550, 7551, 7583,
-           7596, 7597, 7598, 7599, 7613, 7614, 7615, 7659, 7660, 7691, 7700, 7705, 7706, 7707, 7708, 7721, 7722,
-           7723, 7724, 7757, 7759, 7760, 7761, 7762, 7764, 7766, 7767, 7769, 7797, 7799, 7803, 7804, 7805, 7806,
-           7807, 7808, 7829, 7831, 7832, 7834, 7835, 7837, 7838, 7839, 7840, 7841, 7848, 7854, 7857, 7864, 7871,
-           7886, 7888, 7889, 7893, 7909, 7910, 7911, 7912, 7922, 7923, 7924, 7952, 7953, 7954, 7966, 7979, 7980,
-           7981, 7998, 8083, 8084, 8096, 8097, 8098, 8115, 8127, 8128, 8129, 8130, 8144, 8145, 8178, 8179, 8191,
-           8192, 8194, 8210, 8222, 8223, 8224, 8225, 8239, 8240, 8288, 8289, 8319, 8320, 8350, 8351, 8450, 8451,
-           8452, 8453, 8454, 8455, 8460, 8461, 8534, 8535, 8536, 8537, 8538, 8539, 8540, 8541, 8542, 8543, 8544,
-           8545, 8546, 8547, 8548, 8549, 8550, 8551, 8552, 8567, 8568, 8569, 8570, 8571, 8572, 8573, 8574, 8590,
-           8591, 8592, 8593, 8594, 8595, 8596, 8597, 8598, 8599, 8600, 8601, 8602, 8603, 8604, 8605, 8606, 8607,
-           8608, 8623, 8624, 8625, 8626, 8627, 8628, 8629, 8630, 8631, 8632, 8633, 8634, 8635, 8636, 8637, 8638,
-           8639, 8640, 8641, 8642, 8643, 8644, 8645, 8646, 8647, 8648, 8649, 8650, 8651, 8652, 8653, 8699, 8700,
-           8701, 8702, 8703, 8704, 8709, 8710, 8783, 8784, 8785, 8786, 8787, 8788, 8789, 8790, 8791, 8792, 8793,
-           8794, 8795, 8796, 8797, 8798, 8799, 8800, 8801, 8816, 8817, 8818, 8819, 8820, 8821, 8822, 8823, 8839,
-           8840, 8841, 8842, 8843, 8844, 8845, 8846, 8847, 8848, 8849, 8850, 8851, 8852, 8853, 8854, 8855, 8856,
-           8857, 8872, 8873, 8874, 8875, 8876, 8877, 8878, 8879, 8880, 8881, 8882, 8883, 8884, 8885, 8886, 8887,
-           8888, 8889, 8890, 8891, 8892, 8893, 8894, 8895, 8896, 8897, 8898, 8899, 8900, 8901, 8902, 8948, 8949,
-           8950, 8951, 8952, 8953, 8958, 8959, 9006, 9007, 9008, 9009, 9010, 9062, 9063, 9064, 9065, 9066, 9067,
-           9072, 9263, 9264, 9267, 9268, 9275, 9276, 9285, 9286, 9293, 9294, 9305, 9308, 9312, 9313, 9316, 9317,
-           9320, 9321, 9324, 9325]
-
-for i in notdone:
+for i in failedjobs_models:
     model_dict.pop(i)
 
 # RPM data from cibersort csvs
-
 Oliver_pct = {
 'NE_obs':0.259122843833646,
 'NEv1_obs':0.318704767383416,
@@ -92,6 +67,7 @@ def beta_dist_from_mu_and_stdev(mu,std):
     alpha_out = mu*nu_out
     beta_out = (1-mu)*nu_out
     return beta(alpha_out,beta_out)
+
 
 # beta distrs for means near zero are U-shaped with the bottom left of the curve near zero
 # if you try to get a y-value for an x-value too close to zero it'll just be inf
@@ -152,7 +128,6 @@ def likelihood(position,obs_list,param_values,rates_mask,solver):
                     not_eq = True
             except IndexError:
                 return -np.inf
-                continue
         if not_eq:
             return -np.inf
         # Score
@@ -178,10 +153,9 @@ def likelihood(position,obs_list,param_values,rates_mask,solver):
 with open('../helper_functions_and_files/all_possible_sampled_params_dict.pickle', 'rb') as p:
     sampled_params_dict = pickle.load(p)
 
-# per model
-
 results_dict = {}
 
+# per model
 for m in model_dict:
     model = model_dict[m]
     solver = ScipyOdeSimulator(model,integrator='lsoda',compiler='cython')
@@ -202,7 +176,7 @@ for m in model_dict:
         if i.split('sp_')[1] in [y.name for y in model.parameters]:
             sp_list.append(sampled_params_dict[i])
     #
-    sfr = ""+indir+"/dir_model_"+str(m)+"/model_"+str(m)+"_"
+    sfr = "" + indir + "/dir_model_" + str(m) + "/model_" + str(m) + "_"
     #
     a = pymultinest.Analyzer(len(sp_list),outputfiles_basename=sfr)
     results_dict[m] = {}
@@ -246,22 +220,27 @@ for m in model_dict:
         results_dict[m]['DIC_calcs']['D_of_theta_bar'] = D_of_theta_bar
         results_dict[m]['DIC_calcs']['p_D'] = p_D
         results_dict[m]['DIC_calcs']['DIC'] = DIC
-        #
-        #
         # AIC estimate
         k = len(sp_list)
         AIC = 2.*k - 2.*ml
         print (AIC)
         results_dict[m]['AIC'] = AIC
+        # plus correction
+        # n_data = number of observations in the data
+        n_data = 11
+        try:
+            AIC_corr = ( (2. * k**2) + (2. * k) ) / (n_data - k - 1)
+        except ZeroDivisionError:
+            AIC_corr = np.inf
+        results_dict[m]['AICc'] = AIC + AIC_corr
         #
         # BIC estimate
         k = len(sp_list)
-        # n_data = number of observations in the data... so the number of cibersort bars per data
-        n_data = 10
+        # n_data = number of observations in the data... so the number of cell line cibersort bars per data
+        #n_data = 11
         BIC = np.log(n_data)*k - 2.*ml
         results_dict[m]['BIC'] = BIC
         #
-        # Not currently using INS but why not save it in case
         # log Z for INS
         results_dict[m]['INS_log_Z'] = a.get_stats()['nested importance sampling global log-evidence'] # equivalent to a.get_stats()['global evidence'] at least in this context
         # log Z err for INS
@@ -286,8 +265,7 @@ for m in results_dict:
     df_list.append(pd.DataFrame(results_dict[m],index=[m]))
 
 full_rez_dict = pd.concat(df_list)
-full_rez_dict.to_pickle(outdir+'results_fromNS_gathered_TKO_somemissing.pickle')
+full_rez_dict.to_pickle(outdir+'results_fromNS_gathered_RPM.pickle')
 
-
-#with open(outdir+'compare_clA_gleipnir_results_subset_betafit_12_10_2020_DIC_calc_values_in_case.pickle','wb') as f:
+#with open(outdir+'compare_RPM_gleipnir_results_subset_betafit_DIC_calc_values_in_case.pickle','wb') as f:
 #    pickle.dump(DIC_dict,f)
