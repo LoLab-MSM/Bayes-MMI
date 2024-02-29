@@ -23,7 +23,7 @@ hb_dir = '/home/'
 #   directory called 'candidate_models' at the same depth as 'multimodel_inference_SCLC'
 #  (or make a symlink)
 
-ModelAssembler(hb_dir+'/HB_library.txt', '02_sclc_multimodelinference_models_updatedjun2022.csv')
+ModelAssembler(hb_dir+'/HB_library.txt', '02_sclc_multimodelinference_models.csv')
 # ModelAssembler(hb_dir+'/HB_library.txt', hb_dir+'/earm_example.csv')
 # ModelAssembler(hb_dir+'/HB_library.txt', hb_dir+'/optional_reactions_example.csv')
 # ModelAssembler(hb_dir+'/HB_library.txt', hb_dir+'/initial_binding_example.csv')
