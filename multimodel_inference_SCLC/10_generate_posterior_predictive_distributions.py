@@ -69,133 +69,65 @@ outdir_post = "../posterior_marginals_and_predictives/prior_posterior_predictive
 
 obs_list = ['NE_obs', 'NEv1_obs', 'NEv2_obs', 'NonNE_obs']
 
-tko_notdone = [24, 26, 34, 36, 39, 40, 41, 136, 138, 141, 143, 156, 158, 161, 163, 268, 270, 271, 274, 288, 290, 293, 295,
-           542, 547, 549, 562, 564, 613, 615, 628, 630, 631, 679, 681, 682, 689, 694, 696, 1336, 1337, 1441, 1638, 1640,
-           1666, 1668, 1728, 1731, 1733, 1736, 1738, 1826, 1828, 1841, 1843, 1941, 1943, 1947, 1951, 1953, 1954, 1956,
-           1958, 2046, 2048, 2049, 2061, 2063, 2129, 2171, 2173, 2176, 2178, 2266, 2268, 2278, 2281, 2283, 2386, 2391,
-           2393, 2396, 2398, 2486, 2488, 2501, 2503, 2563, 2601, 2603, 2607, 2611, 2613, 2616, 2618, 2701, 2703, 2706,
-           2707, 2708, 2716, 2718, 2721, 2723, 2812, 2823, 2831, 2833, 2836, 2838, 2921, 2923, 2926, 2928, 2936, 2938,
-           2941, 2943, 3004, 3041, 3044, 3051, 3053, 3056, 3058, 3141, 3143, 3146, 3148, 3156, 3158, 3161, 3163, 3285,
-           3287, 3290, 3292, 3305, 3307, 3310, 3312, 3390, 3405, 3407, 3410, 3412, 3420, 3422, 3425, 3427, 3528, 3549,
-           3551, 3554, 3556, 3569, 3571, 3574, 3576, 3669, 3671, 3674, 3676, 3684, 3686, 3689, 3691, 3792, 3813, 3815,
-           3818, 3820, 3833, 3835, 3838, 3840, 3945, 3947, 3948, 3950, 3953, 3965, 3967, 3970, 3972, 4065, 4067, 4070,
-           4072, 4080, 4082, 4085, 4087, 4125, 4131, 4133, 4136, 4137, 4138, 4139, 4146, 4148, 4151, 4153, 4323, 4329,
-           4330, 4331, 4334, 4335, 4336, 4337, 4344, 4346, 4349, 4351, 4352, 4643, 4647, 4694, 4695, 4756, 4757, 4762,
-           4807, 4867, 4872, 4914, 4916, 4917, 4989, 5127, 5132, 5134, 5155, 5160, 5162, 5183, 5188, 5190, 5211, 5216,
-           5218, 5251, 5296, 5298, 5301, 5303, 5311, 5313, 5396, 5398, 5493, 5497, 5505, 5508, 5509, 5523, 5580, 5581,
-           5584, 5585, 5599, 5600, 5602, 5622, 5636, 5638, 5731, 5800, 5801, 5806, 5808, 5812, 5822, 5824, 5828, 5829,
-           5845, 5846, 5850, 5851, 5852, 5856, 5857, 5858, 5859, 5888, 5889, 5890, 5891, 5892, 5893, 5894, 5895, 5896,
-           5898, 5899, 5901, 5902, 5903, 5906, 5907, 5930, 5931, 5982, 5983, 5984, 5986, 5987, 5988, 5989, 6001, 6003,
-           6006, 6008, 6106, 6108, 6109, 6121, 6123, 6216, 6217, 6288, 6289, 6290, 6292, 6293, 6294, 6295, 6312, 6314,
-           6419, 6421, 6436, 6482, 6485, 6510, 6511, 6514, 6515, 6518, 6519, 6534, 6536, 6552, 6553, 6555, 6556, 6557,
-           6562, 6563, 6564, 6566, 6567, 6570, 6571, 6594, 6595, 6596, 6613, 6614, 6615, 6618, 6642, 6649, 6657, 6659,
-           6661, 6677, 6687, 6688, 6690, 6691, 6694, 6695, 6701, 6703, 6712, 6748, 6751, 6753, 6754, 6846, 6944, 6955,
-           6956, 6981, 6982, 6983, 6984, 6986, 6987, 6988, 6998, 6999, 7000, 7030, 7031, 7032, 7034, 7048, 7049, 7050,
-           7053, 7075, 7096, 7098, 7114, 7115, 7116, 7162, 7163, 7164, 7174, 7175, 7176, 7330, 7331, 7332, 7333, 7362,
-           7363, 7364, 7365, 7379, 7380, 7381, 7395, 7396, 7397, 7487, 7490, 7596, 7597, 7598, 7599, 7612, 7613, 7614,
-           7615, 7616, 7617, 7618, 7619, 7620, 7706, 7707, 7708, 7721, 7722, 7723, 7724, 7725, 7726, 7727, 7728, 7729,
-           7757, 7761, 7762, 7767, 7769, 7799, 7802, 7806, 7807, 7829, 7830, 7834, 7835, 7838, 7839, 7840, 7841, 7854,
-           7857, 7870, 7880, 7881, 7882, 7886, 7889, 7890, 7891, 7892, 7893, 7894, 7964, 7965, 7966, 7976, 7977, 7978,
-           7979, 7980, 7981, 8063, 8064, 8084, 8098, 8099, 8115, 8130, 8142, 8143, 8144, 8145, 8157, 8158, 8159, 8160,
-           8161, 8162, 8163, 8179, 8193, 8194, 8210, 8224, 8225, 8232, 8234, 8235, 8237, 8238, 8239, 8240, 8250, 8252,
-           8254, 8255, 8256, 8257, 8258, 8274, 8282, 8284, 8285, 8305, 8312, 8313, 8314, 8315, 8316, 8346, 8358, 8359,
-           8361, 8362, 8366, 8373, 8374, 8375, 8376, 8377, 8391, 8392, 8396, 8405, 8451, 8452, 8453, 8454, 8455, 8534,
-           8535, 8536, 8537, 8538, 8539, 8540, 8541, 8542, 8543, 8544, 8545, 8546, 8547, 8548, 8549, 8550, 8551, 8552,
-           8567, 8568, 8569, 8570, 8571, 8572, 8573, 8574, 8590, 8591, 8592, 8593, 8594, 8595, 8596, 8597, 8598, 8599,
-           8600, 8601, 8602, 8603, 8604, 8605, 8606, 8607, 8608, 8623, 8624, 8625, 8626, 8627, 8628, 8629, 8630, 8631,
-           8632, 8633, 8634, 8635, 8636, 8637, 8638, 8639, 8640, 8641, 8642, 8643, 8644, 8645, 8646, 8647, 8648, 8649,
-           8650, 8651, 8652, 8653, 8699, 8700, 8701, 8702, 8703, 8704, 8783, 8784, 8785, 8786, 8787, 8788, 8789, 8790,
-           8791, 8792, 8793, 8794, 8795, 8796, 8797, 8798, 8799, 8800, 8801, 8816, 8817, 8818, 8819, 8820, 8821, 8822,
-           8823, 8839, 8840, 8841, 8842, 8843, 8844, 8845, 8846, 8847, 8848, 8849, 8850, 8851, 8852, 8853, 8854, 8855,
-           8856, 8857, 8872, 8873, 8874, 8875, 8876, 8877, 8878, 8879, 8880, 8881, 8882, 8883, 8884, 8885, 8886, 8887,
-           8888, 8889, 8890, 8891, 8892, 8893, 8894, 8895, 8896, 8897, 8898, 8899, 8900, 8901, 8902, 8918, 8920, 8922,
-           8923, 8924, 8933, 8951, 8975, 8978, 8980, 8981, 8989, 8990, 8992, 9031, 9066, 9089, 9090, 9091, 9092, 9093,
-           9094, 9102, 9103, 9104, 9105, 9106, 9107, 9122, 9129, 9145, 9146, 9147, 9148, 9149, 9150, 9158, 9159, 9160,
-           9161, 9162, 9163, 9178, 9185, 9201, 9202, 9203, 9205, 9215, 9216, 9217, 9218, 9219, 9252, 9267, 9268, 9275,
-           9276, 9285, 9286, 9293, 9294, 9317, 9318, 9319, 9320]
+# this is tko_retired (retired = job took more than 28 days without finishing)
+# 5 + 2*10 + 2*9 + 13*10 = 173
+tko_retired = [263, 264, 383, 384, 406, 1044, 1360, 1490, 1514, 1520, 1524, 1526, 1585, 1655, 1657, 1660, 1667, 1688,
+               1694, 1754, 1780, 1781, 1782, 1786, 1787, 1793, 1811, 1832, 1838, 1854, 1855, 1859, 1864, 1865, 1866,
+               2009, 2025, 2026, 2335, 2336, 2353, 2354, 2499, 2500, 2517, 2518, 2608, 2935, 2937, 2938, 2942, 3005,
+               3007, 3012, 3076, 3271, 3272, 3274, 3275, 3281, 3282, 3283, 3348, 3350, 3351, 3355, 3356, 3427, 3429,
+               3434, 3435, 3549, 3551, 3552, 3554, 3562, 3803, 3805, 3810, 3811, 3873, 3875, 3880, 3944, 4139, 4140,
+               4142, 4149, 4150, 4151, 4216, 4218, 4219, 4223, 4295, 4297, 4302, 4417, 4419, 4420, 4422, 4423, 4429,
+               4430, 4431, 4509, 4510, 4518, 4520, 4545, 4546, 4556, 4777, 4780, 4787, 4788, 4798, 4808, 4834, 4844,
+               4889, 4892, 4909, 4910, 4920, 4945, 4946, 4956, 5016, 5026, 5054, 5056, 5064, 5066, 5217, 5286, 5317,
+               5318, 5322, 5334, 5346, 5356, 5382, 5392, 5438, 5441, 5448, 5449, 5461, 5471, 5501, 5511, 5563, 5566,
+               5569, 5573, 5585, 5586, 5596, 5597, 5626, 5636, 5702, 5759, 5760, 5764, 5774, 5776, 5790, 5800, 5830,
+               5833, 5840]
 
-rpm_notdone = [1128, 1281, 1282, 1334, 1335, 1336, 1337, 1338, 1438, 1439, 1446, 1546, 1567, 1568, 1570, 4409, 4472,
-               4532, 4533, 4804, 4805, 4806, 4807, 4812, 4986, 4988, 5251, 5264, 5265, 5272, 5273, 5274, 5275, 5276,
-               5277, 5285, 5286, 5287, 5288, 5289, 5301, 5361, 5362, 5363, 5364, 5365, 5379, 5380, 5381, 5382, 5383,
-               5397, 5398, 5399, 5401, 5402, 5403, 5492, 5495, 5507, 5516, 5518, 5580, 5583, 5598, 5601, 5712, 5713,
-               5714, 5718, 5719, 5720, 5725, 5726, 5727, 5730, 5731, 5734, 5735, 5736, 5740, 5741, 5742, 5756, 5757,
-               5758, 5762, 5763, 5764, 5769, 5774, 5776, 5778, 5779, 5780, 5784, 5785, 5786, 5807, 5812, 5817, 5888,
-               5889, 5890, 5891, 5892, 5893, 5894, 5895, 5902, 5903, 5906, 5907, 5916, 5930, 5931, 6510, 6511, 6512,
-               6513, 6518, 6519, 6531, 6552, 6553, 6556, 6557, 6560, 6561, 6562, 6563, 6564, 6565, 6566, 6567, 6570,
-               6594, 6595, 6613, 6614, 6615, 6616, 6617, 6625, 6633, 6634, 6641, 6657, 6659, 6661, 6666, 6667, 6670,
-               6687, 6688, 6689, 6714, 6716, 6722, 6723, 6724, 6726, 6727, 6734, 6735, 6736, 6739, 6766, 6767, 6768,
-               6778, 6779, 6780, 6810, 6811, 6812, 6813, 6814, 6815, 6828, 6829, 6830, 6831, 6832, 6833, 6846, 6848,
-               6876, 6877, 6878, 6894, 6895, 6896, 6942, 6943, 6944, 6945, 6946, 6954, 6955, 6956, 6957, 6958, 6959,
-               6966, 6967, 6968, 6969, 6971, 6972, 6973, 6974, 6986, 6987, 6988, 6998, 6999, 7000, 7030, 7031, 7032,
-               7033, 7048, 7051, 7052, 7096, 7097, 7098, 7114, 7115, 7162, 7163, 7164, 7174, 7175, 7176, 7228, 7229,
-               7230, 7240, 7241, 7242, 7378, 7379, 7380, 7381, 7394, 7395, 7396, 7397, 7398, 7399, 7400, 7401, 7402,
-               7435, 7436, 7437, 7438, 7441, 7467, 7468, 7469, 7470, 7473, 7474, 7511, 7548, 7549, 7550, 7551, 7583,
-               7596, 7597, 7598, 7599, 7613, 7614, 7615, 7659, 7660, 7691, 7700, 7705, 7706, 7707, 7708, 7721, 7722,
-               7723, 7724, 7757, 7759, 7760, 7761, 7762, 7764, 7766, 7767, 7769, 7797, 7799, 7803, 7804, 7805, 7806,
-               7807, 7808, 7829, 7831, 7832, 7834, 7835, 7837, 7838, 7839, 7840, 7841, 7848, 7854, 7857, 7864, 7871,
-               7886, 7888, 7889, 7893, 7909, 7910, 7911, 7912, 7922, 7923, 7924, 7952, 7953, 7954, 7966, 7979, 7980,
-               7981, 7998, 8083, 8084, 8096, 8097, 8098, 8115, 8127, 8128, 8129, 8130, 8144, 8145, 8178, 8179, 8191,
-               8192, 8194, 8210, 8222, 8223, 8224, 8225, 8239, 8240, 8288, 8289, 8319, 8320, 8350, 8351, 8450, 8451,
-               8452, 8453, 8454, 8455, 8460, 8461, 8534, 8535, 8536, 8537, 8538, 8539, 8540, 8541, 8542, 8543, 8544,
-               8545, 8546, 8547, 8548, 8549, 8550, 8551, 8552, 8567, 8568, 8569, 8570, 8571, 8572, 8573, 8574, 8590,
-               8591, 8592, 8593, 8594, 8595, 8596, 8597, 8598, 8599, 8600, 8601, 8602, 8603, 8604, 8605, 8606, 8607,
-               8608, 8623, 8624, 8625, 8626, 8627, 8628, 8629, 8630, 8631, 8632, 8633, 8634, 8635, 8636, 8637, 8638,
-               8639, 8640, 8641, 8642, 8643, 8644, 8645, 8646, 8647, 8648, 8649, 8650, 8651, 8652, 8653, 8699, 8700,
-               8701, 8702, 8703, 8704, 8709, 8710, 8783, 8784, 8785, 8786, 8787, 8788, 8789, 8790, 8791, 8792, 8793,
-               8794, 8795, 8796, 8797, 8798, 8799, 8800, 8801, 8816, 8817, 8818, 8819, 8820, 8821, 8822, 8823, 8839,
-               8840, 8841, 8842, 8843, 8844, 8845, 8846, 8847, 8848, 8849, 8850, 8851, 8852, 8853, 8854, 8855, 8856,
-               8857, 8872, 8873, 8874, 8875, 8876, 8877, 8878, 8879, 8880, 8881, 8882, 8883, 8884, 8885, 8886, 8887,
-               8888, 8889, 8890, 8891, 8892, 8893, 8894, 8895, 8896, 8897, 8898, 8899, 8900, 8901, 8902, 8948, 8949,
-               8950, 8951, 8952, 8953, 8958, 8959, 9006, 9007, 9008, 9009, 9010, 9062, 9063, 9064, 9065, 9066, 9067,
-               9072, 9263, 9264, 9267, 9268, 9275, 9276, 9285, 9286, 9293, 9294, 9305, 9308, 9312, 9313, 9316, 9317,
-               9320, 9321, 9324, 9325]
+# these jobs finished but couldn't be read by pymultinest.Analyzer,
+# so maybe pymultinest experienced an error in saving them...
+tko_retired.extend([358, 1013, 1037, 1349, 2024, 2217, 2218]) #358, 1037, 1349, 2024, 2217, 2218 propagated from 09_generate_posterior_marginal_distributions.py
 
+# this is rpm_retired
+# 15 + 5*11 + 7*10 + 5*11 = 195
+rpm_retired = [31, 46, 75, 378, 379, 458, 572, 573, 574, 575, 579, 670, 671, 672, 727, 1015, 1016, 1037, 1038, 1044,
+               1331, 1332, 1353, 1354, 1417, 1422, 1487, 1488, 1491, 1492, 1514, 1515, 1516, 1517, 1518, 1519, 1520,
+               1521, 1522, 1524, 1525, 1526, 1527, 1528, 1585, 1589, 1639, 1655, 1656, 1659, 1668, 1683, 1685, 1686,
+               1688, 1689, 1690, 1691, 1692, 1693, 1694, 1695, 1736, 1780, 1782, 1783, 1785, 1787, 1788, 1789, 1811,
+               1815, 1816, 1833, 1834, 1838, 1854, 1859, 1860, 1865, 2030, 2255, 2317, 2318, 2358, 2420, 2481, 2482,
+               2522, 2645, 2707, 2708, 2766, 2935, 2941, 2942, 2943, 3005, 3006, 3007, 3012, 3013, 3075, 3076, 3271,
+               3272, 3274, 3280, 3281, 3282, 3284, 3348, 3350, 3354, 3355, 3356, 3427, 3429, 3434, 3435, 3505, 3549,
+               3551, 3552, 3561, 3562, 3563, 3564, 3803, 3804, 3805, 3810, 3811, 3873, 3875, 3880, 3881, 3882, 3944,
+               3945, 4139, 4140, 4143, 4145, 4148, 4149, 4150, 4151, 4216, 4218, 4222, 4223, 4224, 4295, 4297, 4302,
+               4373, 4417, 4419, 4420, 4422, 4423, 4428, 4429, 4430, 4432, 4517, 4553, 4805, 4841, 4873, 4917, 4953,
+               5013, 5023, 5063, 5099, 5329, 5353, 5389, 5421, 5468, 5498, 5538, 5544, 5583, 5593, 5623, 5633, 5669,
+               5771, 5787, 5797, 5867, 5873]
 
-cla_notdone = [643, 1279, 1281, 1282, 1337, 1338, 1439, 1442, 1553, 1579, 1583, 1633, 1638, 1640, 1657, 1659, 1661,
-               1666, 1668, 2823, 2841, 2888, 4410, 4412, 4436, 4439, 4469, 4470, 4496, 4499, 4529, 4530, 4556, 4559,
-               4595, 4598, 4638, 4640, 4641, 4644, 4647, 4652, 4693, 4694, 4695, 4696, 4697, 4699, 4702, 4754, 4757,
-               4804, 4806, 4863, 4872, 4913, 4914, 4916, 4917, 4922, 4985, 4987, 4989, 4993, 5049, 5053, 5065, 5069,
-               5081, 5085, 5251, 5267, 5272, 5273, 5274, 5276, 5277, 5285, 5288, 5298, 5303, 5306, 5308, 5361, 5362,
-               5365, 5379, 5380, 5381, 5382, 5383, 5396, 5398, 5401, 5403, 5493, 5494, 5523, 5526, 5528, 5581, 5582,
-               5584, 5585, 5599, 5604, 5712, 5713, 5714, 5718, 5719, 5720, 5724, 5725, 5726, 5728, 5734, 5735, 5736,
-               5740, 5741, 5742, 5756, 5757, 5758, 5762, 5763, 5764, 5770, 5772, 5778, 5779, 5780, 5784, 5785, 5786,
-               5800, 5801, 5802, 5808, 5822, 5823, 5824, 5828, 5829, 5830, 5844, 5845, 5846, 5850, 5851, 5852, 5868,
-               5874, 5888, 5889, 5891, 5892, 5893, 5895, 5896, 5901, 5902, 5903, 5906, 5907, 5916, 5917, 5918, 5919,
-               5930, 5931, 6510, 6511, 6512, 6513, 6514, 6516, 6517, 6518, 6519, 6534, 6552, 6553, 6554, 6555, 6556,
-               6557, 6559, 6561, 6562, 6563, 6564, 6565, 6566, 6567, 6570, 6571, 6586, 6595, 6596, 6613, 6614, 6615,
-               6616, 6617, 6618, 6657, 6658, 6660, 6661, 6662, 6666, 6670, 6671, 6687, 6688, 6689, 6694, 6695, 6711,
-               6712, 6716, 6718, 6719, 6720, 6722, 6723, 6724, 6725, 6726, 6739, 6746, 6751, 6753, 6766, 6767, 6768,
-               6778, 6779, 6780, 6811, 6812, 6814, 6815, 6828, 6829, 6830, 6831, 6833, 6846, 6848, 6876, 6877, 6878,
-               6894, 6895, 6896, 6944, 6946, 6947, 6967, 6970, 6971, 6972, 6974, 6975, 6986, 6987, 6988, 6998, 6999,
-               7000, 7032, 7034, 7035, 7045, 7046, 7049, 7052, 7097, 7098, 7114, 7116, 7162, 7163, 7164, 7174, 7175,
-               7176, 7228, 7229, 7230, 7240, 7241, 7242, 7378, 7379, 7380, 7381, 7394, 7395, 7396, 7397, 7398, 7399,
-               7400, 7401, 7402, 7436, 7437, 7438, 7442, 7467, 7468, 7469, 7470, 7474, 7487, 7510, 7511, 7597, 7598,
-               7599, 7612, 7613, 7614, 7615, 7616, 7617, 7618, 7619, 7620, 7706, 7707, 7708, 7722, 7723, 7724, 7725,
-               7726, 7727, 7728, 7729, 7757, 7766, 7767, 7797, 7798, 7807, 7829, 7830, 7831, 7832, 7833, 7835, 7836,
-               7838, 7839, 7840, 7841, 7854, 7870, 7886, 7889, 7891, 7893, 7894, 7922, 7923, 7924, 7952, 7953, 7954,
-               7964, 7965, 7966, 7976, 7977, 7978, 7979, 7980, 7981, 8011, 8053, 8096, 8097, 8098, 8099, 8115, 8127,
-               8128, 8129, 8130, 8142, 8143, 8144, 8145, 8157, 8158, 8159, 8160, 8162, 8163, 8179, 8191, 8192, 8193,
-               8194, 8210, 8222, 8223, 8224, 8225, 8237, 8238, 8239, 8240, 8252, 8253, 8254, 8255, 8257, 8258, 8288,
-               8289, 8320, 8350, 8351, 8450, 8451, 8452, 8453, 8454, 8455, 8460, 8461, 8534, 8535, 8536, 8537, 8538,
-               8539, 8540, 8541, 8542, 8543, 8544, 8545, 8546, 8547, 8548, 8549, 8550, 8551, 8552, 8568, 8569, 8570,
-               8571, 8572, 8573, 8574, 8590, 8591, 8592, 8593, 8594, 8595, 8596, 8597, 8598, 8599, 8600, 8601, 8602,
-               8603, 8604, 8605, 8606, 8607, 8608, 8623, 8624, 8625, 8626, 8627, 8628, 8629, 8630, 8631, 8632, 8633,
-               8634, 8635, 8636, 8637, 8638, 8639, 8640, 8641, 8642, 8643, 8644, 8645, 8646, 8647, 8648, 8649, 8650,
-               8651, 8652, 8653, 8699, 8700, 8701, 8702, 8703, 8704, 8709, 8710, 8783, 8784, 8785, 8786, 8787, 8788,
-               8789, 8790, 8791, 8792, 8793, 8794, 8795, 8796, 8797, 8798, 8799, 8800, 8801, 8817, 8818, 8819, 8820,
-               8821, 8822, 8823, 8839, 8840, 8841, 8842, 8843, 8844, 8845, 8846, 8847, 8848, 8849, 8850, 8851, 8852,
-               8853, 8854, 8855, 8856, 8857, 8872, 8873, 8874, 8875, 8876, 8877, 8878, 8879, 8880, 8881, 8882, 8883,
-               8884, 8885, 8886, 8887, 8888, 8889, 8890, 8891, 8892, 8893, 8894, 8895, 8896, 8897, 8898, 8899, 8900,
-               8901, 8902, 8923, 8934, 8935, 8948, 8949, 8950, 8951, 8952, 8953, 8959, 8978, 8979, 8980, 8981, 8992,
-               9006, 9007, 9008, 9009, 9010, 9016, 9031, 9034, 9036, 9062, 9063, 9064, 9065, 9066, 9067, 9073, 9096,
-               9098, 9100, 9101, 9102, 9106, 9122, 9129, 9154, 9159, 9178, 9214, 9215, 9263, 9264, 9267, 9268, 9275,
-               9276, 9285, 9286, 9293, 9294, 9313, 9316, 9317, 9320, 9321, 9324, 9325]
+# these jobs finished but couldn't be read by pymultinest.Analyzer,
+# so maybe pymultinest experienced an error in saving it...
+rpm_retired.extend([2336, 2499, 3432])  #3432 propagated from 09_generate_posterior_marginal_distributions.py
 
+# this is cla_retired
+# 8 + 6*10 + 7*11 + 4*10 = 185
+cla_retired = [68, 85, 91, 379, 412, 574, 580, 670, 1011, 1015, 1016, 1331, 1332, 1418, 1427, 1489, 1490, 1492, 1498,
+               1499, 1500, 1514, 1515, 1524, 1525, 1526, 1586, 1588, 1635, 1655, 1657, 1658, 1682, 1684, 1694, 1734,
+               1735, 1736, 1742, 1743, 1754, 1765, 1780, 1781, 1782, 1783, 1784, 1785, 1787, 1788, 1790, 1810, 1811,
+               1832, 1833, 1838, 1854, 1859, 1866, 2030, 2075, 2194, 2255, 2358, 2401, 2402, 2419, 2420, 2482, 2522,
+               2583, 2584, 2646, 2708, 2766, 2935, 2937, 2938, 2940, 2942, 2943, 3005, 3007, 3008, 3010, 3012, 3013,
+               3076, 3271, 3272, 3273, 3274, 3275, 3276, 3278, 3282, 3283, 3284, 3348, 3350, 3351, 3355, 3356, 3427,
+               3429, 3430, 3434, 3435, 3505, 3549, 3551, 3552, 3554, 3555, 3556, 3559, 3562, 3563, 3564, 3803, 3806,
+               3808, 3810, 3811, 3873, 3875, 3876, 3878, 3880, 3881, 3944, 3946, 4139, 4140, 4142, 4143, 4144, 4146,
+               4147, 4150, 4151, 4152, 4153, 4216, 4218, 4219, 4221, 4223, 4224, 4295, 4297, 4298, 4300, 4302, 4303,
+               4419, 4420, 4422, 4423, 4424, 4426, 4427, 4430, 4432, 4433, 4517, 4553, 4805, 4841, 4874, 4953, 5013,
+               5024, 5053, 5322, 5544, 5563, 5583, 5584, 5623, 5633, 5760, 5797, 5873, 5874]
 
-notdonedict = {
-    'TKO':tko_notdone,
-    'RPM':rpm_notdone,
-    'cl_A':cla_notdone
+# this job finished but couldn't be read by pymultinest.Analyzer,
+# so maybe pymultinest experienced an error in saving it...
+cla_retired.extend([2256])
+
+retireddict = {
+    'TKO':tko_retired,
+    'RPM':rpm_retired,
+    'cl_A':cla_retired
 }
 
 from helper_functions_and_files.modeldict_generator import generate_modeldict
@@ -211,7 +143,16 @@ for i in ['TKO','RPM','cl_A']:
                         'NonNE_obs':pd.DataFrame()
                         }
 
-# prior predictive should go for the same models as posterior predictive for optimal comparison (lol)
+modselection_sampledmarginals = {}
+for i in ['TKO','RPM','cl_A']:
+    modselection_sampledmarginals[i] = {
+                        'NE_obs':pd.DataFrame(),
+                        'NEv1_obs':pd.DataFrame(),
+                        'NEv2_obs':pd.DataFrame(),
+                        'NonNE_obs':pd.DataFrame()
+                        }
+
+# prior predictive
 modselection_priorpred = {}
 for i in ['TKO','cl_A','RPM']:
     modselection_priorpred[i] = {
@@ -221,29 +162,50 @@ for i in ['TKO','cl_A','RPM']:
             'NonNE_obs': pd.DataFrame()
         }
 
-dfdict = pd.read_pickle('../helper_functions_and_files/updatedinjune_all_9327_models_in_dataframe_with_subtype_starting_makeup_code.pickle')
-updated_modelmakeups = np.load('../helper_functions_and_files/updatedinjune_apr_11_all_model_makeups_from_redo_ignoring_uneven_bidirtxns.npy')
-upd_modnums = []
-for j in dfdict.index:
-    if dfdict.loc[j]['model_makeup'] in updated_modelmakeups:
-        upd_modnums.append(j)
+topo_dict = {
+    'TKO':('2','6','7'),
+    'RPM':('1.','5','7'),
+    'cl_A':('4','5','6','7')
+}
 
-# print(upd_modnums)
+# final model for each dataset's top topology
+finalmodel = {'TKO':  1863,
+              'RPM':  726,
+              'cl_A': 2193
+              }
+
+# Generate posterior predictive (based on full parameter sets, called "manifold sampling" in Eydgahi et al 2013),
+# posterior predictive based on independent sampling from posterior marginal distributions (called "independent sampling" in Eydgahi)
+# and prior predictive (based on independent sampling from prior marginal distributions)
 
 TOLERANCE = 1e-4
-for dset in ['TKO', 'RPM', 'cl_A']:
-    old_m = 5000
+DOING_ALL = False #True     ## IF TRUE, DOING ALL TOPOLOGIES
+old_m = 0   # this will be different if you have to restart the code because it exceeded memory or failed for some reason
+            # to figure out, check what the last saved file is for the dataset (then will have to change the for loop as well)
+for dset in ['TKO','RPM','cl_A']:#'TKO']:#, 'RPM']:#, 'cl_A']:
     ind = 1
     #postparamstosim only need to load once as long as it's for the correct dataset
-    postparamstosim = pd.read_pickle(margfile_dir + dset + '_betafit_postmarg_params_and_probabilities_from_postequalweights_somemissing_6_23_22.pklz',
+    postparamstosim = pd.read_pickle(margfile_dir + dset + '_betafit_postmarg_params_and_probabilities_from_postequalweights.pklz',
                                      compression='gzip')
+    ###
+    # for top topologies
+    if not DOING_ALL:
+        # this code filters for only top topologies
+        postparamstosim = postparamstosim[postparamstosim['model_starting_subtype_makeup_code'].str.startswith(topo_dict[dset])]
+    ###
     for m in modeldict:
-        if m <= old_m: #first run should be <; anything past the first time this needs to be <=
+        if old_m == 0:      #first run (old_m == 0) should be m < old_m; anything past the first time this needs to be <=
+            if m < old_m:
+                continue
+        else:
+            if m <= old_m:  #first run should be <; anything past the first time this needs to be <=
+                continue
+        if m in retireddict[dset]:
+            print(str(m) + ' is marked as not finished so will not be included')
             continue
-        if m in notdonedict[dset]:
-            continue
-        if m not in upd_modnums:
-            continue
+        if not DOING_ALL:
+            if len(np.where(postparamstosim.from_model==m)[0]) == 0:    # then it's not in the top topologies for this dset
+                continue
         print('analyzing model ' + str(m) +' for dir ' + str(dset))
         model = modeldict[m]
         print(model)
@@ -267,10 +229,10 @@ for dset in ['TKO', 'RPM', 'cl_A']:
             thisprior = [sampled_params_dict[i] for i in sampled_params_dict if i == 'sp_' + model.parameters[parameters_idxs[dim]].name][0]
             priors_to_simulate = []
             if thisprior.a == np.inf or thisprior.a == -np.inf: #normal distribution
-                priors_to_simulate = gen_priors_for_predictive(1000, thisprior.dist,
+                priors_to_simulate = gen_priors_for_predictive(500, thisprior.dist,
                                         thisprior.mean(), thisprior.std())
             else:
-                priors_to_simulate = gen_priors_for_predictive(1000, thisprior.dist,
+                priors_to_simulate = gen_priors_for_predictive(500, thisprior.dist,
                                         thisprior.ppf(0.00001),
                                         thisprior.ppf(0.99999)
                                         )
@@ -304,11 +266,11 @@ for dset in ['TKO', 'RPM', 'cl_A']:
                 sim_data[obs] = sim[obs]  # [:new_end]
                 if sim[obs][-1] > 1:
                     all_lessthan1 = False
-            if sim['total_cells'][-1] < 1000000:
+            if sim['total_cells'][-1] < 100:
                 print('not enough cells ' + str(sim['total_cells'][-1]))
             elif np.isnan(sim['total_cells'][-1]):
                 print('too many cells computer couldnt handle ' + str(sim['total_cells'][-1]))
-            elif all_lessthan1:  # smallest size in SCLC allografts (Lim et al) 1cm^3 (~10^8 cells), largest ~3.5cm^3 (~4*10^8)
+            elif all_lessthan1:
                 print('something crashed out at the end ')
             else:
                 sim_pct_run = {}
@@ -318,8 +280,8 @@ for dset in ['TKO', 'RPM', 'cl_A']:
                 y = np.column_stack(
                     (sim_pct_run['NE_obs'], sim_pct_run['NEv1_obs'], sim_pct_run['NEv2_obs'], sim_pct_run['NonNE_obs']))
                 for idx in range(y.shape[1]):
-                    derivative = (y[:, idx][-1] - y[:, idx][-50]) / (tspan[
-                                                                         -1] - tspan[-50])
+                    derivative = (y[:, idx][-1] - y[:, idx][-75]) / (tspan[
+                                                                         -1] - tspan[-75])
                     if abs(derivative) > TOLERANCE:
                         not_eq = True
                 if not_eq:
@@ -338,19 +300,65 @@ for dset in ['TKO', 'RPM', 'cl_A']:
         modselection_priorpred[dset]['NEv2_obs'] = pd.concat([modselection_priorpred[dset]['NEv2_obs'], priorNEv2])
         modselection_priorpred[dset]['NonNE_obs'] = pd.concat([modselection_priorpred[dset]['NonNE_obs'], priorNonNE])
         #  #
-        ## Posterior predictive
+        ## Posterior predictive: setup
         to_sim = postparamstosim.loc[postparamstosim.from_model==m]
         pweight = to_sim.iloc[0].model_pp                       # will be the same no matter the index so just look at 0 to get one weight value
         makeup_code = to_sim.iloc[0].model_starting_subtype_makeup_code
         #
         pnamesandorder = [names_dict['sp_'+p.name] for p in model.parameters if not p.name in ['NE_0','NEv1_0','NEv2_0','NonNE_0']]
+        # Posterior predictive: independent sampling
         #
         NE = pd.DataFrame(columns=tspan)
         NEv1 = pd.DataFrame(columns=tspan)
         NEv2 = pd.DataFrame(columns=tspan)
         NonNE = pd.DataFrame(columns=tspan)
         #
-        for i in range(0,len(to_sim[pnamesandorder])):
+        # ok so instead sample 500x from each param (so first sample could be, index 0 for division_A, index 10 for division_A2, index 154 for die_A...)
+        sampled_dict = {}
+        for i in pnamesandorder:
+            sampled_dict[i] = list(to_sim[i].sample(500,replace=True))
+        sampleddf = pd.DataFrame(sampled_dict)
+        for i in range(0,len(sampleddf)):
+            if i % 500 == 0:
+                print('model '+str(m)+', '+str(i))
+            Y = np.copy(sampleddf.iloc[i])
+            param_values[rates_mask] = 10 ** Y
+            signal.alarm(60)
+            try:
+                sim = solver.run(param_values=param_values,tspan=tspan).all
+            except TimeoutException as exc:
+                # this should not add anything to the df
+                continue
+            else:
+                signal.alarm(0)
+            NE.loc[i] = sim['NE_obs']/sim['total_cells']
+            NEv1.loc[i] = sim['NEv1_obs']/sim['total_cells']
+            NEv2.loc[i] = sim['NEv2_obs']/sim['total_cells']
+            NonNE.loc[i] = sim['NonNE_obs']/sim['total_cells']
+        NE['post_prob'] = pweight
+        NE['from_model'] = m
+        NE['model_starting_subtype_makeup_code'] = makeup_code
+        NEv1['post_prob'] = pweight
+        NEv1['from_model'] = m
+        NEv1['model_starting_subtype_makeup_code'] = makeup_code
+        NEv2['post_prob'] = pweight
+        NEv2['from_model'] = m
+        NEv2['model_starting_subtype_makeup_code'] = makeup_code
+        NonNE['post_prob'] = pweight
+        NonNE['from_model'] = m
+        NonNE['model_starting_subtype_makeup_code'] = makeup_code
+        modselection_sampledmarginals[dset]['NE_obs'] = pd.concat([modselection_sampledmarginals[dset]['NE_obs'], NE])
+        modselection_sampledmarginals[dset]['NEv1_obs'] = pd.concat([modselection_sampledmarginals[dset]['NEv1_obs'], NEv1])
+        modselection_sampledmarginals[dset]['NEv2_obs'] = pd.concat([modselection_sampledmarginals[dset]['NEv2_obs'], NEv2])
+        modselection_sampledmarginals[dset]['NonNE_obs'] = pd.concat([modselection_sampledmarginals[dset]['NonNE_obs'], NonNE])
+        # Posterior predictive: parameter set / manifold sampling
+        #
+        NE = pd.DataFrame(columns=tspan)
+        NEv1 = pd.DataFrame(columns=tspan)
+        NEv2 = pd.DataFrame(columns=tspan)
+        NonNE = pd.DataFrame(columns=tspan)
+        #
+        for i in range(0,500):  #len(to_sim[pnamesandorder]) #is 1000, but i only want 500
             if i % 500 == 0:
                 print('model '+str(m)+', '+str(i))
             Y = np.copy(to_sim[pnamesandorder].iloc[i])
@@ -359,7 +367,7 @@ for dset in ['TKO', 'RPM', 'cl_A']:
             try:
                 sim = solver.run(param_values=param_values,tspan=tspan).all
             except TimeoutException as exc:
-                # this should not add anything to to the df
+                # this should not add anything to the df
                 continue
             else:
                 signal.alarm(0)
@@ -383,25 +391,63 @@ for dset in ['TKO', 'RPM', 'cl_A']:
         modselection_postpred[dset]['NEv1_obs'] = pd.concat([modselection_postpred[dset]['NEv1_obs'], NEv1])
         modselection_postpred[dset]['NEv2_obs'] = pd.concat([modselection_postpred[dset]['NEv2_obs'], NEv2])
         modselection_postpred[dset]['NonNE_obs'] = pd.concat([modselection_postpred[dset]['NonNE_obs'], NonNE])
-        if (ind % 250 == 0 and not ind == 0) or m == 9264 or m == 9262 or m == 5000:   #7293 #for clA high, now #5000 #for cla low, now
-            # within one dataset (e.g., TKO), but any structure, and all observables
-            print('saving ' + str(old_m) + ' to ' + str(m) + ', ' + str(ind) + ' models...')
-            print(outdir_prior + dset + '_trajectories_as_priorpredictive_from_model_'
-                  + str(old_m) + '_to_' + str(m) + '.pickle')
-            if not os.path.exists(outdir_prior):
-                os.makedirs(outdir_prior)
-            with open(outdir_prior + dset + '_trajectories_as_priorpredictive_from_model_'
-                      + str(old_m) + '_to_' + str(m) + '.pickle','wb') as fp:
-                pickle.dump(modselection_priorpred[dset], fp)
-            print(outdir_post + dset + '_trajectories_as_postpredictive_from_postequalweights_from_model_'
-                  + str(old_m) + '_to_' + str(m) + '.pickle')
-            if not os.path.exists(outdir_post):
-                os.makedirs(outdir_post)
-            with open(outdir_post + dset + '_trajectories_as_postpredictive_from_postequalweights_from_model_'
-                      + str(old_m) + '_to_' + str(m) + '.pickle','wb') as fp:
-                pickle.dump(modselection_postpred[dset], fp)
+        if (ind % 250 == 0 and not ind == 0) or (m == finalmodel[dset] and DOING_ALL) or m == 5890:
+            if not DOING_ALL:   # i.e. if only doing top topologies
+                print('saving ' + str(old_m) + ' to ' + str(m) + ', ' + str(ind) + ' models...')
+                # prior predictives
+                print(outdir_prior + dset + '_trajectories_as_priorpredictive_from_model_'
+                      + str(old_m) + '_to_' + str(m) + '_toptopologies.pickle')
+                if not os.path.exists(outdir_prior):
+                    os.makedirs(outdir_prior)
+                with open(outdir_prior + dset + '_trajectories_as_priorpredictive_from_model_'
+                          + str(old_m) + '_to_' + str(m) + '_toptopologies.pickle','wb') as fp:
+                    pickle.dump(modselection_priorpred[dset], fp)
+                # predictives from sampled parameter sets (independent sampling)
+                print(outdir_post + dset + '_trajectories_as_postpredictive_from_independentsampling_from_model_'
+                      + str(old_m) + '_to_' + str(m) + '_toptopologies.pickle')
+                if not os.path.exists(outdir_post):
+                    os.makedirs(outdir_post)
+                with open(outdir_post + dset + '_trajectories_as_postpredictive_from_independentsampling_from_model_'
+                          + str(old_m) + '_to_' + str(m) + '_toptopologies.pickle','wb') as fp:
+                    pickle.dump(modselection_sampledmarginals[dset], fp)
+                # predictives from parameter sets (manifold sampling)
+                print(outdir_post + dset + '_trajectories_as_postpredictive_from_postequalweights_from_model_'
+                      + str(old_m) + '_to_' + str(m) + '_toptopologies.pickle')
+                with open(outdir_post + dset + '_trajectories_as_postpredictive_from_postequalweights_from_model_'
+                          + str(old_m) + '_to_' + str(m) + '_toptopologies.pickle','wb') as fp:
+                    pickle.dump(modselection_postpred[dset], fp)
+            else:   #so, if DOING_ALL
+                print('saving ' + str(old_m) + ' to ' + str(m) + ', ' + str(ind) + ' models...')
+                # prior predictives
+                print(outdir_prior + dset + '_trajectories_as_priorpredictive_from_model_'
+                      + str(old_m) + '_to_' + str(m) + '_alltopologies.pickle')
+                if not os.path.exists(outdir_prior):
+                    os.makedirs(outdir_prior)
+                with open(outdir_prior + dset + '_trajectories_as_priorpredictive_from_model_'
+                          + str(old_m) + '_to_' + str(m) + '_alltopologies.pickle','wb') as fp:
+                    pickle.dump(modselection_priorpred[dset], fp)
+                # predictives from sampled parameter sets (independent sampling)
+                print(outdir_post + dset + '_trajectories_as_postpredictive_from_independentsampling_from_model_'
+                      + str(old_m) + '_to_' + str(m) + '_alltopologies.pickle')
+                if not os.path.exists(outdir_post):
+                    os.makedirs(outdir_post)
+                with open(outdir_post + dset + '_trajectories_as_postpredictive_from_independentsampling_from_model_'
+                          + str(old_m) + '_to_' + str(m) + '_alltopologies.pickle','wb') as fp:
+                    pickle.dump(modselection_sampledmarginals[dset], fp)
+                # predictives from parameter sets (manifold sampling)
+                print(outdir_post + dset + '_trajectories_as_postpredictive_from_postequalweights_from_model_'
+                      + str(old_m) + '_to_' + str(m) + '_alltopologies.pickle')
+                with open(outdir_post + dset + '_trajectories_as_postpredictive_from_postequalweights_from_model_'
+                          + str(old_m) + '_to_' + str(m) + '_alltopologies.pickle','wb') as fp:
+                    pickle.dump(modselection_postpred[dset], fp)
             # restart for new ones to save
             modselection_postpred[dset] = {
+                    'NE_obs': pd.DataFrame(),
+                    'NEv1_obs': pd.DataFrame(),
+                    'NEv2_obs': pd.DataFrame(),
+                    'NonNE_obs': pd.DataFrame()
+                }
+            modselection_sampledmarginals[dset] = {
                     'NE_obs': pd.DataFrame(),
                     'NEv1_obs': pd.DataFrame(),
                     'NEv2_obs': pd.DataFrame(),
@@ -417,3 +463,4 @@ for dset in ['TKO', 'RPM', 'cl_A']:
             print('old_m is now '+str(old_m))
         ind += 1
     print('moving on to new dataset')
+    old_m = 0
