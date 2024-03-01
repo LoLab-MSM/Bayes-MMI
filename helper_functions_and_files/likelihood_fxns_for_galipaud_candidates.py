@@ -1,11 +1,11 @@
 import numpy as np
 import pandas as pd
 
-df = pd.read_pickle('galipaud_sim_dat.pickle')
+df = pd.read_csv('galipaud_sim_dat.csv')
 chisquare_denom = np.var(df.y)  # np.std(df.y)**2
 
 def likelihood_beta(position):
-    Y=np.copy(position) # this is the param values... not using logs because beta should be negative
+    # position is the param values... not using logs because beta should be negative
     chisquare_num = (df.y -
                         (
 #                         df.x1*position[0] +
@@ -20,7 +20,7 @@ def likelihood_beta(position):
     return total_cost
 
 def likelihood_x1(position):
-    Y=np.copy(position) # this is the param values... not using logs because beta should be negative
+    # position is the param values... not using logs because beta should be negative
     chisquare_num = (df.y -
                         (
                          df.x1*position[0] +
@@ -35,7 +35,7 @@ def likelihood_x1(position):
     return total_cost
 
 def likelihood_x2(position):
-    Y=np.copy(position) # this is the param values... not using logs because beta should be negative
+    # position is the param values... not using logs because beta should be negative
     chisquare_num = (df.y -
                         (
 #                         df.x1*position[0] +
@@ -50,7 +50,7 @@ def likelihood_x2(position):
     return total_cost
 
 def likelihood_x3(position):
-    Y=np.copy(position) # this is the param values... not using logs because beta should be negative
+    # position is the param values... not using logs because beta should be negative
     chisquare_num = (df.y -
                         (
 #                         df.x1*position[0] +
@@ -65,7 +65,7 @@ def likelihood_x3(position):
     return total_cost
 
 def likelihood_x4(position):
-    Y=np.copy(position) # this is the param values... not using logs because beta should be negative
+    # position is the param values... not using logs because beta should be negative
     chisquare_num = (df.y -
                         (
 #                         df.x1*position[0] +
@@ -80,7 +80,7 @@ def likelihood_x4(position):
     return total_cost
 
 def likelihood_x1x2(position):
-    Y=np.copy(position) # this is the param values... not using logs because beta should be negative
+    # position is the param values... not using logs because beta should be negative
     chisquare_num = (df.y -
                         (
                          df.x1*position[0] +
@@ -95,7 +95,7 @@ def likelihood_x1x2(position):
     return total_cost
 
 def likelihood_x1x3(position):
-    Y=np.copy(position) # this is the param values... not using logs because beta should be negative
+    # position is the param values... not using logs because beta should be negative
     chisquare_num = (df.y -
                         (
                          df.x1*position[0] +
@@ -110,7 +110,7 @@ def likelihood_x1x3(position):
     return total_cost
 
 def likelihood_x1x4(position):
-    Y=np.copy(position) # this is the param values... not using logs because beta should be negative
+    # position is the param values... not using logs because beta should be negative
     chisquare_num = (df.y -
                         (
                          df.x1*position[0] +
@@ -125,7 +125,7 @@ def likelihood_x1x4(position):
     return total_cost
 
 def likelihood_x2x3(position):
-    Y=np.copy(position) # this is the param values... not using logs because beta should be negative
+    # position is the param values... not using logs because beta should be negative
     chisquare_num = (df.y -
                         (
 #                         df.x1*position[0] +
@@ -140,7 +140,7 @@ def likelihood_x2x3(position):
     return total_cost
 
 def likelihood_x2x4(position):
-    Y=np.copy(position) # this is the param values... not using logs because beta should be negative
+    # position is the param values... not using logs because beta should be negative
     chisquare_num = (df.y -
                         (
 #                         df.x1*position[0] +
@@ -155,7 +155,7 @@ def likelihood_x2x4(position):
     return total_cost
 
 def likelihood_x3x4(position):
-    Y=np.copy(position) # this is the param values... not using logs because beta should be negative
+    # position is the param values... not using logs because beta should be negative
     chisquare_num = (df.y -
                         (
 #                         df.x1*position[0] +
@@ -170,7 +170,7 @@ def likelihood_x3x4(position):
     return total_cost
 
 def likelihood_x1x2x3(position):
-    Y=np.copy(position) # this is the param values... not using logs because beta should be negative
+    # position is the param values... not using logs because beta should be negative
     chisquare_num = (df.y -
                         (
                          df.x1*position[0] +
@@ -185,7 +185,7 @@ def likelihood_x1x2x3(position):
     return total_cost
 
 def likelihood_x1x2x4(position):
-    Y=np.copy(position) # this is the param values... not using logs because beta should be negative
+    # position is the param values... not using logs because beta should be negative
     chisquare_num = (df.y -
                         (
                          df.x1*position[0] +
@@ -201,7 +201,7 @@ def likelihood_x1x2x4(position):
 
 
 def likelihood_x1x3x4(position):
-    Y=np.copy(position) # this is the param values... not using logs because beta should be negative
+    # position is the param values... not using logs because beta should be negative
     chisquare_num = (df.y -
                         (
                          df.x1*position[0] +
@@ -215,10 +215,8 @@ def likelihood_x1x3x4(position):
     total_cost = -np.sum(cost_df)
     return total_cost
 
-# all complete except this one
-
 def likelihood_x2x3x4(position):
-    Y=np.copy(position) # this is the param values... not using logs because beta should be negative
+    # position is the param values... not using logs because beta should be negative
     chisquare_num = (df.y -
                         (
 #                         df.x1*position[0] +
@@ -235,7 +233,7 @@ def likelihood_x2x3x4(position):
 ####
 
 def likelihood_all(position):
-    Y=np.copy(position) # this is the param values... not using logs because beta should be negative
+    # position is the param values... not using logs because beta should be negative
     chisquare_num = (df.y -
                         (
                          df.x1*position[0] +

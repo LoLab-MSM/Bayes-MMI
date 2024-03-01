@@ -1,11 +1,10 @@
 import pandas as pd
 import numpy as np
 
-# how to generate updatedinjune_all_9327_models_in_dataframe_with_subtype_starting_makeup_code.pickle
-mm_list = list(np.load('all_models_createdthroughout_forhypbuilder_upto_9327.npy'))
+# how to generate all_5891_models_in_dataframe_with_subtype_starting_makeup_code.pickle
 
 # but if you give a different set of model makeups, this will calculate the codes for that too
-#mm_list = list(np.load('../datafiles_generated_in_MMI_sclc/all_filtered_topologies_models_for_hypbuilder.npy')) #the output of 01_make_model_list_for_Hypbuilder.py
+mm_list = list(np.load('../files_generated_in_MMI_sclc/all_filtered_topologies_models_for_hypbuilder.npy')) #the output of 01_make_model_list_for_Hypbuilder.py
 
 df = pd.DataFrame({'model_makeup':mm_list})
 
@@ -211,7 +210,4 @@ for i in df.index:
 
 df['subtype_starting_and_makeup_code'] = df_start_and_subtype_makeup_code
 
-#df.to_pickle('updatedinjune_all_9327_models_in_dataframe_with_subtype_starting_makeup_code.pickle')
-
-# or if you used the mm_list from the commmented out code at the top...
-#df.to_pickle('all_5891_models_in_dataframe_with_subtype_starting_makeup_code.pickle')
+df.to_pickle('all_5891_models_in_dataframe_with_subtype_starting_makeup_code.pickle')
