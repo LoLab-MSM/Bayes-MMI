@@ -2,12 +2,9 @@ Bayes-MMI
 ========
 
 This is the repository for the Bayesian Multimodel Inference (Bayes-MMI) analysis of small cell lung cancer (SCLC) using 
-several RNA-sequencing datasets integrated into one overall analysis, to be published as "Unified Tumor Growth 
-Mechanisms from Multimodel Inference and Dataset Integration". Code in this repository represents the generation of
-multiple candidate models of SCLC based on prior knowledge, followed by model selection and Bayesian evidence (marginal 
-likelihood) value calculation via Nested Sampling. Evidence values are then used to determine posterior probabilities 
-per model, which are model-averaged to 1) generate posterior parameter distributions across all candidate models, and 2) 
-determine the probability of model features conditioned on the evaluated datasets. 
+several RNA-sequencing datasets integrated into one overall analysis, published in PLOS Comput. Biol as "Unified Tumor Growth Mechanisms from Multimodel Inference and Dataset Integration" by Beik et al. (2023), https://doi.org/10.1371/journal.pcbi.1011215.
+
+Code in this repository represents the generation of multiple candidate models of SCLC based on prior knowledge, followed by model selection and Bayesian evidence (marginal likelihood) value calculation via Nested Sampling. Evidence values are then used to determine posterior probabilities per model, which are model-averaged to 1) generate posterior parameter distributions across all candidate models, and 2) determine the probability of model features conditioned on the evaluated datasets. 
 
 Why Bayesian Multimodel Inference of small cell lung cancer (SCLC)?
 ---------------------------------
