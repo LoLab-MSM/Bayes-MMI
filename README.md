@@ -56,8 +56,8 @@ Place in posterior_marginals_and_predictives/ : <br>
 
 Zenodo links: <br>
 &emsp; https://doi.org/10.5281/zenodo.6671100 (TKO data files) <br>
-&emsp;https://doi.org/10.5281/zenodo.8002484 (RPM data files) <br>
-&emsp;https://doi.org/10.5281/zenodo.8002506 (SCLC-A cell line data files)
+&emsp; https://doi.org/10.5281/zenodo.8002484 (RPM data files) <br>
+&emsp; https://doi.org/10.5281/zenodo.8002506 (SCLC-A cell line data files)
 
 How to run Bayes-MMI (with SCLC data)
 ------------------------------------
