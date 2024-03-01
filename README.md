@@ -40,16 +40,24 @@ this usage, no downloads are necessary. Figures can then be generated after all 
 been run and completed.
 
 To run only the figure-generating code, with scripts in figure-number-order in the plotting_incl_for_paper_figures/ 
-directory, files generated via the multimodel_inference_SCLC/ scripts, used in the publication, are hosted via DropBox.
-The empty directories in this repository (files_generated_in_MMI_sclc/ and posterior_marginals_and_predictives/) are the
-locations where Bayes-MMI code expects the data to be placed in order to generate figures; these are identical to 
-directory names in DropBox where the data is located.
+directory, files generated via the multimodel_inference_SCLC/ scripts, used in the publication, are hosted via Zenodo.
+The following directories in this repository: files_generated_in_MMI_sclc/ and posterior_marginals_and_predictives/ are the
+locations where Bayes-MMI code expects the data to be placed in order to generate figures.
 
-To run the Bayes-MMI/plotting_incl_for_paper_figures/ scripts, go to the DropBox link and download the contents of the 
-directories, and place them in the identically-named but empty directories provided in Bayes-MMI.
+To run the Bayes-MMI/plotting_incl_for_paper_figures/ scripts, go to the Zenodo links and download the contents of all three, and place them in the appropriate directories:
 
-DropBox link:
-https://www.dropbox.com/sh/4fqzpvu9hgyjicm/AABdfFlCenEuiOPgiH0TT-xqa?dl=0
+Place in files_generated_in_MMI_sclc/ :
+  results_fromNS_gathered_TKO_addlanalyses.pickle
+  results_fromNS_gathered_RPM_addlanalyses.pickle
+  results_fromNS_gathered_cl_A_addlanalyses.pickle
+
+Place in posterior_marginals_and_predictives/ :
+  All other files from the Zenodo repositories
+
+Zenodo links:
+  https://doi.org/10.5281/zenodo.6671100 (TKO data files)
+  https://doi.org/10.5281/zenodo.8002484 (RPM data files)
+  https://doi.org/10.5281/zenodo.8002506 (SCLC-A cell line data files)
 
 How to run Bayes-MMI (with SCLC data)
 ------------------------------------
