@@ -10,6 +10,7 @@ from scipy.stats import ttest_ind
 from matplotlib import ticker
 from matplotlib.ticker import FormatStrFormatter
 from matplotlib.ticker import FuncFormatter
+import sys
 
 def magnitude(value):
     if (value == 0): return 0
@@ -19,14 +20,8 @@ def magnitude(value):
         return np.NaN
 
 indir = '../posterior_marginals_and_predictives/'
-outdir = '../generated_figures/'
-
-dfdict = pd.read_pickle('../helper_functions_and_files/updatedinjune_all_9327_models_in_dataframe_with_subtype_starting_makeup_code.pickle')
-updated_modelmakeups = np.load('../helper_functions_and_files/updatedinjune_apr_11_all_model_makeups_from_redo_ignoring_uneven_bidirtxns.npy')
-upd_modnums = []
-for j in dfdict.index:
-    if dfdict.loc[j]['model_makeup'] in updated_modelmakeups:
-        upd_modnums.append(j)
+outdir_fig =  '../generated_figures/'
+outdir_file = '../files_generated_in_MMI_sclc/'
 
 palette_dict = {
     'TKO':'Blues_r',
@@ -95,6 +90,8 @@ ordered_namelist = ['division_A_baseline',
                     'diff_A_to_Y_baseline',
                     'diff_Y_to_A_baseline']
 
+alpha_val = 0.01
+
 # for subplots_adjust later on
 left = 0.2  # the value on the x axis where the left margin should be
 right = 0.8
@@ -103,12 +100,14 @@ top = 0.8
 wspace = 1#0.5  # the proportion of the average of the left value and the right value -> for example, 0.2*((0.075+0.95)/2)
 hspace = 1#0.8
 
+## Fig 5B
+
 num_to_sample = 1000
 for dset in ['TKO', 'RPM', 'cl_A']:
     kde_dict = {dset:{}}
-    df = pd.read_pickle(indir+dset+'_betafit_postmarg_params_and_probabilities_from_postequalweights_somemissing_6_23_22.pklz',
+    df = pd.read_pickle(indir+dset+'_betafit_postmarg_params_and_probabilities_from_postequalweights.pklz',
                         compression='gzip')
-    df = df.loc[df.from_model.isin(upd_modnums)]
+    # starting with A (+/- others) subtype
     df = df[df['model_starting_subtype_makeup_code'].str.contains('\...1')]
     #
     for topo in topo_dict[dset]:
@@ -159,14 +158,57 @@ for dset in ['TKO', 'RPM', 'cl_A']:
     plt.legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
     plt.xlabel('Parameter')
     plt.ylabel('Log parameter value')
-    plt.savefig(outdir+'/'+dset+'_comparison_across_highscoring_topologies.pdf',format='pdf')
+    plt.savefig(outdir_fig + '/' + dset + '_comparison_across_highscoring_topologies.pdf', format='pdf')
     plt.show()
+    for i in list(set(df.variable)):
+        try:
+            testsample = df.loc[~np.isnan(df.value)]
+            testsample = testsample.loc[testsample.variable == i]
+            topo_param_variances = {topo: np.var(testsample.loc[testsample.topology == topo]['value']) for topo in
+                                    topo_dict[dset]}
+            # check the variances - should be equal to do ANOVA + Tukey, also note if unequal for caught TypeError t-test
+            eqvar = True
+            if not np.all([magnitude(topo_param_variances[v]) for v in topo_param_variances]):  # np.all() ignores NaNs
+                print('***************')
+                print('variances are not the same (different order of magnitude) for param ' + str(i))
+                for j in topo_param_variances:
+                    print(j, topo_param_variances[j])
+                print('***************')
+                eqvar = False
+            # now do ANOVA + Tukey (maybe)
+            try:
+                tukey = pairwise_tukeyhsd(endog=testsample['value'],
+                                          groups=testsample['topology'],
+                                          alpha=alpha_val)
+            except TypeError:
+                # this catches the statsmodels tukey test error thrown when there are only 2 topologies to compare
+                #  and the p-value is "at bounds" (i assume this means too close to 0 or 1):
+                #   error noted in https://github.com/statsmodels/statsmodels/issues/6132
+                # since this isn't actually multiple comparisons, can run a t-test instead
+                tukey = tuple(
+                    (ttest_ind(testsample.loc[testsample.topology == list(set(testsample.topology))[0]]['value'],
+                               testsample.loc[testsample.topology == list(set(testsample.topology))[1]]['value'],
+                               equal_var=eqvar),
+                     # ttest_ind doesn't return the names of the topologies it tests which i need for
+                     #  building the results dict; tukey lists in alphabetical order so i will here too
+                     sorted(list(set(testsample.topology)))[0], sorted(list(set(testsample.topology)))[1]))
+                pass
+            print(i)
+            print(tukey)
+        except ValueError:
+            # this catches the tukey test error thrown when only one topology has a particular parameter distr
+            #  (so nothing to compare)... leaving the print statement so the user can check that it's a parameter
+            #  they'd expect to only be in one topology
+            print('only one topo (no comparison possible)', i)
 
+# calculate significance for Fig 5B (see Fig 5 legend / Methods)
 num_to_sample = 1000
+results_acrossdatasets = {}
 for dset in ['TKO', 'RPM', 'cl_A']:
     kde_dict = {dset:{}}
-    df = pd.read_pickle(indir+dset+'_betafit_postmarg_params_and_probabilities_from_postequalweights_somemissing_4_10_22.pickle')
-    df = df.loc[df.from_model.isin(upd_modnums)]
+    df = pd.read_pickle(indir+dset+'_betafit_postmarg_params_and_probabilities_from_postequalweights.pklz',
+                        compression='gzip')
+    # starting with A (+/- others) subtype
     df = df[df['model_starting_subtype_makeup_code'].str.contains('\...1')]
     #
     for topo in topo_dict[dset]:
@@ -187,10 +229,9 @@ for dset in ['TKO', 'RPM', 'cl_A']:
             except KeyError:
                 print('UH OH')
                 pass
-            #break
-    #
     results_from_topology_comparisons = {}
-    for y in range(10):
+    y = 0
+    while y < 10:
         # not using y, just want to run this 10 times
         print(y)
         all_topos_in_dset_all_params_df = pd.DataFrame()
@@ -209,49 +250,97 @@ for dset in ['TKO', 'RPM', 'cl_A']:
         all_topos_in_dset_all_params_df.columns = [x.split('_baseline')[0] for x in all_topos_in_dset_all_params_df.columns if not x == 'topology'] + ['topology']
         df = pd.melt(all_topos_in_dset_all_params_df, id_vars=['topology'], value_vars=[x for x in all_topos_in_dset_all_params_df.columns if not x == 'topology'])
         #
-        results_from_topology_comparisons = {}
         for i in list(set(df.variable)):
             if i not in results_from_topology_comparisons: # the first of 10 samples need to add the key
                 results_from_topology_comparisons[i] = {}
             try:
+                tukey_returned = True
                 testsample = df.loc[~np.isnan(df.value)]
                 testsample = testsample.loc[testsample.variable==i]
-                tukey = pairwise_tukeyhsd(endog=testsample['value'],
-                                      groups=testsample['topology'],
-                                      alpha=0.01)
                 topo_param_variances = {topo:np.var(testsample.loc[testsample.topology == topo]['value']) for topo in topo_dict[dset]}
+                # check the variances - should be equal to do ANOVA + Tukey
+                eqvar = True
                 if not np.all([magnitude(topo_param_variances[v]) for v in topo_param_variances]): # np.all() ignores NaNs
                     print('***************')
                     print('variances are not the same (different order of magnitude) for param ' + str(i))
                     for j in topo_param_variances:
                         print(j,topo_param_variances[j])
                     print('***************')
+                    eqvar = False
+                # now do ANOVA + Tukey (maybe)
+                try:
+                    tukey = pairwise_tukeyhsd(endog=testsample['value'],
+                                          groups=testsample['topology'],
+                                          alpha=alpha_val)
+                except TypeError:
+                    # this catches the statsmodels tukey test error thrown when there are only 2 topologies to compare
+                    #  and the p-value is "at bounds" (i assume this means too close to 0 or 1):
+                    #   error noted in https://github.com/statsmodels/statsmodels/issues/6132
+                    # since this isn't actually multiple comparisons, can run a t-test instead
+                    tukey = tuple((np.mean(testsample.loc[testsample.topology==list(set(testsample.topology))[1]]['value'])-np.mean(testsample.loc[testsample.topology==list(set(testsample.topology))[0]]['value']),
+                                    # ttest_ind doesn't return differences in means which i need for the results dict;
+                                    # statsmodels tukeyhsd lists mean differences (pairwise_tukeyhsd.meandiffs)
+                                    # subtracting the alphabetically earlier group from the alphabetically later group
+                                    # so i do the same above
+                                    ttest_ind(testsample.loc[testsample.topology == list(set(testsample.topology))[0]]['value'],
+                                    testsample.loc[testsample.topology == list(set(testsample.topology))[1]]['value'],
+                                    equal_var=eqvar),
+                                    # ttest_ind doesn't return the names of the topologies it tests which i need for
+                                    #  building the results dict; statsmodels tukeyhsd lists in alphabetical order so
+                                    #  i will here too
+                                    sorted(list(set(testsample.topology)))[0],sorted(list(set(testsample.topology)))[1]))
+                    tukey_returned = False
+                    pass
+                #print(y,i)
                 #print(tukey)
-                ind = 0
-                for n,j in enumerate(tukey.groupsunique):
-                    for m,k in enumerate(tukey.groupsunique):
-                        if m>n: # tukey lists the groups and also compares them in alphabetical order
-                            try:
-                                results_from_topology_comparisons[i][j + ' vs ' + k].append((tukey.pvalues[ind], tukey.reject[ind]))
-                            except KeyError:
-                                results_from_topology_comparisons[i][j + ' vs ' + k] = [(tukey.pvalues[ind], tukey.reject[ind])]
-                            ind += 1
-        #        break
+                if tukey_returned:
+                    ind = 0
+                    for n,j in enumerate(tukey.groupsunique):
+                        for m,k in enumerate(tukey.groupsunique):
+                            if m>n: # tukey lists the groups and also compares them in alphabetical order
+                                try:
+                                    results_from_topology_comparisons[i][j + ' vs ' + k].append((tukey.meandiffs[ind], tukey.pvalues[ind], tukey.reject[ind]))
+                                except KeyError:
+                                    results_from_topology_comparisons[i][j + ' vs ' + k] = [(tukey.meandiffs[ind], tukey.pvalues[ind], tukey.reject[ind])]
+                                ind += 1
+                else:
+                    try:
+                        results_from_topology_comparisons[i][tukey[2] + ' vs ' + tukey[3]].append(
+                            (tukey[0], tukey[1].pvalue, tukey[1].pvalue < alpha_val))
+                    except KeyError:
+                        results_from_topology_comparisons[i][tukey[2] + ' vs ' + tukey[3]] = [(tukey[0], tukey[1].pvalue, tukey[1].pvalue < alpha_val)]
             except ValueError:
                 # this catches the tukey test error thrown when only one topology has a particular parameter distr
                 #  (so nothing to compare)... leaving the print statement so the user can check that it's a parameter
                 #  they'd expect to only be in one topology
                 print('only one topo (no comparison possible)',i)
-        #break
+        y += 1
     print(dset)
     for i in results_from_topology_comparisons:
         print(i)
         for j in results_from_topology_comparisons[i]:
             print('\t'+j)
-            print('\t\t' + str(np.mean([x[1] for x in results_from_topology_comparisons[i][j]])))
+            print('\t\t' + str(np.mean([x[2] for x in results_from_topology_comparisons[i][j]])))
+    results_acrossdatasets[dset] = results_from_topology_comparisons
 
+# save the results of the 10-iteration sampling process to compare differences and significances across topologies
+np.save(outdir_file + '/comparisons_across_highscoring_topologies_by_dataset.npy',results_acrossdatasets)
 
-# Fig S5, parameter values *within* each topology
+# # # ## If you want to load the above and examine the results
+# # # results_acrossdatasets = np.load(outdir_file + '/comparisons_across_highscoring_topologies_by_dataset.npy',allow_pickle=True)[()]
+# # #
+# # # for dset in ['TKO', 'RPM', 'cl_A']:
+# # #     print(dset)
+# # #     for i in results_acrossdatasets[dset]:
+# # #         print('\t' + i)
+# # #         for j in results_acrossdatasets[dset][i]:
+# # #             print('\t\t' + j)
+# # #             print('\t\t\t' + str(np.mean([x[2] for x in results_acrossdatasets[dset][i][j]])))
+# # #     print('')
+# # #
+#
+
+## Fig S6, parameter values *within* each topology
 # after plotting, need to consolidate barplots in Inkscape
 
 plt.rcParams.update({'font.size': 12})
@@ -263,9 +352,8 @@ warnings.filterwarnings("ignore")
 num_to_sample = 1000
 for dset in ['TKO', 'RPM', 'cl_A']:
     kde_dict = {dset:{}}
-    df = pd.read_pickle(indir+dset+'_betafit_postmarg_params_and_probabilities_from_postequalweights_somemissing_6_23_22.pklz',
+    df = pd.read_pickle(indir+dset+'_betafit_postmarg_params_and_probabilities_from_postequalweights.pklz',
                         compression='gzip')
-    df = df.loc[df.from_model.isin(upd_modnums)]
     df = df[df['model_starting_subtype_makeup_code'].str.contains('\...1')]
     #
     for topo in topo_dict[dset]:
@@ -319,26 +407,39 @@ for dset in ['TKO', 'RPM', 'cl_A']:
             ax.set_ylim(-4,3.5)
             plt.subplots_adjust(left=left, right=right, bottom=bottom, top=top, wspace=wspace, hspace=hspace)
             plt.title(dset + ' ' + topo + ' '+strcontains[1]+'-directions diffs')
-            plt.savefig(outdir+'/parambarplot_'+dset+'_struct'+topo_makeup_dict[topo]+'_'+strcontains[1]+'diffs.pdf',
+            plt.savefig(outdir_fig + '/parambarplot_' + dset + '_struct' + topo_makeup_dict[topo] + '_' + strcontains[1] + 'diffs.pdf',
                         format='pdf')
             plt.show()
-            #print(dset)
-            #print(topo)
-            #print(strcontains)
             try:
                 testsample = df_byhier.loc[~np.isnan(df_byhier.value)]
                 testsample = testsample.loc[testsample.topology == topo]
-                tukey = pairwise_tukeyhsd(endog=testsample['value'],
-                                      groups=testsample['variable'],
-                                      alpha=0.01)
                 topo_param_variances = {diff:np.var(testsample.loc[testsample.variable==diff]['value']) for diff in set(testsample.variable)}
+                # check the variances - should be equal to do ANOVA + Tukey, also note if unequal for caught TypeError t-test
+                eqvar = True
                 if not np.all([magnitude(topo_param_variances[v]) for v in topo_param_variances]): # np.all() ignores NaNs
                     print('***************')
                     print('variances are not the same (different order of magnitude) for params in topology ' + str(topo))
                     for j in topo_param_variances:
                         print(j,topo_param_variances[j])
                     print('***************')
-                print(tukey)
+                # now do ANOVA + Tukey (maybe)
+                try:
+                    tukey = pairwise_tukeyhsd(endog=testsample['value'],
+                                          groups=testsample['variable'],
+                                          alpha=0.01)
+                    print(i)
+                    print(tukey)
+                except TypeError:
+                    # this catches the statsmodels tukey test error thrown when there are only 2 topologies to compare
+                    #  and the p-value is "at bounds" (i assume this means too close to 0 or 1):
+                    #   error noted in https://github.com/statsmodels/statsmodels/issues/6132
+                    # since this isn't actually multiple comparisons, can run a t-test instead
+                    rez = ttest_ind(testsample.loc[testsample.variable == list(set(testsample.variable))[0]]['value'],
+                                    testsample.loc[testsample.variable == list(set(testsample.variable))[1]]['value'],
+                                    equal_var=eqvar)
+                    print('for 2 samples (equal var):') if eqvar else print('for 2 samples (unequal var):')
+                    print(rez)
+                    pass
             except ValueError:
                 # this catches the tukey test error thrown when only one topology has a particular parameter distr
                 #  (so nothing to compare)... leaving the print statement so the user can check that it's a parameter
@@ -355,10 +456,8 @@ for dset in ['TKO', 'RPM', 'cl_A']:
         ax.set_ylim(-4,3.5)
         plt.title(dset+' '+topo+' both hierarchical-directions diffs')
         plt.subplots_adjust(left=left, right=right, bottom=bottom, top=top, wspace=wspace, hspace=hspace)
-        plt.savefig(outdir+'/parambarplot_'+dset+'_struct'+topo_makeup_dict[topo]+'_bothdiffs.pdf',format='pdf')
+        plt.savefig(outdir_fig + '/parambarplot_' + dset + '_struct' + topo_makeup_dict[topo] + '_bothdiffs.pdf', format='pdf')
         plt.show()
-        #print(dset)
-        #print(topo)
         eqvar = True
         topo_param_variances = {diff: np.var(testsample.loc[testsample.variable == diff]['value']) for diff in
                                 set(testsample.variable)}

@@ -3,10 +3,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 import copy
+import sys
 
 pd.set_option('display.max_columns', 500)
 
-indir = '../files_generated_in_MMI_sclc/'
+indir =  '../files_generated_in_MMI_sclc/'
+outdir = '../generated_figures/'
 
 left = 0.1  # the value on the x axis where the left margin should be
 right = 0.9
@@ -191,7 +193,7 @@ def plot_with_x_and_y_breaks(df, lastprob_ind, add_to_lp=200, figsize=(14,8),
     fig.text((.5-(len(toplabel)*0.0055)),0.96,toplabel,va='center',rotation='horizontal')
     plt.subplots_adjust(left=left, right=right, bottom=bottom, top=top, wspace=wspace, hspace=hspace)
     if savedir:
-        plt.savefig(savedir+dset+'_to9327_evidence_ordered_no95CI_somemissing.pdf',format='pdf')
+        plt.savefig(savedir+dset+'_evidence_ordered.pdf',format='pdf')
     plt.show()
 
 
@@ -258,23 +260,12 @@ def plot_with_y_breaks(df, lastprob_ind, add_to_lp=200, figsize=(14,8),
     #plt.title(toplabel)
     plt.subplots_adjust(left=left, right=right, bottom=bottom, top=top, wspace=wspace, hspace=hspace)
     if savedir:
-        plt.savefig(savedir+dset+'_to9327_evidence_ordered_no95CI_somemissing.pdf',format='pdf')
+        plt.savefig(savedir+dset+'_evidence_ordered.pdf',format='pdf')
     plt.show()
-
-
-dfdict = pd.read_pickle('../helper_functions_and_files/updatedinjune_all_9327_models_in_dataframe_with_subtype_starting_makeup_code.pickle')
-updated_modelmakeups = np.load('../helper_functions_and_files/updatedinjune_apr_11_all_model_makeups_from_redo_ignoring_uneven_bidirtxns.npy')
-upd_modnums = []
-for j in dfdict.index:
-    if dfdict.loc[j]['model_makeup'] in updated_modelmakeups:
-        upd_modnums.append(j)
-
-# print(upd_modnums)
 
 CInums = {}
 for dset in ['TKO','RPM','clA']:
-    df = pd.read_pickle(indir+'/results_fromNS_gathered_'+dset+'_somemissing_addlanalyses.pickle')
-    df = df.loc[df.index.isin(upd_modnums)]
+    df = pd.read_pickle(indir + '/results_fromNS_gathered_' + dset + '_addlanalyses.pickle')
     #
     df.sort_values('posterior_prob',ascending=False,inplace=True)
     df.reset_index(inplace=True)
@@ -283,25 +274,25 @@ for dset in ['TKO','RPM','clA']:
     while np.sum(df.loc[df.posterior_prob>df.loc[lastprob_ind].posterior_prob].posterior_prob) < 0.95:
         lastprob_ind += 1
     #
-    # prep for Fig 3D
+    # prep for Fig 4D
     CInums[dset] = {
                     'non 95% CI':len(df)-len(df.loc[df.posterior_prob>df.loc[lastprob_ind].posterior_prob]),
                     '95% CI':len(df) - len(df.loc[df.INS_Z > (np.max(df.INS_Z) / 10 ** .5)]),
                     'relative likelihood CI':len(df)
                     }
-    # Fig 3A-C
+    ## Fig 4A-C
     add_to_lp = 200
     if len(df) / (lastprob_ind + add_to_lp) < 2:
         plot_with_y_breaks(df,lastprob_ind,toplabel=(dset if dset != 'clA' else 'SCLC-A cell lines'),bottomlabel='Model no.',
-                           leftlabel='Evidence (marginal likelihood',rightlabel='Posterior probability',
-                           savedir='../generated_figures/')
+                           leftlabel='Evidence (marginal likelihood)',rightlabel='Posterior probability',
+                           savedir=outdir)
     else:
         plot_with_x_and_y_breaks(df,lastprob_ind,toplabel=(dset if dset != 'clA' else 'SCLC-A cell lines'),bottomlabel='Model no.',
-                                 leftlabel='Evidence (marginal likelihood',rightlabel='Posterior probability',
-                                 savedir='../generated_figures/')
+                                 leftlabel='Evidence (marginal likelihood)',rightlabel='Posterior probability',
+                                 savedir=outdir)
 
 ####
-# Fig 3D
+## Fig 4D
 
 # example from when i did this using both all-models group and 4-subtype only models
 #df1 = pd.DataFrame(CInums['SCLC-A cell lines'],index=[0])#['all models'],index=[0])
@@ -387,7 +378,7 @@ plt.xlabel('Dataset')
 sns.despine()
 #plt.subplots_adjust(left=left, right=right, bottom=bottom, top=top, wspace=wspace, hspace=hspace)
 plt.tight_layout()
-plt.savefig('../generated_figures/number_models_perCIs_bw_datasets.pdf',format='pdf')
+plt.savefig(outdir+'number_models_perCIs_bw_dataset.pdf',format='pdf')
 plt.show()
 
 
