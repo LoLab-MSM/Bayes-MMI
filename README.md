@@ -86,6 +86,7 @@ statsmodels               0.10.1
 
 Data-generating and analyzing code is in the multimodel_inference_SCLC directory,
 where each script can be run in order. 
+- Script 00_example_Galipaud2014: this does multimodel inference on data generated in Galipaud et al. 2014 (https://doi.org/10.1111/2041-210X.12251) that was used in that publication to perform sums of AIC weights; the example in this repository (shown in Beik et al. 2023) compares Bayesian multimodel inference comparing these regression models to summed weights comparing these regression models.
 - Scripts 01 through 05: these generate all of the
 PySB models that represent model candidates for the multimodel inference analysis,
 as well as generate individual scripts that will run nested sampling (via PyMultiNest)
@@ -106,19 +107,20 @@ distributions (10). Scripts 09 and 10 result in multiple files as-written.
   access these analyzed data.
 
 Plotting code, including for plotting-specific helper functions, is in the plotting_incl_for_paper_figures/ directory, 
-named and commented within each file for which figure is plotted using each script (e.g., script f03 plots each part of 
-Figure 3, and comments within the script indicate the code that plots Fig 3A-C, and the code that plots Fig 3D). Files 
-from the DropBox link above are required for running these scripts.
-- Script f03: this plots the Bayesian evidence (marginal likelihood) values per candidate model in order, per dataset, 
-corresponding to Figures 3A-C in the publication, and plots the total numbers of candidate models in and out of 
-confidence intervals per dataset, corrseponding to Figure 3D.
-- Script f04a: this plots the Bayesian model-averaged probabilities of each model structure compared to each dataset, 
-corresponding to Figure 4A.
+named and commented within each file for which figure is plotted using each script (e.g., script f04 plots each part of 
+Figure 4, and comments within the script indicate the code that plots Fig 4A-C, and the code that plots Fig 4D). Files 
+from Zenodo (links above) are required for running these scripts.
+- Script f01: this corresponds to Figures 1C-D, plotting Bayesian prior and posterior probability (based on evidence / marginal likelihood) and sums of AIC weights using the example data from Galipaud et al. 2014, to illustrate the utility of the Bayesian multimodel inference method for comparing across multiple models.
+- Script f04: this plots the marginal likelihood (Bayesian evidence) values per candidate model in order, per dataset, 
+corresponding to Figures 4A-C in the publication, and plots the total numbers of candidate models in and out of 
+confidence intervals per dataset, corrseponding to Figure 4D.
+- Script f05a: this plots the Bayesian model-averaged probabilities of each model structure compared to each dataset, 
+corresponding to Figure 5A.
   - Helper function posterior_probability_calculations.py is called by this script to calculate these probabilities.
-- Script f04b: this plots the Bayesian model-averaged posterior parameter distributions per highest-scoring model 
-structures (seen in Figure 4A) per dataset, corresponding to Figure 4B.
-- Script f05: this plots the Bayesian model-averaged probabilities of each feature in the highest-scoring three-subtype
-models, as a heatmap, corresponding to Figure 5A, and as model topology representations, corresponding to Figures 5B-D.
+- Script f05b: this plots the Bayesian model-averaged posterior parameter distributions per highest-scoring model 
+structures (seen in Figure 5A) per dataset, corresponding to Figure 5B.
+- Script f06: this plots the Bayesian model-averaged probabilities of each feature in the highest-scoring three-subtype
+models, as a heatmap, corresponding to Figure 6A, and as model topology representations, corresponding to Figures 6B-D.
   - Helper function posterior_probability_calculations.py (in helper_functions_and_files/) is called by this script to 
   calculate the model-averaged probabilities for each model structure.
   - Plotting-specific helper function plotting_incl_for_paper_figures/posterior_prob_networkgraph_plotting.py is called
@@ -126,5 +128,5 @@ models, as a heatmap, corresponding to Figure 5A, and as model topology represen
 - Scripts plot_prior_and_posterior_marginals.py and plot_prior_and_posterior_predictives.py: these plot model-averaged 
 posterior parameter distributions (posterior marginals), and simulate candidate models using model-averaged posterior 
 marginal distributions (posterior predictives). Part of plot_prior_and_posterior_marginals.py corresponds to
-Figure 5F, and the remainder of the script, as well as plot_prior_and_posterior_predictives.py, correspond to 
+Figure 6F, and the remainder of the script, as well as plot_prior_and_posterior_predictives.py, correspond to 
 supplementary figures.
