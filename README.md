@@ -47,16 +47,23 @@ locations where Bayes-MMI code expects the data to be placed in order to generat
 To run the Bayes-MMI/plotting_incl_for_paper_figures/ scripts, go to the Zenodo links and download the contents of all three, and place them in the appropriate directories:
 
 Place in files_generated_in_MMI_sclc/ :
+
   results_fromNS_gathered_TKO_addlanalyses.pickle
+
   results_fromNS_gathered_RPM_addlanalyses.pickle
+  
   results_fromNS_gathered_cl_A_addlanalyses.pickle
 
 Place in posterior_marginals_and_predictives/ :
+  
   All other files from the Zenodo repositories
 
 Zenodo links:
+  
   https://doi.org/10.5281/zenodo.6671100 (TKO data files)
+  
   https://doi.org/10.5281/zenodo.8002484 (RPM data files)
+  
   https://doi.org/10.5281/zenodo.8002506 (SCLC-A cell line data files)
 
 How to run Bayes-MMI (with SCLC data)
