@@ -6,12 +6,14 @@ import pandas as pd
 from scipy.stats import gaussian_kde
 import math
 from statsmodels.stats.multicomp import pairwise_tukeyhsd
+from scipy.stats import ttest_ind
 import matplotlib.pyplot as plt
 from matplotlib import ticker
 from matplotlib.ticker import FormatStrFormatter
 from matplotlib.ticker import FuncFormatter
 from scipy.stats import norm, uniform, beta
 import seaborn as sns
+import sys
 
 def magnitude(value):
     if (value == 0): return 0
@@ -21,17 +23,11 @@ def magnitude(value):
         return np.NaN
 
 indir = '../posterior_marginals_and_predictives/'
-outdir = ''
+outdir_fig = '../generated_figures/'
+outdir_file = '../files_generated_in_MMI_sclc/'
 
 with open('../helper_functions_and_files/all_possible_sampled_params_dict.pickle', 'rb') as p:
     sampled_params_dict = pickle.load(p)
-
-dfdict = pd.read_pickle('../helper_functions_and_files/updatedinjune_all_9327_models_in_dataframe_with_subtype_starting_makeup_code.pickle')
-updated_modelmakeups = np.load('../helper_functions_and_files/updatedinjune_apr_11_all_model_makeups_from_redo_ignoring_uneven_bidirtxns.npy')
-upd_modnums = []
-for j in dfdict.index:
-    if dfdict.loc[j]['model_makeup'] in updated_modelmakeups:
-        upd_modnums.append(j)
 
 ### much of ticks_format() is from https://stackoverflow.com/questions/19239297/matplotlib-bad-ticks-labels-for-loglog-twin-axis adapted for just the x axis
 def ticks_format(value, index):
@@ -164,7 +160,7 @@ ordered_namelist = ['division_A_baseline',
                     'diff_Y_to_A_baseline']
 
 
-# Plot prior distributions only (Figure S2)
+## Plot prior distributions only (Figure S3)
 
 plt.rcParams.update({'font.size': 12})
 plt.rcParams.update({'axes.titlesize': 12})
@@ -211,12 +207,10 @@ remove_empty_plots(fig, axs, dims_plotted, columns, rows)
 fig.text(0.5, 0.02, 'Log parameter value', ha='center')
 fig.text(0.01, 0.55, 'Probability', va='center', rotation='vertical')
 plt.subplots_adjust(left=left, right=right, bottom=bottom, top=top, wspace=wspace, hspace=hspace)
-#plt.savefig('../generated_figures/prior_marginals_suppfig.pdf',
-#            format='pdf')
-
+#plt.savefig(outdir_fig+'prior_marginals_suppfig.pdf', format='pdf')
 plt.show()
 
-# Priors and posteriors per model (the posteriors are the same as in the boxplot from Fig 5F, but a diff view of them)
+## Priors and posteriors per model (the posteriors are the same as in the boxplot from Fig 6F, but a diff view of them)
 
 plt.rcParams.update({'font.size': 12})
 plt.rcParams.update({'axes.titlesize': 12})
@@ -229,15 +223,19 @@ for dset in ['TKO', 'RPM', 'cl_A']:
     fig, axs = plt.subplots(rows, columns, figsize=(20, 20))
     dims_plotted = []
     model_avgd = pd.read_pickle(
-        indir + dset + '_betafit_postmarg_params_and_probabilities_from_postequalweights_somemissing_6_23_22.pklz',
+        indir + dset + '_betafit_postmarg_params_and_probabilities_from_postequalweights.pklz',
         compression='gzip')
     model_avgd = model_avgd.loc[~np.isnan(model_avgd.model_pp)]  # only models with a posterior probability can be used
-    model_avgd = model_avgd.loc[model_avgd.from_model.isin(upd_modnums)]
     ## comment out for any initiating subtype, currently has A +/- others
     model_avgd = model_avgd.loc[model_avgd.model_starting_subtype_makeup_code.str.contains('\...1')]
     ##
     removeind = 0
     for n, i in enumerate(ordered_namelist):
+        ####
+        if 'baseline' not in i:
+            removeind += 1
+            continue
+        ####
         dims_plotted.append(n - removeind)
         ax = axs[int(((n - removeind) - (n - removeind) % columns) / columns), ((n - removeind) % columns)]
         try:
@@ -287,11 +285,12 @@ for dset in ['TKO', 'RPM', 'cl_A']:
     fig.text(0.01, 0.55, 'Probability', va='center',
              rotation='vertical')  # , fontsize=30)  ## need diff sizes for ACCRE
     plt.subplots_adjust(left=left, right=right, bottom=bottom, top=top, wspace=wspace, hspace=hspace)
-#    plt.savefig('../generated_figures/priors_modelavg_posterior_marginals_5891update_' + str(dset) + '.pdf',
+#    plt.savefig(outdir_fig+'priors_modelavg_posterior_marginals_5891update_' + str(dset) + '.pdf',
 #                format='pdf')
     plt.show()
 
-# Priors and posteriors separated by initiating subtype (Figure S4)
+
+## Priors and posteriors separated by initiating subtype (not a figure, but could be useful)
 
 ndims = len(ordered_namelist)
 columns = 6
@@ -308,11 +307,10 @@ for dset in ['TKO', 'RPM', 'cl_A']:
                      ('4000', 'red', 'darkred')]:
         removeind = 0
         model_avgd = pd.read_pickle(
-            indir + dset + '_betafit_postmarg_params_and_probabilities_from_postequalweights_somemissing_6_23_22.pklz',
+            indir + dset + '_betafit_postmarg_params_and_probabilities_from_postequalweights.pklz',
             compression='gzip')
         model_avgd = model_avgd.loc[
             ~np.isnan(model_avgd.model_pp)]  # only models with a posterior probability can be used
-        model_avgd = model_avgd.loc[model_avgd.from_model.isin(upd_modnums)]
         model_avgd = model_avgd.loc[model_avgd.model_starting_subtype_makeup_code.str.endswith(starting[0])]
         for n, i in enumerate(ordered_namelist):
             dims_plotted.append(n - removeind)
@@ -363,11 +361,11 @@ for dset in ['TKO', 'RPM', 'cl_A']:
     fig.text(0.01, 0.55, 'Probability', va='center',
              rotation='vertical')  # , fontsize=30)  ## need diff sizes for ACCRE
     plt.subplots_adjust(left=left, right=right, bottom=bottom, top=top, wspace=wspace, hspace=hspace)
-#    plt.savefig('../generated_figures/priors_modelavg_posterior_marginals_' + str(dset) + '_bystarting_suppfig.pdf',
+#    plt.savefig(outdir_fig+'priors_modelavg_posterior_marginals_' + str(dset) + '_bystarting_suppfig.pdf',
 #                format='pdf')
     plt.show()
 
-# Priors and posteriors per structural topology (not a figure, but could be useful)
+## Priors and posteriors per structural topology (not a figure, but could be useful)
 
 topodict = {
     'TKO': [('0.', 'gray', 'black'), ('2.', 'blue', 'blue'), ('6.', 'orange', 'goldenrod'),
@@ -389,10 +387,9 @@ for dset in ['TKO', 'RPM', 'cl_A']:
     for topo in topodict[dset]:
         removeind = 0
         model_avgd = pd.read_pickle(
-            indir + dset + '_betafit_postmarg_params_and_probabilities_from_postequalweights_somemissing_6_23_22.pklz',
+            indir + dset + '_betafit_postmarg_params_and_probabilities_from_postequalweights.pklz',
             compression='gzip')
         model_avgd = model_avgd.loc[~np.isnan(model_avgd.model_pp)]
-        model_avgd = model_avgd.loc[model_avgd.from_model.isin(upd_modnums)]
         # this is only per structure, not initiating subtype
         model_avgd = model_avgd.loc[model_avgd.model_starting_subtype_makeup_code.str.startswith(topo[0])]
         #
@@ -441,24 +438,23 @@ for dset in ['TKO', 'RPM', 'cl_A']:
                 pass
     remove_empty_plots(fig, axs, dims_plotted, columns, rows)
     #
-    fig.text(0.5, 0.02, 'Log parameter value', ha='center')  # , fontsize=30)  ## need diff sizes for ACCRE
+    fig.text(0.5, 0.02, 'Log parameter value', ha='center')  # , fontsize=30)  ## need diff sizes depending where this is run
     fig.text(0.01, 0.55, 'Probability', va='center',
-             rotation='vertical')  # , fontsize=30)  ## need diff sizes for ACCRE
+             rotation='vertical')  # , fontsize=30)  ## need diff sizes depending where this is run
     plt.subplots_adjust(left=left, right=right, bottom=bottom, top=top, wspace=wspace, hspace=hspace)
-    # plt.savefig('priors_modelavg_posterior_marginals_'+str(resdir)+'_bytopology.pdf',
+    # plt.savefig(outdir_fig+'priors_modelavg_posterior_marginals_'+str(resdir)+'_bytopology.pdf',
     #          format='pdf')
     plt.show()
 
-# Figure 5F
+## Figure 6F
 
 sampledict = {}
 for dset in ['TKO', 'RPM', 'cl_A']:
     sampledict[dset] = {}
     model_avgd = pd.read_pickle(
-        indir + dset + '_betafit_postmarg_params_and_probabilities_from_postequalweights_somemissing_6_23_22.pklz',
+        indir + dset + '_betafit_postmarg_params_and_probabilities_from_postequalweights.pklz',
         compression='gzip')
     model_avgd = model_avgd.loc[~np.isnan(model_avgd.model_pp)]
-    model_avgd = model_avgd.loc[model_avgd.from_model.isin(upd_modnums)]
     model_avgd = model_avgd.loc[model_avgd.model_starting_subtype_makeup_code.str.contains('\...1')]
     model_avgd = model_avgd.loc[model_avgd.model_starting_subtype_makeup_code.str.startswith('0')]
     for n, i in enumerate(ordered_namelist):
@@ -509,12 +505,13 @@ plt.subplots_adjust(left=left, right=right, bottom=bottom, top=top, wspace=wspac
 plt.legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
 plt.xlabel('Parameter')
 plt.ylabel('Log parameter value')
-# plt.savefig('../generated_figures/parambarplot_updated5891.pdf',format='pdf')
+plt.savefig(outdir_fig+'parambarplot_updated5891_2023.pdf',format='pdf')
 plt.show()
 
-#import warnings
-#warnings.filterwarnings("ignore")
+import warnings
+warnings.filterwarnings("ignore")
 
+alpha_val = 0.01
 results_from_dataset_comparisons = {}
 num_to_sample = 1000
 for y in range(10):
@@ -522,10 +519,9 @@ for y in range(10):
     sampledict = {}
     for dset in ['TKO','RPM','cl_A']:
         model_avgd = pd.read_pickle(
-            indir + dset + '_betafit_postmarg_params_and_probabilities_from_postequalweights_somemissing_6_23_22.pklz',
+            indir + dset + '_betafit_postmarg_params_and_probabilities_from_postequalweights.pklz',
             compression='gzip')
         model_avgd = model_avgd.loc[~np.isnan(model_avgd.model_pp)]
-        model_avgd = model_avgd.loc[model_avgd.from_model.isin(upd_modnums)]
         model_avgd = model_avgd.loc[model_avgd.model_starting_subtype_makeup_code.str.contains('\...1')]
         model_avgd = model_avgd.loc[model_avgd.model_starting_subtype_makeup_code.str.startswith('0')]
         sampledict[dset] = {}
@@ -562,35 +558,67 @@ for y in range(10):
     all_datasets_all_params_df.columns = [x.split('_baseline')[0] for x in all_datasets_all_params_df.columns if not x == 'dataset'] + ['dataset']
     df = pd.melt(all_datasets_all_params_df, id_vars=['dataset'], value_vars=[x for x in all_datasets_all_params_df.columns if not x == 'dataset'])
     #
-    results_from_dataset_comparisons = {}
+    #results_from_dataset_comparisons = {}
     for i in list(set(df.variable)):
         if i not in results_from_dataset_comparisons:
             results_from_dataset_comparisons[i] = {}
         try:
+            tukey_returned = True
             testsample = df.loc[~np.isnan(df.value)]
             testsample = testsample.loc[testsample.variable==i]
-            tukey = pairwise_tukeyhsd(endog=testsample['value'],
-                                  groups=testsample['dataset'],
-                                  alpha=0.01)
             dset_param_variances = {dt: np.var(testsample.loc[testsample.dataset == dt]['value']) for dt in
                                     ['TKO','RPM','cl_A']}
+            # check the variances - should be equal to do ANOVA + Tukey
+            eqvar = True
             if not np.all([magnitude(dset_param_variances[v]) for v in dset_param_variances]):  # np.all() ignores NaNs
                 print('***************')
                 print('variances are not the same (different order of magnitude) for param '+str(i))
                 for j in dset_param_variances:
                     print(j, dset_param_variances[j])
                 print('***************')
-            #print(tukey)
-            ind = 0
-            for n,j in enumerate(tukey.groupsunique):
-                for m,k in enumerate(tukey.groupsunique):
-                    if m>n:
-                        try:
-                            results_from_dataset_comparisons[i][j + ' vs ' + k].append((tukey.pvalues[ind], tukey.reject[ind]))
-                        except KeyError:
-                            results_from_dataset_comparisons[i][j + ' vs ' + k] = [(tukey.pvalues[ind], tukey.reject[ind])]
-                        ind += 1
-    #        break
+                eqvar = False
+            # now do ANOVA + Tukey (maybe)
+            try:
+                tukey = pairwise_tukeyhsd(endog=testsample['value'],
+                                      groups=testsample['dataset'],
+                                      alpha=0.01)
+            except TypeError:
+                # this catches the statsmodels tukey test error thrown when there are only 2 topologies to compare
+                #  and the p-value is "at bounds" (i assume this means too close to 0 or 1):
+                #   error noted in https://github.com/statsmodels/statsmodels/issues/6132
+                # since this isn't actually multiple comparisons, can run a t-test instead
+                tukey = tuple((np.mean(testsample.loc[testsample.topology==list(set(testsample.topology))[1]]['value'])-np.mean(testsample.loc[testsample.topology==list(set(testsample.topology))[0]]['value']),
+                                # ttest_ind doesn't return differences in means which i need for the results dict;
+                                # statsmodels tukeyhsd lists mean differences (pairwise_tukeyhsd.meandiffs)
+                                # subtracting the alphabetically earlier group from the alphabetically later group
+                                # so i do the same above
+                                ttest_ind(testsample.loc[testsample.topology == list(set(testsample.topology))[0]]['value'],
+                                testsample.loc[testsample.topology == list(set(testsample.topology))[1]]['value'],
+                                equal_var=eqvar),
+                                # ttest_ind doesn't return the names of the topologies it tests which i need for
+                                #  building the results dict; statsmodels tukeyhsd lists in alphabetical order so
+                                #  i will here too
+                                sorted(list(set(testsample.topology)))[0],sorted(list(set(testsample.topology)))[1]))
+                tukey_returned = False
+                pass
+                #print(y,i)
+                #print(tukey)
+            if tukey_returned:
+                ind = 0
+                for n,j in enumerate(tukey.groupsunique):
+                    for m,k in enumerate(tukey.groupsunique):
+                        if m>n: # tukey lists the groups and also compares them in alphabetical order
+                            try:
+                                results_from_dataset_comparisons[i][j + ' vs ' + k].append((tukey.meandiffs[ind], tukey.pvalues[ind], tukey.reject[ind]))
+                            except KeyError:
+                                results_from_dataset_comparisons[i][j + ' vs ' + k] = [(tukey.meandiffs[ind], tukey.pvalues[ind], tukey.reject[ind])]
+                            ind += 1
+            else:
+                try:
+                    results_from_dataset_comparisons[i][tukey[2] + ' vs ' + tukey[3]].append(
+                        (tukey[0], tukey[1].pvalue, tukey[1].pvalue < alpha_val))
+                except KeyError:
+                    results_from_dataset_comparisons[i][tukey[2] + ' vs ' + tukey[3]] = [(tukey[0], tukey[1].pvalue, tukey[1].pvalue < alpha_val)]
         except ValueError:
             # shouldnt happen in this case
             pass
@@ -598,6 +626,21 @@ for y in range(10):
 for i in results_from_dataset_comparisons:
     print(i)
     for j in results_from_dataset_comparisons[i]:
-        print('\t' + j)
-        print('\t\t' + str(np.mean([x[1] for x in results_from_dataset_comparisons[i][j]])))
+        print('\t'+j)
+        print('\t\t' + str(np.mean([x[2] for x in results_from_dataset_comparisons[i][j]])))
 
+# save the results of the 10-iteration sampling process to compare differences and significances across datasets
+np.save(outdir_file + '/comparisons_for4subtype_BMA_params_across_datasets.npy',results_from_dataset_comparisons)
+
+# # # ## If you want to load the above and examine the results
+# # # results_acrossdatasets = np.load(outdir_file + '/comparisons_for4subtype_BMA_params_across_datasets.npy',allow_pickle=True)[()]
+# # #
+# # # for dset in ['TKO', 'RPM', 'cl_A']:
+# # #     print(dset)
+# # #     for i in results_acrossdatasets[dset]:
+# # #         print('\t' + i)
+# # #         for j in results_acrossdatasets[dset][i]:
+# # #             print('\t\t' + j)
+# # #             print('\t\t\t' + str(np.mean([x[2] for x in results_acrossdatasets[dset][i][j]])))
+# # #     print('')
+# # #
